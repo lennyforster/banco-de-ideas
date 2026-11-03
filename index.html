@@ -243,6 +243,12 @@ body.modo-hilo #vp-hoja textarea,body.modo-hilo #vp-hoja input{pointer-events:no
 .cx-card a{color:var(--link)}
 .cx-card input{width:100%;font:500 1rem var(--mono);border:1px solid rgba(43,37,32,.25);border-radius:8px;padding:11px 12px;background:#fff;color:var(--ink)}
 .cx-msg{font:600 .85rem var(--ui);color:var(--danger)}
+.links-comp{display:flex;flex-wrap:wrap;gap:4px 14px}
+.k-pasos{margin:0;padding-left:20px;font:500 .9rem/1.5 var(--ui);color:var(--ink);display:grid;gap:3px}
+.k-pasos a{color:var(--link)}
+.k-check{display:flex;gap:8px;align-items:center;font:600 .88rem var(--ui);color:var(--ink)}
+#k-file-btn{display:inline-block;text-align:center}
+#k-file-btn[disabled]{opacity:.5;pointer-events:none}
 .link-cats{justify-self:start;border:0;background:none;font:600 .75rem var(--ui);color:var(--soft);text-decoration:underline;cursor:pointer;padding:0}
 .hilos{position:absolute;left:-50000px;top:-50000px;overflow:visible;pointer-events:none;z-index:4}
 .hilos .sombra{stroke:rgba(0,0,0,.28);stroke-width:4;fill:none;transform:translate(1.5px,3px)}
@@ -496,7 +502,7 @@ window.claude={use:async n=>{if(n==="db"){if(!listo)listo=conectar();return list
       <div class="colores" id="colores" role="group" aria-label="Tipo"></div>
       <button class="btn oscuro" id="guardar" type="submit">Pegar</button>
     </div>
-    <button type="button" class="link-cats" id="btn-cats">Editar categorías</button>
+    <div class="links-comp"><button type="button" class="link-cats" id="btn-cats">Editar categorías</button><button type="button" class="link-cats" id="btn-keep">Importar de Google Keep</button></div>
   </form>
 </div>
 
@@ -579,6 +585,20 @@ window.claude={use:async n=>{if(n==="db"){if(!listo)listo=conectar();return list
   <div class="acc"><span class="estado-d" id="d-pensando" hidden>Pensando…</span><button type="button" class="btn rojo" id="d-stop" hidden>Detener</button><button class="btn oscuro" type="submit" id="d-crear">Crear</button></div>
   <div class="d-res" id="d-res" hidden><span id="d-res-txt"></span><div class="acc"><button type="button" class="btn" id="d-deshacer">Deshacer</button><button type="button" class="btn amarillo" id="d-abrir">Abrir</button></div></div>
 </form>
+<div class="panel ancho" id="panel-keep" hidden>
+  <div class="meta"><span>Importar de Google Keep</span><button type="button" class="cerrar" id="cerrar-keep" aria-label="Cerrar">×</button></div>
+  <ol class="k-pasos">
+    <li>Entrá a <a href="https://takeout.google.com/" target="_blank" rel="noopener">takeout.google.com</a> con la cuenta de Google donde está tu Keep.</li>
+    <li>Tocá <b>Anular selección</b>, bajá y marcá solo <b>Keep</b>.</li>
+    <li><b>Siguiente paso</b> → <b>Crear exportación</b>. Google te manda un mail con el .zip en unos minutos.</li>
+    <li>Bajá el .zip y elegilo acá.</li>
+  </ol>
+  <label class="k-check"><input type="checkbox" id="k-arch" checked> Incluir las notas archivadas</label>
+  <span class="nota-panel">Cada nota pasa a ser un post-it, con su texto, listas, links e imágenes adentro. Las etiquetas de Keep pasan a ser categorías. La papelera no se importa.</span>
+  <div class="acc"><span class="estado-d" id="k-prog"></span><label class="btn oscuro" id="k-file-btn" for="k-file" role="button" tabindex="0">Elegir el .zip</label></div>
+  <input type="file" id="k-file" accept=".zip,application/zip,.json,image/*" multiple hidden>
+  <div class="d-res" id="k-res" hidden></div>
+</div>
 <input type="file" id="file" accept="image/png,image/jpeg,image/gif,image/webp" hidden>
 <div class="toast" id="toast" hidden></div>
 
@@ -946,7 +966,7 @@ $("add-img").onclick=()=>{destinoArchivo="hoja";$("file").click()};
 $("volver").onclick=cerrar;
 document.addEventListener("keydown",e=>{
   if(e.key==="Escape"){
-    for(const p of ["panel-dictar","panel-mas","panel-export","panel-compartir","panel-claude","linkform","panel-mezcla","panel-cats","panel-cal"])if(!$(p).hidden){$(p).hidden=true;return}
+    for(const p of ["panel-keep","panel-dictar","panel-mas","panel-export","panel-compartir","panel-claude","linkform","panel-mezcla","panel-cats","panel-cal"])if(!$(p).hidden){$(p).hidden=true;return}
     if(modoHilo){setModoHilo(false);return}if(abierto){cerrar();return}if(selDeco||selHilo){selDeco=null;selHilo=null;pintarMain()}}
   if((e.key==="Delete"||e.key==="Backspace")&&!escribiendo()){
     if(abierto&&selB){const n=[...document.querySelectorAll("#capa-hoja .pieza.sel")][0];n?.querySelector(".herr .peligro")?.click();e.preventDefault()}
@@ -1352,6 +1372,79 @@ $("d-deshacer").onclick=async()=>{
 };
 
 let salirSure=false;$("salir").onclick=()=>{if(!salirSure){salirSure=true;$("salir").textContent="¿Salir? Tocá de nuevo";setTimeout(()=>{salirSure=false;$("salir").textContent="Salir"},4000);return}window.salirGH&&window.salirGH()};
+/* ---------- Importar de Google Keep (exportación de Google Takeout) ---------- */
+function cargarJSZip(){return window.JSZip?Promise.resolve(window.JSZip):new Promise((ok,mal)=>{const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";s.onload=()=>ok(window.JSZip);s.onerror=()=>mal(new Error("jszip"));document.head.append(s)})}
+const esNotaKeep=o=>o&&typeof o==="object"&&!Array.isArray(o)&&("isTrashed" in o||"textContent" in o||"listContent" in o);
+const esImg=n=>/\.(png|jpe?g|gif|webp)$/i.test(n);
+function kProg(t){$("k-prog").textContent=t}
+$("btn-keep").onclick=()=>{$("panel-keep").hidden=false;$("k-res").hidden=true;kProg("");$("nueva").hidden=true;document.querySelector(".comp-btns").hidden=false};
+$("cerrar-keep").onclick=()=>{$("panel-keep").hidden=true};
+$("k-file").onchange=e=>{const fs=[...e.target.files];e.target.value="";if(fs.length)importarKeep(fs)};
+async function leerKeep(files){
+  const notas=[],arch=new Map();
+  for(const f of files){
+    if(/\.zip$/i.test(f.name)||/zip/.test(f.type)){
+      const JSZip=await cargarJSZip();const z=await JSZip.loadAsync(f);
+      for(const en of Object.values(z.files)){if(en.dir)continue;const nm=en.name.split("/").pop();
+        if(/\.json$/i.test(nm)){try{const o=JSON.parse(await en.async("string"));if(esNotaKeep(o))notas.push(o)}catch(_){}}
+        else if(esImg(nm))arch.set(nm,en)}
+    }else if(/\.json$/i.test(f.name)){try{const o=JSON.parse(await f.text());if(esNotaKeep(o))notas.push(o)}catch(_){}}
+    else if(esImg(f.name))arch.set(f.name,f);
+  }
+  return {notas,arch};
+}
+function buscarAdjunto(arch,ruta){
+  const nm=String(ruta||"").split("/").pop();if(!nm)return null;if(arch.has(nm))return arch.get(nm);
+  const base=nm.replace(/\.[^.]+$/,"");for(const [k,v] of arch)if(k.replace(/\.[^.]+$/,"")===base)return v;return null;
+}
+const tipoImg=n=>/\.png$/i.test(n)?"image/png":/\.gif$/i.test(n)?"image/gif":/\.webp$/i.test(n)?"image/webp":"image/jpeg";
+const tsKeep=n=>Math.round(Number(n.createdTimestampUsec||n.userEditedTimestampUsec||0)/1000)||Date.now();
+async function importarKeep(files){
+  if(!cols.ideas){kProg("No hay conexión con tus datos. Recargá la página.");return}
+  $("k-file-btn").disabled=true;$("k-res").hidden=true;
+  try{
+    kProg("Leyendo el archivo…");
+    let {notas,arch}=await leerKeep(files);
+    const conArch=$("k-arch").checked;
+    notas=notas.filter(n=>!n.isTrashed&&(conArch||!n.isArchived)).sort((a,b)=>tsKeep(a)-tsKeep(b));
+    if(!notas.length){kProg("No encontré notas de Keep en ese archivo. Tiene que ser el .zip que baja Google Takeout.");return}
+    const usados=new Set(cats.map(c=>c.color));let catsNuevas=0;
+    const catPara=nombre=>{let c=cats.find(x=>(x.nombre||"").toLowerCase()===nombre.toLowerCase());
+      if(!c){c={id:"c"+bid(),nombre,color:PALETA.find(x=>!usados.has(x))||PALETA[cats.length%PALETA.length]};usados.add(c.color);cats.push(c);catsNuevas++}return c.id};
+    let numero=data.ideas.reduce((m,x)=>Math.max(m,x.numero||0),0)+1,hechas=0,imgs=0,sinImg=0;
+    for(const n of notas){
+      const titulo=String(n.title||"").trim(),texto=String(n.textContent||"").trim();
+      const lista=Array.isArray(n.listContent)?n.listContent.map(i=>(i&&i.isChecked?"☑ ":"☐ ")+String(i&&i.text||"").trim()).join("\n"):"";
+      const cuerpo=[texto,lista].filter(Boolean).join("\n\n");
+      let principal,resto;
+      if(titulo){principal=titulo;resto=cuerpo}
+      else if(cuerpo.length<=280){principal=cuerpo||"(nota sin texto)";resto=""}
+      else{const ls=cuerpo.split("\n");principal=ls[0].slice(0,140);resto=cuerpo.slice(principal.length).trim()}
+      const etiquetas=(Array.isArray(n.labels)?n.labels:[]).map(l=>l&&l.name).filter(Boolean);
+      if(etiquetas.length>1)resto=(resto?resto+"\n\n":"")+"Etiquetas de Keep: "+etiquetas.join(", ");
+      const bloques=[];let y=-60;
+      if(resto){bloques.push({id:bid(),t:"txt",v:resto,w:340,x:480,y});y+=Math.min(420,120+resto.length/2)}
+      for(const a of (Array.isArray(n.annotations)?n.annotations:[]))if(a&&a.url){bloques.push({id:bid(),t:"link",url:a.url,titulo:a.title||"",w:300,x:480,y});y+=150}
+      let yi=-60;
+      for(const at of (Array.isArray(n.attachments)?n.attachments:[])){
+        if(!at||!/^image\//.test(at.mimetype||"image/")&&!esImg(at.filePath||""))continue;
+        const f=buscarAdjunto(arch,at.filePath);if(!f||!assets){sinImg++;continue}
+        try{kProg(`Subiendo imágenes… (nota ${hechas+1} de ${notas.length})`);
+          const raw=f instanceof Blob?f:await f.async("blob");const tipo=/^image\/(png|jpeg|gif|webp)$/.test(at.mimetype||"")?at.mimetype:tipoImg(at.filePath||"");
+          const r=await assets.upload(new Blob([raw],{type:tipo}),{type:tipo});bloques.push({id:bid(),t:"img",a:r.id,alt:"Imagen de Keep",w:300,x:-420,y:yi});yi+=320;imgs++}
+        catch(_){sinImg++}
+      }
+      await cols.ideas.add({texto:principal,tipo:catPara(etiquetas[0]||"De Keep"),creado:tsKeep(n),numero:numero++,origen:"keep",...(bloques.length?{bloques}:{})});
+      hechas++;kProg(`Importando… ${hechas} de ${notas.length}`);
+    }
+    if(catsNuevas){guardarCats();refrescarCats()}
+    kProg("");$("k-res").hidden=false;
+    $("k-res").textContent=`Listo: importé ${hechas} ${hechas===1?"nota":"notas"}${imgs?` y ${imgs} ${imgs===1?"imagen":"imágenes"}`:""}.`+(catsNuevas?` Creé ${catsNuevas} ${catsNuevas===1?"categoría":"categorías"} con sus etiquetas.`:"")+(sinImg?` ${sinImg} ${sinImg===1?"imagen no se pudo":"imágenes no se pudieron"} traer.`:"")+" Se van guardando en unos segundos.";
+    if(vista!=="ideas")setVista("ideas");setTimeout(()=>lzMain.encuadrar(lzMain.limites()),400);
+  }catch(e){console.error(e);kProg(e&&e.message==="jszip"?"No pude abrir el .zip (sin conexión). Probá de nuevo con internet.":"No pude leer ese archivo. Tiene que ser el .zip que baja Google Takeout.")}
+  finally{$("k-file-btn").disabled=false}
+}
+
 /* ---------- Compartir una nota y link directo ---------- */
 const URL_PAGINA="https://lennyforster.github.io/banco-de-ideas/";
 let linkInicial=null;try{const h=location.hash;if(h.startsWith("#nota-"))linkInicial=h.slice(6)}catch(_){}
