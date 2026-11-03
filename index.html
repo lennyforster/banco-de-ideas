@@ -295,7 +295,7 @@ body.modo-hilo #vp-hoja textarea,body.modo-hilo #vp-hoja input{pointer-events:no
       <ol>
         <li>Entrá a <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a></li>
         <li>Nombre: <b>Banco de ideas</b>. Vencimiento: el más largo que te deje.</li>
-        <li>Repository access: <b>Only select repositories</b> → <b>banco-de-ideas-datos</b>.</li>
+        <li>Repository access: <b>Only select repositories</b> → el repo de datos de la persona.</li>
         <li>Permissions → Repository permissions → <b>Contents: Read and write</b>.</li>
         <li><b>Generate token</b>, copiala y pegala acá.</li>
       </ol>
@@ -308,8 +308,8 @@ body.modo-hilo #vp-hoja textarea,body.modo-hilo #vp-hoja input{pointer-events:no
 <script>
 /* ===== Datos en GitHub: reemplaza al runtime de claude.ai con la misma forma (db, assets, downloads) ===== */
 (function(){
-const GH={owner:"lennyforster",repo:"banco-de-ideas-datos",branch:"main"};
-const API="https://api.github.com",RB=`/repos/${GH.owner}/${GH.repo}`;
+const GH={owner:"lennyforster",branch:"main",repos:["banco-de-ideas-datos","banco-de-ideas-datos-2"]};
+const API="https://api.github.com";let RB=null;
 const LS={get(k){try{return localStorage.getItem(k)}catch(_){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(_){}},del(k){try{localStorage.removeItem(k)}catch(_){}}};
 let TOKEN=LS.get("gh_token");
 const docs=new Map();           // "ideas/abc" -> datos
@@ -421,10 +421,17 @@ function pedirClave(msg){
   const ov=document.getElementById("conectar");if(!ov)return;ov.hidden=false;document.getElementById("cx-msg").textContent=msg||"";document.getElementById("cx-clave").value="";
   setTimeout(()=>document.getElementById("cx-clave").focus(),50);
 }
+async function elegirRepo(){
+  const guardado=LS.get("gh_repo");const orden=guardado?[guardado,...GH.repos.filter(x=>x!==guardado)]:GH.repos;
+  let red=false;
+  for(const repo of orden){try{await api(`/repos/${GH.owner}/${repo}/git/ref/heads/${GH.branch}`);RB=`/repos/${GH.owner}/${repo}`;LS.set("gh_repo",repo);return}
+    catch(e){if(e.status===401){throw e}if(e.status!==404&&e.status!==403&&e.status!==409)red=true}}
+  const e=new Error(red?"red":"sin repo");e.status=red?0:404;throw e;
+}
 async function conectar(){
   if(!TOKEN){pedirClave("");await new Promise(r=>resolverClave=r)}
-  for(;;){try{await traer();break}catch(e){
-    if(e.status===401||e.status===403||e.status===404){TOKEN=null;LS.del("gh_token");pedirClave(e.status===404?"Esa clave no tiene acceso al repo banco-de-ideas-datos. Revisá que lo hayas elegido al crearla.":"Esa clave no funciona. Revisala y probá de nuevo.");await new Promise(r=>resolverClave=r)}
+  for(;;){try{if(!RB)await elegirRepo();await traer();break}catch(e){
+    if(e.status===401||e.status===403||e.status===404){TOKEN=null;LS.del("gh_token");RB=null;LS.del("gh_repo");pedirClave(e.status===404?"Esa clave no tiene acceso a ninguna plancha. Revisá que al crearla hayas elegido el repo de datos.":"Esa clave no funciona. Revisala y probá de nuevo.");await new Promise(r=>resolverClave=r)}
     else{aviso("No pude conectar con GitHub. Reintento en unos segundos…");await new Promise(r=>setTimeout(r,5000))}}}
   return db;
 }
@@ -432,7 +439,7 @@ document.addEventListener("DOMContentLoaded",()=>{
   const f=document.getElementById("cx-form");if(!f)return;
   f.addEventListener("submit",e=>{e.preventDefault();const v=document.getElementById("cx-clave").value.trim();if(!v)return;TOKEN=v;LS.set("gh_token",v);document.getElementById("conectar").hidden=true;if(resolverClave){const r=resolverClave;resolverClave=null;r()}});
 });
-window.salirGH=()=>{LS.del("gh_token");LS.del("gh_cache");location.reload()};
+window.salirGH=()=>{LS.del("gh_token");LS.del("gh_cache");LS.del("gh_repo");location.reload()};
 window.claude={use:async n=>{if(n==="db"){if(!listo)listo=conectar();return listo}if(n==="assets"){if(!listo)listo=conectar();await listo;return assets}if(n==="downloads")return downloads;return null}};
 })();
 </script>
@@ -449,6 +456,7 @@ window.claude={use:async n=>{if(n==="db"){if(!listo)listo=conectar();return list
   <span class="sep"></span>
   <input type="search" class="buscar" id="buscar" placeholder="Buscar en todo…" aria-label="Buscar en todo, también adentro de los post-its">
   <button class="btn amarillo" id="mezclar" type="button">Mezclar</button>
+  <button class="btn" id="salir" type="button" title="Cerrar sesión en este dispositivo">Salir</button>
   <button class="btn" id="btn-cal" type="button">Calendario</button>
   <div class="grupo vistaseg" id="vistaseg" role="group" aria-label="Acomodar los post-its"><span class="seg-lbl">Acomodar</span><button type="button" class="seg" data-o="num" aria-pressed="false">N.º</button><button type="button" class="seg" data-o="cat" aria-pressed="false">Categoría</button></div>
 </div>
@@ -1343,6 +1351,7 @@ $("d-deshacer").onclick=async()=>{
   }catch(_){toast("No se pudo deshacer. Borralo a mano desde la plancha.")}
 };
 
+let salirSure=false;$("salir").onclick=()=>{if(!salirSure){salirSure=true;$("salir").textContent="¿Salir? Tocá de nuevo";setTimeout(()=>{salirSure=false;$("salir").textContent="Salir"},4000);return}window.salirGH&&window.salirGH()};
 /* ---------- Compartir una nota y link directo ---------- */
 const URL_PAGINA="https://lennyforster.github.io/banco-de-ideas/";
 let linkInicial=null;try{const h=location.hash;if(h.startsWith("#nota-"))linkInicial=h.slice(6)}catch(_){}
