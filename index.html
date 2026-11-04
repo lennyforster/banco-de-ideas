@@ -451,6 +451,10 @@ body.en-diario #vp-main,body.en-diario .composer,body.en-diario>.lateral,body.en
 .marca-hora{position:fixed;z-index:7;height:32px;display:flex;align-items:center;border:0;background:none;padding:0 2px;font:600 12px var(--mono);color:#c2462a;cursor:pointer;opacity:.85}
 .marca-hora:hover{opacity:1;text-decoration:underline}
 .marca-hora[hidden]{display:none}
+.dpag-horas{position:absolute;top:0;height:0;width:0}
+.dpag-hora{position:absolute;right:0;height:32px;display:flex;align-items:center;border:0;background:none;padding:0;font:600 12px var(--mono);color:#c2462a;cursor:pointer;white-space:nowrap}
+.dpag-hora:hover{text-decoration:line-through;opacity:.7}
+@media (max-width:760px){.dpag-hora,.marca-hora{font-size:9.5px;letter-spacing:-.3px}}
 .espejo-dia{position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre-wrap;word-wrap:break-word;overflow-wrap:break-word;line-height:32px;padding:0}
 .dia-herr{display:none}
 body.en-diario .dia-herr{display:flex}
@@ -1919,20 +1923,33 @@ $("dc-ant").onclick=()=>{mesDC=mesDC.m?{y:mesDC.y,m:mesDC.m-1}:{y:mesDC.y-1,m:11
 
 /* ---------- Diario en scroll infinito: un día abajo del otro ---------- */
 const feed={pags:new Map(),extra:new Set(),pend:new Map()},ANCHO_REF=900,TIPOS_FEED=["post","txt","tx","img","link"];
-const firmaDia=e=>JSON.stringify([textoDia(e),(e&&e.bloques)||[]]);
+const firmaDia=e=>JSON.stringify([textoDia(e),(e&&e.bloques)||[],(e&&e.horas)||null]);
 function diasFeed(){const hoy=hoyDia(),s=new Set([hoy,...feed.extra,...feed.pags.keys()]);for(const e of data.diario)if(nivelDia(e))s.add(e.id);return [...s].filter(k=>k<=hoy).sort()}
 function pintarFeed(){if(!enDiario)return;const cont=$("dia-feed"),dias=diasFeed();
   dias.forEach((k,i)=>{let p=feed.pags.get(k);if(!p){p=crearPagina(k);feed.pags.set(k,p)}else refrescarPagina(p);if(cont.children[i]!==p.el)cont.insertBefore(p.el,cont.children[i]||null)});
   for(const [k,p] of feed.pags)if(!dias.includes(k)){p.el.remove();feed.pags.delete(k)}
   for(const p of feed.pags.values())p.ta.readOnly=!diarioCargado;
   requestAnimationFrame(()=>{for(const p of feed.pags.values())ajustarPagina(p)})}
-function entradaLocal(k){const e=JSON.parse(JSON.stringify(entradaDia(k)||{fecha:k,texto:"",bloques:[]}));if(!Array.isArray(e.bloques))e.bloques=[];e.texto=textoDia(e);return e}
+function entradaLocal(k){const e=JSON.parse(JSON.stringify(entradaDia(k)||{fecha:k,texto:"",bloques:[]}));if(!Array.isArray(e.bloques))e.bloques=[];e.texto=textoDia(e);
+  if(!Array.isArray(e.horas)){e.horas=[];const ls=e.texto.split("\n");ls.forEach((l,n)=>{const m=/^(\d{1,2}:\d{2}) ?/.exec(l);if(m){e.horas.push({l:n,h:m[1]});ls[n]=l.slice(m[0].length)}});e.texto=ls.join("\n")}
+  return e}
+/* cuando cambia el texto, cada hora sigue a su renglón */
+function moverHoras(p,viejo,nuevo){const hs=p.e.horas;if(!hs||!hs.length||viejo===nuevo)return;const A=viejo.split("\n"),B=nuevo.split("\n"),m=Math.min(A.length,B.length);
+  let a=0;while(a<m&&A[a]===B[a])a++;let z=0;while(z<m-a&&A[A.length-1-z]===B[B.length-1-z])z++;
+  const finA=A.length-z,medB=B.length-z-a,d=B.length-A.length,usados=new Set(),out=[];
+  for(const x of hs.slice().sort((u,v)=>u.l-v.l)){let l=x.l;if(l>=finA)l+=d;else if(l>=a){if(medB<=0)continue;l=a+Math.min(l-a,medB-1)}if(usados.has(l))continue;usados.add(l);out.push({l,h:x.h})}
+  p.e.horas=out}
+function pintarHoras(p){const hs=p.e.horas||[],cont=p.horasEl;if(!hs.length){cont.replaceChildren();return}
+  const F=filasDe(p.ta),c=$("diario"),margen=c.getBoundingClientRect().left+(parseFloat(getComputedStyle(c).getPropertyValue("--margen"))||72);
+  cont.style.left=(margen-p.cuerpo.getBoundingClientRect().left-(innerWidth<=760?3:8))+"px";cont.replaceChildren();
+  for(const x of hs){const fila=x.l<F.lineas.length?F.tops[x.l]:F.total+(x.l-F.lineas.length);const b=el("button","dpag-hora",x.h);b.type="button";b.title="Sacar esta hora";b.style.top=fila*32+"px";
+    b.onpointerdown=e=>e.preventDefault();b.onclick=()=>{p.e.horas=p.e.horas.filter(y=>y!==x);pintarHoras(p);guardarDiaFeed(p)};cont.append(b)}}
 function crearPagina(k){const e=entradaLocal(k),hoy=k===hoyDia();
   const sec=el("section","dpag"+(hoy?" hoy":""));sec.dataset.k=k;const cab=el("header","dpag-cab");cab.append(el("span","dpag-fecha",fechaLarga(k)));if(hoy)cab.append(el("span","dpag-hoy","Hoy"));
   const cuerpo=el("div","dpag-cuerpo"),ta=el("textarea","dpag-txt");ta.rows=1;ta.spellcheck=false;ta.value=e.texto||"";ta.setAttribute("aria-label","Diario del "+fechaLarga(k));
-  ta.placeholder=hoy?"¿Qué pasó hoy? Escribí lo que quieras.":"";const capa=el("div","dpag-capa");cuerpo.append(ta,capa);sec.append(cab,cuerpo);
-  const p={k,e,el:sec,ta,capa,cuerpo,sig:firmaDia(e)};
-  ta.addEventListener("input",()=>{p.e.texto=ta.value;ajustarPagina(p);guardarDiaFeed(p)});ta.addEventListener("blur",()=>guardarDiaYaFeed(p));
+  ta.placeholder=hoy?"¿Qué pasó hoy? Escribí lo que quieras.":"";const capa=el("div","dpag-capa"),horasEl=el("div","dpag-horas");cuerpo.append(horasEl,ta,capa);sec.append(cab,cuerpo);
+  const srv0=entradaDia(k),p={k,e,el:sec,ta,capa,cuerpo,horasEl,sig:firmaDia(srv0||{texto:"",bloques:[]})};
+  ta.addEventListener("input",()=>{moverHoras(p,p.e.texto||"",ta.value);p.e.texto=ta.value;ajustarPagina(p);guardarDiaFeed(p)});ta.addEventListener("blur",()=>guardarDiaYaFeed(p));
   pintarBloquesPag(p);return p}
 function refrescarPagina(p,forzar){if(!forzar&&(feed.pend.has(p.k)||p.el.contains(document.activeElement)))return;
   const srv=entradaDia(p.k);const sig=srv?firmaDia(srv):firmaDia({texto:"",bloques:[]});if(sig===p.sig)return;
@@ -1945,10 +1962,10 @@ function ajustarPagina(p){const ta=p.ta;ta.style.height="auto";ta.style.height=M
   for(const n of ns){if(!n.classList.contains("arrastrando")){const b=n._b,fx=typeof b.fx==="number"?b.fx:(b.x||0)/ANCHO_REF;n.style.left=Math.max(0,Math.min(W-n.offsetWidth,fx*W))+"px";
       if(angosto){const y=Math.max(b.y||0,piso);n.style.top=y+"px";piso=y+n.offsetHeight+28}else n.style.top=(b.y||0)+"px"}
     h=Math.max(h,(parseFloat(n.style.top)||0)+n.offsetHeight+24)}
-  p.cuerpo.style.minHeight=Math.ceil(h/32)*32+"px"}
+  p.cuerpo.style.minHeight=Math.ceil(h/32)*32+"px";pintarHoras(p)}
 function guardarDiaFeed(p){clearTimeout(feed.pend.get(p.k));feed.pend.set(p.k,setTimeout(()=>guardarDiaYaFeed(p),700))}
 function guardarDiaYaFeed(p){const k=p.k;if(!feed.pend.has(k))return;clearTimeout(feed.pend.get(k));feed.pend.delete(k);if(!colDiario||!diarioCargado)return;
-  const doc={texto:p.e.texto||"",bloques:p.e.bloques||[]};p.sig=firmaDia(doc);const srv=entradaDia(k);
+  const doc={texto:p.e.texto||"",bloques:p.e.bloques||[],horas:p.e.horas||[]};p.sig=firmaDia(doc);const srv=entradaDia(k);
   if(srv){const patch={...doc};if(srv.imagen||srv.sonido||srv.escena){patch.imagen="";patch.sonido="";patch.escena=""}escribir(colDiario,k,patch)}
   else if(doc.texto.trim()||doc.bloques.length)cola[k]=(cola[k]||Promise.resolve()).then(()=>entradaDia(k)?colDiario.doc(k).update(doc):colDiario.doc(k).set({fecha:k,creado:Date.now(),...doc})).catch(()=>toast("No se guardó el diario. Revisá la conexión."))}
 function guardarTodoFeed(){for(const k of [...feed.pend.keys()]){const p=feed.pags.get(k);if(p)guardarDiaYaFeed(p)}}
@@ -2009,11 +2026,12 @@ const horaAhora=()=>{const f=new Date();return pad(f.getHours())+":"+pad(f.getMi
 function ubicarMarca(e){if(!enDiario||e.target.closest&&e.target.closest(".dblq,.marca-hora"))return e.target.closest&&e.target.closest(".marca-hora")?null:ocultarMarca();
   const p=feed.pags.get(hoyDia());if(!p)return ocultarMarca();const c=$("diario"),cr=c.getBoundingClientRect(),margen=cr.left+(parseFloat(getComputedStyle(c).getPropertyValue("--margen"))||72),
     r=p.cuerpo.getBoundingClientRect(),tx=r.left;
-  if(e.clientX<margen-26||e.clientX>tx+8||e.clientY<r.top||e.clientY>r.bottom)return ocultarMarca();
+  if(e.clientX<margen-(innerWidth<=760?30:64)||e.clientX>tx+8||e.clientY<r.top||e.clientY>r.bottom)return ocultarMarca();
   const fila=Math.floor((e.clientY-r.top)/32),F=filasDe(p.ta);let linea;
-  if(fila<F.total){linea=F.tops.indexOf(fila);if(linea<0)return ocultarMarca();if(/^\d{1,2}:\d{2}\b/.test(F.lineas[linea]))return ocultarMarca()}
+  if(fila<F.total){linea=F.tops.indexOf(fila);if(linea<0)return ocultarMarca()}
   else linea=F.lineas.length+(fila-F.total);
-  marcaDest={p,linea};marcaHora.textContent=horaAhora();marcaHora.style.top=(r.top+fila*32)+"px";marcaHora.hidden=false;marcaHora.style.left=Math.max(4,tx-marcaHora.offsetWidth-6)+"px"}
+  if((p.e.horas||[]).some(x=>x.l===linea))return ocultarMarca();
+  marcaDest={p,linea};marcaHora.textContent=horaAhora();marcaHora.style.top=(r.top+fila*32)+"px";marcaHora.hidden=false;marcaHora.style.left=Math.max(1,margen-(innerWidth<=760?3:8)-marcaHora.offsetWidth)+"px"}
 function ocultarMarca(){marcaHora.hidden=true;marcaDest=null}
 $("diario").addEventListener("pointermove",e=>{if(e.pointerType==="mouse")ubicarMarca(e)});
 $("diario").addEventListener("pointerdown",e=>{if(e.pointerType!=="mouse")ubicarMarca(e)});
@@ -2021,8 +2039,8 @@ $("diario").addEventListener("scroll",()=>{if(!marcaHora.hidden)ocultarMarca()},
 document.addEventListener("pointermove",e=>{if(e.pointerType==="mouse"&&!marcaHora.hidden&&!$("diario").contains(e.target)&&e.target!==marcaHora)ocultarMarca()});
 marcaHora.addEventListener("pointerdown",e=>e.preventDefault());
 marcaHora.onclick=()=>{const d=marcaDest;if(!d)return;const ta=d.p.ta,lineas=ta.value.split("\n");while(lineas.length<=d.linea)lineas.push("");
-  const h=horaAhora()+" ";lineas[d.linea]=h+lineas[d.linea];ta.value=lineas.join("\n");const pos=lineas.slice(0,d.linea).join("\n").length+(d.linea?1:0)+h.length;
-  ta.focus({preventScroll:true});ta.setSelectionRange(pos,pos);ta.dispatchEvent(new Event("input"));cacheFilas=null;ocultarMarca()};;
+  const p=d.p;ta.value=lineas.join("\n");p.e.texto=ta.value;p.e.horas=[...(p.e.horas||[]).filter(x=>x.l!==d.linea),{l:d.linea,h:horaAhora()}];
+  const pos=lineas.slice(0,d.linea+1).join("\n").length;ta.focus({preventScroll:true});ta.setSelectionRange(pos,pos);cacheFilas=null;ajustarPagina(p);guardarDiaFeed(p);ocultarMarca()};
 
 /* ---------- Pilas: la de Keep y las que armás tirando un post-it arriba de otro ---------- */
 let pilaPos=null,pilaTitulo="",docPila=null,pilaCargada=false,pilas=[],colPilas=null,pilasCargadas=false,pvPila="keep";const nodosPila=new Map(),disolviendo=new Set();
