@@ -280,9 +280,9 @@ body.modo-hilo #vp-hoja textarea,body.modo-hilo #vp-hoja input{pointer-events:no
 #k-file-btn{display:inline-block;text-align:center}
 #k-file-btn[disabled]{opacity:.5;pointer-events:none}
 .link-cats{justify-self:start;border:0;background:none;font:600 .75rem var(--ui);color:var(--soft);text-decoration:underline;cursor:pointer;padding:0}
-.hilos{position:absolute;left:-50000px;top:-50000px;overflow:visible;pointer-events:none;z-index:4}
+.hilos{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;pointer-events:none;z-index:4}
 /* Flechas */
-.flechas{position:absolute;left:-50000px;top:-50000px;overflow:visible;pointer-events:none;z-index:2}
+.flechas{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;pointer-events:none;z-index:2}
 .fl-linea{stroke:#fffdf6;stroke-width:3;fill:none;stroke-linecap:round}
 .fl-cabeza{fill:#fffdf6;stroke:#fffdf6;stroke-width:1.5;stroke-linejoin:round}
 .fl-sombra{stroke:rgba(0,0,0,.3);stroke-width:4;fill:none;stroke-linecap:round;transform:translate(1px,2.5px)}
@@ -293,7 +293,7 @@ body.modo-hilo #vp-hoja textarea,body.modo-hilo #vp-hoja input{pointer-events:no
 .vista.modo-flecha .nota,.vista.modo-flecha .pieza,.vista.modo-flecha .principal,.vista.modo-flecha .grip{cursor:crosshair}
 .vista.modo-flecha textarea,.vista.modo-flecha input{pointer-events:none}
 /* Lápiz */
-.trazos{position:absolute;left:-50000px;top:-50000px;overflow:visible;pointer-events:none;z-index:5}
+.trazos{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;pointer-events:none;z-index:5}
 .trazos path{fill:none;stroke-linecap:round;stroke-linejoin:round}
 .capa-lapiz{position:absolute;inset:0;z-index:5;cursor:crosshair;touch-action:none}
 .capa-lapiz.goma{cursor:cell}
@@ -313,6 +313,13 @@ body.modo-hilo #vp-hoja textarea,body.modo-hilo #vp-hoja input{pointer-events:no
 .lm-g i{display:block;border-radius:50%;background:var(--c);box-shadow:0 0 0 1px rgba(43,37,32,.3)}
 .lm-goma[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
 /* Celular */
+.tool.solo-celu{display:none}
+.tool[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.chip-modo{display:none;position:fixed;z-index:13;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 62px);align-items:center;gap:8px;background:var(--ink);color:var(--paper);border-radius:999px;padding:5px 5px 5px 14px;font:600 .82rem var(--ui);box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.chip-modo[hidden]{display:none!important}
+.chip-modo button{border:0;border-radius:999px;padding:7px 12px;font:600 .82rem var(--ui);background:var(--paper);color:var(--ink);cursor:pointer}
+.menu-fila{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:4px}
+.menu-fila .menu-it{text-align:center;padding:11px 6px;font-size:.85rem}
 #btn-menu{display:none}
 .menu-lista{display:grid;gap:4px}
 .menu-it{border:0;background:rgba(43,37,32,.06);border-radius:10px;padding:13px 14px;text-align:left;font:600 .95rem var(--ui);color:var(--ink);cursor:pointer}
@@ -321,14 +328,40 @@ body.modo-hilo #vp-hoja textarea,body.modo-hilo #vp-hoja input{pointer-events:no
 .menu-orden{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 4px 6px 14px;font:600 .95rem var(--ui);color:var(--ink)}
 .menu-orden .grupo{box-shadow:none;background:rgba(43,37,32,.06)}
 .menu-orden .seg[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
-body.en-diario .menu-it:not([data-ir="salir"]),body.en-diario .menu-orden{display:none}
+body.en-diario .menu-it:not([data-ir="salir"]):not(.solo-dia),body.en-diario .menu-orden,body.en-diario .menu-fila{display:none}
+.menu-it.solo-dia{display:none}body.en-diario .menu-it.solo-dia{display:block}
+#btn-dia-cal{display:none;align-items:center;gap:7px}
+body.en-diario #btn-dia-cal{display:inline-flex}
+body.en-diario #salir{display:none}
+body.en-diario #btn-menu{display:inline-block}
+body.en-diario #detalle{z-index:9}
+body.en-diario #detalle>.barra{display:none}
+body.en-diario #diario{display:none}
+#zoom-hoja{transition:top .2s}
+body.en-diario #zoom-hoja{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 70px)}
+.dc-cab{display:flex;align-items:center;gap:6px}
+.dc-cab span{flex:1;text-align:center;font:700 1.15rem var(--hand);color:var(--ink)}
+.dc-cab button{border:0;background:rgba(43,37,32,.07);color:var(--ink);width:34px;height:34px;border-radius:50%;font:600 1.1rem var(--ui);cursor:pointer}
+.dc-cab button:disabled{opacity:.3;cursor:default}
+.dc-cab .cerrar{background:none}
+.dc-grilla{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.dc-grilla .dow{text-align:center;font:600 .62rem var(--mono);color:var(--muted)}
+.dc-grilla button{aspect-ratio:1;border:0;border-radius:8px;background:rgba(43,37,32,.05);font:600 .85rem var(--ui);color:var(--muted);cursor:pointer;padding:0}
+.dc-grilla button.n1{background:#fff0a0;color:var(--ink)}.dc-grilla button.n2{background:#ffd84d;color:var(--ink)}.dc-grilla button.n3{background:#ff9f43;color:var(--ink)}
+.dc-grilla button.hoy{box-shadow:inset 0 0 0 2px var(--ink);color:var(--ink)}
+.dc-grilla button.sel{background:var(--ink);color:var(--paper)}
+.dc-grilla button:disabled{opacity:.3;cursor:default}
+#dc-hoy{justify-self:start}
+@media (max-width:560px){#btn-dia-cal .lbl-dc{display:none}#btn-dia-cal{padding:9px 12px}}
 .btn:focus:not(:focus-visible),.tool:focus:not(:focus-visible),.lat:focus:not(:focus-visible){outline:none}
 @media (max-width:560px){
   #btn-menu{display:inline-block;padding:9px 13px;letter-spacing:.08em}
   #mezclar,#btn-cal,#btn-tiempo,#vistaseg,#salir{display:none!important}
   .barra .buscar{order:5;flex:1 1 100%;width:auto}
   .tab{padding:7px 11px}
-  .lateral{padding:4px}.lat{width:32px;height:32px}
+  .lateral{display:none!important}
+  .tool.solo-celu{display:inline-block}
+  .chip-modo{display:flex}
   #detalle .barra .grupo:has(.titulo-hoja){display:none}
 }
 body.es-celu>.lateral [data-m="lapiz"]{display:none}
@@ -679,19 +712,28 @@ window.claude={use:async n=>{if(n==="db"){if(!listo)listo=conectar();return list
   <span class="sep"></span>
   <input type="search" class="buscar" id="buscar" placeholder="Buscar en todo…" aria-label="Buscar en todo, también adentro de los post-its">
   <button class="btn amarillo" id="mezclar" type="button">Mezclar</button>
+  <button class="btn" id="btn-dia-cal" type="button" aria-label="Calendario del diario"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="3" width="12" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span class="lbl-dc">Calendario</span></button>
   <button class="btn" id="btn-menu" type="button" aria-label="Más opciones" aria-haspopup="true">•••</button>
   <button class="btn" id="salir" type="button" title="Cerrar sesión en este dispositivo">Salir</button>
   <button class="btn" id="btn-cal" type="button">Calendario</button>
   <button class="btn" id="btn-tiempo" type="button">Línea de tiempo</button>
   <div class="grupo vistaseg" id="vistaseg" role="group" aria-label="Acomodar los post-its"><button type="button" class="seg" data-o="num" aria-pressed="false">N.º</button><button type="button" class="seg" data-o="cat" aria-pressed="false">Categoría</button></div>
 </div>
+<div class="panel" id="panel-diacal" hidden>
+  <div class="dc-cab"><button type="button" id="dc-ant" aria-label="Mes anterior">‹</button><span id="dc-mes"></span><button type="button" id="dc-sig" aria-label="Mes siguiente">›</button><button type="button" class="cerrar" id="cerrar-diacal" aria-label="Cerrar">×</button></div>
+  <div class="dc-grilla" id="dc-grilla"></div>
+  <button type="button" class="btn oscuro" id="dc-hoy">Ir a hoy</button>
+</div>
 <div class="panel" id="panel-menu" hidden>
   <div class="meta"><span>Más</span><button type="button" class="cerrar" id="cerrar-menu" aria-label="Cerrar">×</button></div>
   <div class="menu-lista">
+    <div class="menu-fila"><button type="button" class="menu-it" data-mm="undo">↶ Deshacer</button><button type="button" class="menu-it" data-mm="redo">↷ Rehacer</button><button type="button" class="menu-it" data-mm="sel">Elegir varios</button><button type="button" class="menu-it" data-mm="flecha">Flechas</button></div>
     <button type="button" class="menu-it" data-ir="mezclar">Mezclar</button>
     <button type="button" class="menu-it" data-ir="btn-cal">Calendario</button>
     <button type="button" class="menu-it" data-ir="btn-tiempo">Línea de tiempo</button>
     <div class="menu-orden"><span>Ordenar</span><div class="grupo"><button type="button" class="seg" data-o2="num">N.º</button><button type="button" class="seg" data-o2="cat">Categoría</button></div></div>
+    <button type="button" class="menu-it solo-dia" data-ir="h-exportar">Exportar este día</button>
+    <button type="button" class="menu-it solo-dia" id="menu-borrar-dia">Borrar este día</button>
     <button type="button" class="menu-it suave" data-ir="salir">Salir de esta cuenta</button>
   </div>
 </div>
@@ -786,6 +828,11 @@ window.claude={use:async n=>{if(n==="db"){if(!listo)listo=conectar();return list
     <button class="tool" id="add-cal" type="button">Calendario</button>
     <button class="tool" id="add-esc" type="button">Escaleta</button>
     <button class="tool" id="h-hilo" type="button" aria-pressed="false">Hilo rojo</button>
+    <button class="tool solo-celu" type="button" data-mh="lapiz">Lápiz</button>
+    <button class="tool solo-celu" type="button" data-mh="flecha">Flecha</button>
+    <button class="tool solo-celu" type="button" data-mh="sel">Seleccionar</button>
+    <button class="tool solo-celu" type="button" data-mh="undo" aria-label="Deshacer">↶</button>
+    <button class="tool solo-celu" type="button" data-mh="redo" aria-label="Rehacer">↷</button>
     <button class="tool amarillo" id="add-a-idea" type="button" hidden title="Marcá un pedazo de texto y tocá acá">A Ideas</button>
   </div>
   <div class="panel" id="panel-mas" hidden>
@@ -1261,7 +1308,7 @@ function abrir(k,id,virtual){
   $("detalle").hidden=false;pintarCabecera();pintarHoja();
   $("add-img").hidden=!assets;$("btn-claude").hidden=!samp;$("h-dictar").hidden=!samp;
   if(abierto.migrar){abierto.migrar=false;guardarHoja("texto",abierto.doc.texto);escribir(cols.diario,id,{imagen:"",sonido:"",escena:""},{silencioso:true})}
-  lzHoja.apply();if(!lzHoja.usar("hoja:"+id))requestAnimationFrame(()=>lzHoja.encuadrar(lzHoja.limites()));
+  lzHoja.apply();if(k==="diario"){lzHoja.clave=null;posicionarDia()}else if(!lzHoja.usar("hoja:"+id))requestAnimationFrame(()=>lzHoja.encuadrar(lzHoja.limites()));
   requestAnimationFrame(()=>{document.querySelectorAll("#capa-hoja textarea").forEach(autosize);pintarHilos();$("volver").focus()});
 }
 function cerrar(){const eraDia=abierto&&abierto.k==="diario"?{id:abierto.id,doc:abierto.doc}:null;
@@ -1285,7 +1332,7 @@ function pintarCabecera(){
 function pintarHoja(){if(lzHoja.sel.size||lzHoja._barra)selLimpiar(lzHoja);
   const {k,doc}=abierto,capa=$("capa-hoja");capa.replaceChildren();
   const esDia=k==="diario";
-  const p=el("div","principal"+(k==="frases"?" frase":"")+(esDia?" dia":""));p.style.setProperty("--c",colorDe(k,doc));p.style.setProperty("--r",esDia?"0deg":"-1deg");p.style.zIndex=2;if(esDia)p.style.width=(innerWidth<600?Math.max(290,Math.min(560,innerWidth-80)):640)+"px";
+  const p=el("div","principal"+(k==="frases"?" frase":"")+(esDia?" dia":""));p.style.setProperty("--c",colorDe(k,doc));p.style.setProperty("--r",esDia?"0deg":"-1deg");p.style.zIndex=2;if(esDia)p.style.width=(innerWidth<600?Math.max(260,innerWidth-80):Math.min(980,innerWidth-260))+"px";
   const m=el("div","meta");if(esDia)m.append(el("span",null,fechaLarga(abierto.id)),el("span",null,abierto.id.slice(0,4)));
   else m.append(el("span",null,`${k==="ideas"?"Idea":"Frase"} #${doc.numero||"?"}${k==="ideas"?" · "+label(doc.tipo):""}`),el("span",null,doc.creado?new Date(doc.creado).toLocaleDateString("es-AR"):""));
   const t=el("textarea");t.rows=1;t.value=doc.texto||"";t.placeholder=esDia?"¿Qué pasó hoy? Escribí lo que quieras. Podés pegar fotos, post-its, lo que sea.":k==="ideas"?"La idea":"La frase";t.setAttribute("aria-label","Texto principal");
@@ -1355,8 +1402,8 @@ $("add-img").onclick=()=>{destinoArchivo="hoja";$("file").click()};
 $("volver").onclick=cerrar;
 document.addEventListener("keydown",e=>{
   if(e.key==="Escape"){
-    for(const p of ["panel-menu","panel-keep","panel-dictar","panel-mas","panel-export","panel-compartir","panel-claude","linkform","panel-mezcla","panel-cats","panel-cal"])if(!$(p).hidden){$(p).hidden=true;return}
-    if(modoHilo){setModoHilo(false);return}{const lzA=abierto?lzHoja:lzMain;if(lzA.modo){lzA.setModo(null);return}}if(abierto){cerrar();return}if(selDeco||selHilo){selDeco=null;selHilo=null;pintarMain()}}
+    for(const p of ["panel-diacal","panel-menu","panel-keep","panel-dictar","panel-mas","panel-export","panel-compartir","panel-claude","linkform","panel-mezcla","panel-cats","panel-cal"])if(!$(p).hidden){$(p).hidden=true;return}
+    if(modoHilo){setModoHilo(false);return}{const lzA=abierto?lzHoja:lzMain;if(lzA.modo){lzA.setModo(null);return}}if(abierto&&abierto.k!=="diario"){cerrar();return}if(selDeco||selHilo){selDeco=null;selHilo=null;pintarMain()}}
   if((e.key==="Delete"||e.key==="Backspace")&&!escribiendo()){
     if(abierto&&selB){const n=[...document.querySelectorAll("#capa-hoja .pieza.sel")][0];n?.querySelector(".herr .peligro")?.click();e.preventDefault()}
     else if(!abierto&&selFlecha&&quitarFlecha){quitarFlecha.click();e.preventDefault()}
@@ -1365,7 +1412,7 @@ document.addEventListener("keydown",e=>{
 $("h-del").onclick=async()=>{
   if(!abierto)return;if(!borrarSure){borrarSure=true;$("h-del").textContent="¿Seguro? Tocá de nuevo";$("h-del").style.color="var(--danger)";return}
   const {k,id,doc}=abierto;for(const key of Object.keys(pend))if(key.startsWith(id+"|")){clearTimeout(timers[key]);delete pend[key]}
-  try{await cols[k].doc(id).delete();cerrar();borrarFlechasDe(id);
+  try{await cols[k].doc(id).delete();cerrar();borrarFlechasDe(id);if(k==="diario"&&enDiario)setTimeout(()=>abrirDia(hoyClave()),80);
     if(colHilos)for(const h of hilos.filter(h=>h.a===id||h.b===id)){try{await colHilos.doc(h.id).delete()}catch(_){}}if(assets)for(const b of doc.bloques||[])if(b.t==="img"){try{await assets.delete(b.a)}catch(_){}}}
   catch(_){toast("No se pudo despegar. Probá de nuevo.")}
 };
@@ -1427,8 +1474,8 @@ function tocarHilo(id){
   if(d.hilos.some(h=>h.tipo!=="flecha"&&((h.a===a&&h.b===b)||(h.a===b&&h.b===a)))){toast("Esas dos ya están unidas.");return}
   d.hilos.push({id:bid(),a,b});pintarHilos();guardarHoja("hilos",d.hilos)}
 function crearSvgHilos(capa){
-  const svg=document.createElementNS(NS,"svg");svg.setAttribute("class","hilos");svg.setAttribute("width","100000");svg.setAttribute("height","100000");svg.setAttribute("aria-hidden","true");
-  gHoja=document.createElementNS(NS,"g");gHoja.setAttribute("transform","translate(50000,50000)");svg.append(gHoja);
+  const svg=document.createElementNS(NS,"svg");svg.setAttribute("class","hilos");svg.setAttribute("width","1");svg.setAttribute("height","1");svg.setAttribute("aria-hidden","true");
+  gHoja=document.createElementNS(NS,"g");svg.append(gHoja);
   cortarHoja=el("button","cortar","Cortar hilo");cortarHoja.type="button";cortarHoja.hidden=true;cortarHoja.addEventListener("pointerdown",e=>e.stopPropagation());
   cortarHoja.onclick=()=>{if(!abierto||!selHilo)return;abierto.doc.hilos=(abierto.doc.hilos||[]).filter(h=>h.id!==selHilo);selHilo=null;pintarHilos();guardarHoja("hilos",abierto.doc.hilos)};
   capa.append(svg,cortarHoja)}
@@ -1467,7 +1514,7 @@ let flechas=[],colFlechas=null,selFlecha=null,gFlechas=null,quitarFlecha=null,ra
 function pedirFlechas(){if(rafFl)return;rafFl=requestAnimationFrame(()=>{rafFl=0;pintarFlechas()})}
 const nodoPlancha=id=>nodosNota.get(vista+":"+id)||nodosDeco.get(id);
 function pintarFlechas(){
-  if(!gFlechas){const svg=svgEl("svg",{class:"flechas",width:"100000",height:"100000","aria-hidden":"true"});gFlechas=svgEl("g",{transform:"translate(50000,50000)"});svg.append(gFlechas);
+  if(!gFlechas){const svg=svgEl("svg",{class:"flechas",width:"1",height:"1","aria-hidden":"true"});gFlechas=svgEl("g",{});svg.append(gFlechas);
     quitarFlecha=el("button","cortar","Quitar flecha");quitarFlecha.type="button";quitarFlecha.hidden=true;quitarFlecha.addEventListener("pointerdown",e=>e.stopPropagation());
     quitarFlecha.onclick=()=>{const id=selFlecha;selFlecha=null;pintarFlechas();if(id&&colFlechas)colFlechas.doc(id).delete().catch(()=>toast("No se pudo quitar la flecha."))};
     $("capa-main").prepend(svg);$("capa-main").append(quitarFlecha)}
@@ -1499,7 +1546,7 @@ const r1=v=>Math.round(v*10)/10;
 function camino(a){const n=a.length/2;if(n<1)return "";if(n===1)return `M${a[0]},${a[1]} L${a[0]+.01},${a[1]}`;
   let d=`M${a[0]},${a[1]}`;for(let i=1;i<n-1;i++){const x=a[i*2],y=a[i*2+1];d+=` Q${x},${y} ${r1((x+a[i*2+2])/2)},${r1((y+a[i*2+3])/2)}`}
   return d+` L${a[n*2-2]},${a[n*2-1]}`}
-function capaTrazos(capa){const svg=svgEl("svg",{class:"trazos",width:"100000",height:"100000","aria-hidden":"true"});const g=svgEl("g",{transform:"translate(50000,50000)"});svg.append(g);capa.append(svg);return g}
+function capaTrazos(capa){const svg=svgEl("svg",{class:"trazos",width:"1",height:"1","aria-hidden":"true"});const g=svgEl("g",{});svg.append(g);capa.append(svg);return g}
 function pintarTrazos(g,lista){g.replaceChildren(...lista.map(t=>{const p=svgEl("path",{d:camino(t.pts||[]),stroke:t.c||"#fffdf6","stroke-width":t.g||4});p.dataset.id=t.id;return p}))}
 function tocaTrazo(t,p,tol){const a=t.pts||[],r=tol+(t.g||4)/2;
   for(let i=0;i<a.length;i+=2){const x1=a[i],y1=a[i+1],x2=i+2<a.length?a[i+2]:x1,y2=i+2<a.length?a[i+3]:y1,dx=x2-x1,dy=y2-y1,L=dx*dx+dy*dy;
@@ -1569,6 +1616,9 @@ function crearLateral(lz){
   const bLapiz=modos[2];
   lz.onModo=mo=>{modos.forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===mo));pal.hidden=mo!=="lapiz";lz._lapizOv.hidden=mo!=="lapiz";if(mo==="lapiz"){const r=bLapiz.getBoundingClientRect();pal.style.top=(r.top+r.height/2)+"px"}
     if(mo&&lz===lzHoja&&modoHilo)setModoHilo(false);
+    if(!lz._chip){const ch=el("div","chip-modo");const t=el("span");const b=el("button",null,"Listo");b.type="button";b.onclick=()=>lz.setModo(null);ch.append(t,b);ch.hidden=true;lz.vp.parentElement.append(ch);lz._chip=ch;lz._chipT=t}
+    lz._chip.hidden=!mo||mo==="lapiz";lz._chipT.textContent=mo==="sel"?"Tocá para elegir varios":mo==="flecha"?"Tocá uno y después otro":"";
+    document.querySelectorAll("#detalle .tool[data-mh]").forEach(b=>{if(lz===lzHoja&&b.dataset.mh!=="undo"&&b.dataset.mh!=="redo")b.setAttribute("aria-pressed",b.dataset.mh===mo)});
     if(mo==="flecha")toast("Tocá un post-it y después otro para unirlos con una flecha.");if(mo==="lapiz"){pincel.goma=false;if(lz.papel&&pincel.c==="#fffdf6")pincel.c="#2b2520";pintarPaletas()}};
 }
 crearLateral(lzMain);crearLateral(lzHoja);pintarPaletas();
@@ -1695,8 +1745,8 @@ function entrarDiario(){
   enDiario=true;document.body.classList.add("en-diario");$("tab-ideas").setAttribute("aria-selected","false");$("tab-frases").setAttribute("aria-selected","false");$("tab-diario").setAttribute("aria-selected","true");
   $("diario").hidden=false;try{localStorage.setItem("pestana","diario")}catch(_){}anioDia=new Date().getFullYear();pintarDiario();requestAnimationFrame(ajustarDiario);if(diarioCargado)abrirDia(hoyClave());else abrirHoyAlCargar=true}
 let diarioCargado=false,abrirHoyAlCargar=false;
-function salirDiario(){if(!enDiario)return;enDiario=false;document.body.classList.remove("en-diario");$("diario").hidden=true;$("tab-diario").setAttribute("aria-selected","false");try{localStorage.setItem("pestana","")}catch(_){}}
-function pintarDiario(){$("n-diario").textContent="";if(!enDiario)return;pintarHeroDia();pintarAnioDia()}
+function salirDiario(){if(!enDiario)return;$("panel-diacal").hidden=true;if(abierto&&abierto.k==="diario")cerrar();enDiario=false;document.body.classList.remove("en-diario");$("diario").hidden=true;$("tab-diario").setAttribute("aria-selected","false");try{localStorage.setItem("pestana","")}catch(_){}}
+function pintarDiario(){$("n-diario").textContent="";if(!enDiario)return;if(!$("panel-diacal").hidden)pintarCalDC()}
 let anioDia=new Date().getFullYear();
 function pintarHeroDia(){const k=hoyClave(),f=fechaDe(k),e=entradaDia(k),t=textoDia(e);
   $("dg-semana").textContent="Hoy";$("dg-num").textContent=fechaLarga(k);$("dg-mes").textContent=String(f.getFullYear());
@@ -1744,9 +1794,25 @@ function pintarMenu(){const p=$("panel-menu");p.querySelector('[data-ir="mezclar
   const o=document.querySelector('#vistaseg .seg[aria-pressed="true"]')?.dataset.o;p.querySelectorAll("[data-o2]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.o2===o));p.querySelector(".menu-orden").hidden=$("vistaseg").hidden}
 $("btn-menu").onclick=()=>{const p=$("panel-menu");p.hidden=!p.hidden;if(!p.hidden)pintarMenu()};
 $("cerrar-menu").onclick=()=>{$("panel-menu").hidden=true};
-$("panel-menu").addEventListener("click",e=>{const b=e.target.closest("[data-ir],[data-o2]");if(!b)return;
+document.querySelectorAll("#detalle .tool[data-mh]").forEach(b=>b.onclick=()=>{const m=b.dataset.mh;if(m==="undo"){deshacerUI(false);return}if(m==="redo"){deshacerUI(true);return}lzHoja.setModo(lzHoja.modo===m?null:m)});
+$("panel-menu").addEventListener("click",e=>{const mm=e.target.closest("[data-mm]");if(mm){const m=mm.dataset.mm;$("panel-menu").hidden=true;if(m==="undo")deshacerUI(false);else if(m==="redo")deshacerUI(true);else lzMain.setModo(lzMain.modo===m?null:m);return}
+  const b=e.target.closest("[data-ir],[data-o2]");if(!b)return;
   if(b.dataset.o2){document.querySelector(`#vistaseg .seg[data-o="${b.dataset.o2}"]`)?.click();pintarMenu();return}
   $("panel-menu").hidden=true;$(b.dataset.ir).click()});
+/* ---------- Diario: la hoja arranca pegada al margen, y el calendario es un panel ---------- */
+function posicionarDia(){const movil=innerWidth<600;lzHoja.s=1;lzHoja.tx=(movil?24:84)+30;lzHoja.ty=movil?64:80;lzHoja.apply()}
+let mesDC=null;
+function abrirCalDia(){const p=$("panel-diacal");if(!p.hidden){p.hidden=true;return}const k=abierto&&abierto.k==="diario"?abierto.id:hoyClave(),f=fechaDe(k);mesDC={y:f.getFullYear(),m:f.getMonth()};$("panel-menu").hidden=true;p.hidden=false;pintarCalDC()}
+function pintarCalDC(){if(!mesDC)return;const {y,m}=mesDC,hoy=hoyClave(),g=$("dc-grilla"),sel=abierto&&abierto.k==="diario"?abierto.id:null,ahora=new Date();
+  $("dc-mes").textContent=capi(new Date(y,m,1).toLocaleDateString("es-AR",{month:"long",year:"numeric"}));$("dc-sig").disabled=y>ahora.getFullYear()||(y===ahora.getFullYear()&&m>=ahora.getMonth());
+  g.replaceChildren(...["L","M","M","J","V","S","D"].map(d=>el("span","dow",d)));const off=(new Date(y,m,1).getDay()+6)%7,dias=new Date(y,m+1,0).getDate();for(let i=0;i<off;i++)g.append(el("span"));
+  for(let d=1;d<=dias;d++){const k=claveDia(y,m,d),nv=nivelDia(entradaDia(k)),b=el("button",(nv?"n"+nv:"")+(k===hoy?" hoy":"")+(k===sel?" sel":""),String(d));b.type="button";b.disabled=k>hoy;
+    b.setAttribute("aria-label",fechaLarga(k)+(nv?", escrito":""));b.onclick=()=>irADia(k);g.append(b)}}
+function irADia(k){$("panel-diacal").hidden=true;if(abierto&&abierto.k==="diario"&&abierto.id===k)return;if(abierto)cerrar();abrirDia(k)}
+$("btn-dia-cal").onclick=abrirCalDia;$("cerrar-diacal").onclick=()=>{$("panel-diacal").hidden=true};$("dc-hoy").onclick=()=>irADia(hoyClave());
+$("dc-ant").onclick=()=>{mesDC=mesDC.m?{y:mesDC.y,m:mesDC.m-1}:{y:mesDC.y-1,m:11};pintarCalDC()};$("dc-sig").onclick=()=>{mesDC=mesDC.m<11?{y:mesDC.y,m:mesDC.m+1}:{y:mesDC.y+1,m:0};pintarCalDC()};
+{let seguro=false,t;$("menu-borrar-dia").onclick=()=>{const b=$("menu-borrar-dia");if(!seguro){seguro=true;b.textContent="¿Seguro? Tocá de nuevo";clearTimeout(t);t=setTimeout(()=>{seguro=false;b.textContent="Borrar este día"},4000);return}
+  seguro=false;b.textContent="Borrar este día";$("panel-menu").hidden=true;if(!abierto||abierto.k!=="diario")return;borrarSure=true;$("h-del").click()}}
 /* ---------- Pila de Keep: todas las importadas en un solo post-it gordo ---------- */
 let pilaPos=null,docPila=null,nodoPilaEl=null,pilaCargada=false;
 function colorPila(){const c=cats.find(c=>/keep/i.test(c.nombre||""));return c?c.color:"#dcc6f2"}
