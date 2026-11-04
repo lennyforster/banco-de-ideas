@@ -120,6 +120,13 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus
 .principal textarea:focus,.btxt textarea:focus{outline:none}
 .principal input{width:100%;border:0;background:rgba(255,255,255,.55);font:500 16px var(--hand);color:var(--ink);padding:7px 10px;border-radius:4px}
 textarea::placeholder,input::placeholder{color:rgba(43,37,32,.45)}
+.volver-centro{position:fixed;z-index:12;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 74px);box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.btexto{background:transparent}
+.btexto .grip{height:18px;opacity:0;transition:opacity .15s;background:repeating-linear-gradient(90deg,rgba(255,253,246,.55) 0 2px,transparent 2px 6px) center/36px 6px no-repeat;border:0}
+.btexto:hover .grip,.btexto.sel .grip{opacity:1}
+.btexto textarea{display:block;width:100%;resize:none;overflow:hidden;border:0;background:transparent;color:var(--paper);font:600 22px/1.3 var(--hand);padding:2px 4px;text-shadow:0 1px 2px rgba(0,0,0,.35);user-select:text;-webkit-user-select:text;touch-action:auto}
+.btexto textarea:focus{outline:1px dashed rgba(255,253,246,.5);outline-offset:2px}
+.btexto textarea::placeholder{color:rgba(255,253,246,.55)}
 .btxt{background:var(--paper);box-shadow:0 1px 1px rgba(0,0,0,.1),0 10px 16px -8px rgba(0,0,0,.45);transform:rotate(var(--r,0deg))}
 .grip{height:22px;cursor:grab;background:repeating-linear-gradient(90deg,rgba(43,37,32,.18) 0 2px,transparent 2px 6px) center/36px 6px no-repeat;border-bottom:1px dashed rgba(43,37,32,.15)}
 .btxt textarea{display:block;width:100%;resize:none;overflow:hidden;border:0;background:transparent;color:var(--ink);font:500 17px/1.45 var(--hand);padding:10px 14px 14px;user-select:text;-webkit-user-select:text;touch-action:auto}
@@ -522,6 +529,7 @@ window.claude={use:async n=>{if(n==="db"){if(!listo)listo=conectar();return list
     <span class="tool-lbl">Agregar</span>
     <button class="tool amarillo" id="add-post" type="button">Post-it</button>
     <button class="tool" id="add-txt" type="button">Nota</button>
+    <button class="tool" id="add-tx" type="button">Texto</button>
     <button class="tool" id="add-link" type="button">Link</button>
     <button class="tool" id="add-img" type="button">Imagen</button>
     <button class="tool" id="add-cal" type="button">Calendario</button>
@@ -636,7 +644,15 @@ class Lienzo{
   apply(){const s=this.s;this.capa.style.transform=`translate(${this.tx}px,${this.ty}px) scale(${s})`;this.capa.style.setProperty("--inv",1/s);
     let b=20;while(b*s<10)b*=5;const g=n=>{const v=n*b/20*s;return `${v}px ${v}px`};this.vp.style.backgroundSize=[g(400),g(400),g(100),g(100),g(20),g(20),"180px 180px"].join(",");
     const p=`${this.tx}px ${this.ty}px`;this.vp.style.backgroundPosition=[p,p,p,p,p,p,"0 0"].join(",");
-    if(this.zoomUI)this.zoomUI.querySelector(".pct").textContent=Math.round(s*100)+"%";this.guardar()}
+    if(this.zoomUI)this.zoomUI.querySelector(".pct").textContent=Math.round(s*100)+"%";this.guardar();this.pedirRevision()}
+  pedirRevision(){if(this._rv)return;this._rv=requestAnimationFrame(()=>{this._rv=null;this.revisarVolver()})}
+  revisarVolver(){
+    if(!this.limites)return;
+    if(!this.volverBtn){const x=document.createElement("button");x.type="button";x.className="btn oscuro volver-centro";x.textContent="↩ Volver a los post-its";x.hidden=true;x.onclick=()=>this.encuadrar(this.limites&&this.limites());this.vp.parentElement.append(x);this.volverBtn=x}
+    const b=this.limites(),r=this.rect();if(!b||!r.width){this.volverBtn.hidden=true;return}
+    const L=b.x*this.s+this.tx,T=b.y*this.s+this.ty,R=L+b.w*this.s,B=T+b.h*this.s;
+    this.volverBtn.hidden=!(R<0||L>r.width||B<0||T>r.height);
+  }
   rect(){return this.vp.getBoundingClientRect()}
   aMundo(cx,cy){const r=this.rect();return {x:(cx-r.left-this.tx)/this.s,y:(cy-r.top-this.ty)/this.s}}
   centro(){const r=this.rect();return this.aMundo(r.left+r.width/2,r.top+r.height/2)}
@@ -709,7 +725,7 @@ function posiciones(lista){
   con.forEach(i=>m.set(i.id,{x:i.x,y:i.y}));const y0=con.length?Math.max(...con.map(i=>i.y))+260:0;
   sin.forEach((i,n)=>m.set(i.id,{x:(n%5)*240,y:y0+Math.floor(n/5)*250}));return m;
 }
-const textoBloques=i=>(i.bloques||[]).map(b=>b.t==="txt"||b.t==="post"?b.v:b.t==="link"?(b.titulo||"")+" "+b.url:b.t==="cal"?(b.ev||[]).map(e=>e.t).join(" "):b.t==="esc"?textoEsc(b):"").join(" ");
+const textoBloques=i=>(i.bloques||[]).map(b=>b.t==="txt"||b.t==="post"||b.t==="tx"?b.v:b.t==="link"?(b.titulo||"")+" "+b.url:b.t==="cal"?(b.ev||[]).map(e=>e.t).join(" "):b.t==="esc"?textoEsc(b):"").join(" ");
 const coincide=i=>{const s=q.trim().toLowerCase();return !s||[i.texto,i.autor,i.nota,textoBloques(i),vista==="ideas"?label(i.tipo)+" "+(estadoDe(i.estado)?.nombre||""):""].join(" ").toLowerCase().includes(s)};
 function resumenExtra(i){const b=i.bloques||[];const n=t=>b.filter(x=>x.t===t).length;const r=[];const nt=n("txt"),nl=n("link"),ni=n("img"),np=n("post");
   if(np)r.push(np+(np>1?" post-its":" post-it"));if(nt)r.push(nt+(nt>1?" notas":" nota"));if(nl)r.push(nl+(nl>1?" links":" link"));if(ni)r.push(ni+(ni>1?" imágenes":" imagen"));return r.length?"+ "+r.join(" · "):""}
@@ -916,14 +932,14 @@ function pintarHoja(){
 }
 function guardarBloques(){guardarHoja("bloques",abierto.doc.bloques)}
 function nodoBloque(b){
-  const tipo={txt:"btxt",link:"blink",img:"bimg",post:"bpost",cal:"bcal",esc:"besc"}[b.t]||"btxt";
+  const tipo={txt:"btxt",tx:"btexto",link:"blink",img:"bimg",post:"bpost",cal:"bcal",esc:"besc"}[b.t]||"btxt";
   const n=el("div","pieza "+tipo+(selB===b.id?" sel":""));n.dataset.bid=b.id;n.style.left=b.x+"px";n.style.top=b.y+"px";n.style.width=(b.t==="post"?200:b.t==="cal"?280:(b.w||(b.t==="img"?300:260)))+"px";n.style.zIndex=b.t==="img"?1:3;
   n.style.setProperty("--r",giro(b.id)*(b.t==="post"?1:.6)+"deg");
   const marcar=()=>{if(selB!==b.id){selB=b.id;selHilo=null;document.querySelectorAll("#capa-hoja .pieza.sel").forEach(x=>x.classList.remove("sel"));n.classList.add("sel");pintarHilos()}};
   if(b.t==="esc"){const g=el("div","grip esc-cab","Escaleta");g.title="Arrastrá para mover";n.append(g);const cont=el("div");n.append(cont);pintarEsc(cont,b,n)}
   else if(b.t==="cal"){n.append(el("div","grip"));const cont=el("div");n.append(cont);pintarCal(cont,b)}
-  else if(b.t==="post"||b.t==="txt"){if(b.t==="post")n.style.setProperty("--c",b.c||PALETA[1]);const g=el("div","grip");g.title="Arrastrá para mover";const t=el("textarea");t.rows=b.t==="post"?3:2;t.value=b.v||"";
-    t.placeholder=b.t==="post"?"Escribí…":"Seguí escribiendo…";t.setAttribute("aria-label",b.t==="post"?"Post-it":"Nota");
+  else if(b.t==="post"||b.t==="txt"||b.t==="tx"){if(b.t==="post")n.style.setProperty("--c",b.c||PALETA[1]);const g=el("div","grip");g.title="Arrastrá para mover";const t=el("textarea");t.rows=b.t==="post"?3:2;t.value=b.v||"";
+    t.placeholder=b.t==="post"?"Escribí…":b.t==="tx"?"Escribí sobre la plancha…":"Seguí escribiendo…";t.setAttribute("aria-label",b.t==="post"?"Post-it":b.t==="tx"?"Texto":"Nota");
     t.oninput=()=>{b.v=t.value;autosize(t);guardarLuego("bloques",()=>abierto.doc.bloques)};t.onfocus=marcar;n.append(g,t)}
   else if(b.t==="link"){let host=b.url;try{host=new URL(b.url).hostname.replace(/^www\./,"")}catch(_){}
     const a=el("a",null,"Abrir ↗");a.href=b.url;a.target="_blank";a.rel="noopener noreferrer";n.append(el("b",null,b.titulo||host),el("span",null,b.url),a)}
@@ -936,7 +952,7 @@ function nodoBloque(b){
     n.remove();pintarHilos();guardarBloques();if(d.hilos.length!==antes)guardarHoja("hilos",d.hilos);
     if(b.t==="img"&&assets){try{await assets.delete(b.a)}catch(_){}}};
   if(b.t==="img"){const asa=el("div","asa");n.append(asa);redimensionable(asa,lzHoja,{inicio:()=>parseFloat(n.style.width),mover:w=>{n.style.width=w+"px";pintarHilos()},soltar:()=>{b.w=Math.round(parseFloat(n.style.width));guardarBloques()}})}
-  arrastrable(n,lzHoja,{solo:b.t==="txt"||b.t==="post"||b.t==="cal"||b.t==="esc"?".grip":null,inicio:()=>({x:parseFloat(n.style.left),y:parseFloat(n.style.top)}),mover:(x,y)=>{n.style.left=x+"px";n.style.top=y+"px";pintarHilos()},
+  arrastrable(n,lzHoja,{solo:b.t==="txt"||b.t==="tx"||b.t==="post"||b.t==="cal"||b.t==="esc"?".grip":null,inicio:()=>({x:parseFloat(n.style.left),y:parseFloat(n.style.top)}),mover:(x,y)=>{n.style.left=x+"px";n.style.top=y+"px";pintarHilos()},
     soltar:()=>{b.x=Math.round(parseFloat(n.style.left));b.y=Math.round(parseFloat(n.style.top));guardarBloques()},
     tocar:()=>{if(modoHilo){tocarHilo(b.id);return}marcar();borrarB=null;q.textContent="Quitar"}});
   return n;
@@ -952,6 +968,7 @@ async function bloqueImagen(file,p){
   if(abierto&&abierto.id===destino)agregarBloque(b);
   else{for(const k of ["ideas","frases"]){const i=data[k].find(x=>x.id===destino);if(i)escribir(cols[k],destino,{bloques:[...(i.bloques||[]),b]})}}
 }
+$("add-tx").onclick=()=>{const c=lzHoja.centro();const n=agregarBloque({id:bid(),t:"tx",v:"",x:Math.round(c.x-160),y:Math.round(c.y-30),w:320});requestAnimationFrame(()=>n.querySelector("textarea")?.focus())};
 $("add-txt").onclick=()=>{const c=lzHoja.centro();const n=agregarBloque({id:bid(),t:"txt",v:"",x:Math.round(c.x-130),y:Math.round(c.y-60),w:260});requestAnimationFrame(()=>n.querySelector("textarea")?.focus())};
 $("add-post").onclick=()=>{const c=lzHoja.centro();const n=agregarBloque({id:bid(),t:"post",v:"",c:PALETA[Math.floor(Math.random()*8)],x:Math.round(c.x-100+(Math.random()*30-15)),y:Math.round(c.y-100+(Math.random()*30-15))});requestAnimationFrame(()=>n.querySelector("textarea")?.focus())};
 $("add-link").onclick=()=>{$("linkform").hidden=false;$("l-url").focus()};
@@ -1178,7 +1195,7 @@ function textoExport(k,d){
   L.push(`${k==="ideas"?"IDEA":"FRASE"} #${d.numero||"?"}${k==="ideas"?` · ${label(d.tipo)}${est?" · "+est.nombre:""}`:""}`);
   if(d.creado)L.push(new Date(d.creado).toLocaleDateString("es-AR"));L.push("",d.texto||"");if(d.autor)L.push("— "+d.autor);
   const sec=(t,arr)=>{if(arr.length)L.push("","",t,...arr)};
-  sec("NOTAS",bl.filter(b=>b.t==="txt"&&b.v&&b.v.trim()).flatMap(b=>[b.v.trim(),""]));
+  sec("NOTAS",bl.filter(b=>(b.t==="txt"||b.t==="tx")&&b.v&&b.v.trim()).flatMap(b=>[b.v.trim(),""]));
   sec("POST-ITS",bl.filter(b=>b.t==="post"&&b.v&&b.v.trim()).map(b=>"- "+b.v.trim().replace(/\n+/g," ")));
   bl.filter(b=>b.t==="esc"&&(b.sc||[]).length).forEach((b,n)=>sec(n?`ESCALETA ${n+1}`:"ESCALETA",lineasEsc(b)));
   sec("LINKS",bl.filter(b=>b.t==="link").map(b=>`- ${b.titulo?b.titulo+": ":""}${b.url}`));
@@ -1199,7 +1216,7 @@ const REGLAS="Sos un colaborador creativo de un guionista y director de cine de 
 function describir(k,i){
   const est=estadoDe(i.estado);const ls=[`${k==="ideas"?"Idea":"Frase"} #${i.numero||"?"}${k==="ideas"?` (categoría: ${label(i.tipo)}${est?`, estado: ${est.nombre}`:""})`:""}:`,`"""${i.texto||""}"""`];
   if(i.autor)ls.push("Autor: "+i.autor);
-  const bl=i.bloques||[];const notas=bl.filter(b=>(b.t==="txt"||b.t==="post")&&b.v&&b.v.trim()).map(b=>"- "+b.v.trim());if(notas.length)ls.push("Notas de desarrollo:",...notas);
+  const bl=i.bloques||[];const notas=bl.filter(b=>(b.t==="txt"||b.t==="tx"||b.t==="post")&&b.v&&b.v.trim()).map(b=>"- "+b.v.trim());if(notas.length)ls.push("Notas de desarrollo:",...notas);
   const esc=bl.filter(b=>b.t==="esc"&&(b.sc||[]).length).flatMap(b=>lineasEsc(b));if(esc.length)ls.push("Escaleta actual (los caminos con letra son alternativas que salen de una escena):",...esc);
   const links=bl.filter(b=>b.t==="link").map(b=>"- "+(b.titulo?b.titulo+" ":"")+b.url);if(links.length)ls.push("Links de referencia:",...links);
   const ev=bl.filter(b=>b.t==="cal").flatMap(b=>b.ev||[]).map(e=>`- ${e.d}: ${e.t}`);if(ev.length)ls.push("Fechas anotadas:",...ev);
