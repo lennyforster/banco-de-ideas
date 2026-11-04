@@ -628,24 +628,6 @@ body.en-diario .dia-herr{display:flex}
 @media (max-width:560px){.buscar{width:130px}.titulo-hoja{display:none}}
 @media (max-width:420px){.zoom .pct{display:none}}
 @media (prefers-reduced-motion:reduce){.nota{transition:none}}
-/* papel servilleta de bar */
-.nota.servilleta,.principal.servilleta{background-color:#fbfaf5;padding-right:28px;padding-bottom:26px;
-  background-image:linear-gradient(90deg,transparent calc(50% - 1px),rgba(0,0,0,.045) 50%,rgba(255,255,255,.7) calc(50% + 1px),transparent calc(50% + 3px)),
-    linear-gradient(transparent calc(50% - 1px),rgba(0,0,0,.04) 50%,rgba(255,255,255,.7) calc(50% + 1px),transparent calc(50% + 3px)),
-    radial-gradient(circle at 40% 40%,rgba(255,255,255,.95) .8px,transparent 1.3px),
-    radial-gradient(circle at 60% 60%,rgba(60,50,40,.09) 1px,transparent 1.6px);
-  background-size:auto,auto,5px 5px,5px 5px}
-.nota.servilleta::after,.principal.servilleta::after{content:"";position:absolute;right:11px;bottom:11px;width:calc(100% - 22px);height:calc(100% - 22px);pointer-events:none;
-  background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2040%2040%22%20fill%3D%22none%22%20stroke%3D%22%232a4fb8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M9%2019h19v3a9.5%209.5%200%200%201-19%200z%22%20fill%3D%22%232a4fb8%22%20fill-opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M28%2021h2.5a3.5%203.5%200%200%201%200%207H27%22/%3E%3Cpath%20d%3D%22M6%2033.5c5%202%2023%202%2028%200%22/%3E%3Cpath%20d%3D%22M14%2015c-2-2%202-4%200-7M19.5%2015c-2-2%202-4%200-7M25%2015c-2-2%202-4%200-7%22/%3E%3C/svg%3E") right -3px bottom -3px/34px no-repeat,
-    linear-gradient(#2a4fb8,#2a4fb8) right 0 top 0/1.5px calc(100% - 28px) no-repeat,linear-gradient(#2a4fb8,#2a4fb8) right 4px top 0/1.5px calc(100% - 28px) no-repeat,
-    linear-gradient(#2a4fb8,#2a4fb8) left 0 bottom 0/calc(100% - 28px) 1.5px no-repeat,linear-gradient(#2a4fb8,#2a4fb8) left 0 bottom 4px/calc(100% - 28px) 1.5px no-repeat;opacity:.9}
-.nota.servilleta::before,.principal.servilleta::before{background:rgba(255,255,255,.45)}
-.nota.servilleta .meta{color:rgba(43,37,32,.5)}
-.vista.lejos .nota.servilleta{background-color:#fbfaf5}
-.papel-chips{display:flex;gap:8px;flex-wrap:wrap}
-.papel-chips .cchip i{border-radius:2px}
-.papel-chips .cchip.serv i{background:#fbfaf5;box-shadow:inset -3px -3px 0 -1.5px #2a4fb8,inset 0 0 0 1px rgba(43,37,32,.25)}
-
 </style>
 <div class="conectar" id="conectar" hidden>
   <form class="cx-card" id="cx-form">
@@ -952,7 +934,6 @@ window.claude={use:async n=>{if(n==="db"){if(!listo)listo=conectar();return list
   <div class="panel" id="panel-mas" hidden>
     <div class="meta"><span>Esta idea</span><button type="button" class="cerrar" id="cerrar-mas" aria-label="Cerrar">×</button></div>
     <div id="mas-cat" class="mas-sec"><span class="nota-panel">Categoría</span><div class="colores" id="h-colores" role="group" aria-label="Categoría"></div></div>
-    <div id="mas-papel" class="mas-sec"><span class="nota-panel">Papel</span><div class="papel-chips" id="h-papel" role="group" aria-label="Papel"></div></div>
     <div id="mas-est" class="mas-sec"><span class="nota-panel">Estado</span><div class="colores" id="h-estados" role="group" aria-label="Estado de la idea"></div></div>
     <div class="acc" style="justify-content:flex-start"><button class="btn" id="h-exportar" type="button">Exportar</button><button class="btn" id="h-compartir" type="button">Compartir</button><button class="btn" id="h-a-pila" type="button" hidden>Devolver a la pila</button><button class="btn" id="h-del" type="button">Despegar post-it</button></div>
   </div>
@@ -1200,9 +1181,9 @@ function nodoNota(k,i){
 function pintarNota(c,k,i,p){
   const esIdea=k==="ideas";
   if(!c.classList.contains("arrastrando")){c.style.left=p.x+"px";c.style.top=p.y+"px"}
-  const px0=proximo(i),firma=[i.numero,i.tipo,esIdea?label(i.tipo):"",colorDe(k,i),i.texto,i.autor,i.creado,i.estado,i.papel||"",px0?px0.d+px0.t:"",resumenExtra(i),coincide(i),modoHilo&&origenHilo===i.id].join("\u0001");
+  const px0=proximo(i),firma=[i.numero,i.tipo,esIdea?label(i.tipo):"",colorDe(k,i),i.texto,i.autor,i.creado,i.estado,px0?px0.d+px0.t:"",resumenExtra(i),coincide(i),modoHilo&&origenHilo===i.id].join("\u0001");
   if(c._firma===firma)return;c._firma=firma;
-  c.style.zIndex=2;c.style.setProperty("--c",colorDe(k,i));c.classList.toggle("servilleta",esIdea&&i.papel==="servilleta");c.style.setProperty("--r",giro(i.id)+"deg");
+  c.style.zIndex=2;c.style.setProperty("--c",colorDe(k,i));c.style.setProperty("--r",giro(i.id)+"deg");
   c.setAttribute("aria-label",`Abrir ${esIdea?"idea":"frase"} ${i.numero||""}`);
   c.children[0].replaceChildren(el("span",null,`#${i.numero||"?"}${esIdea?" · "+label(i.tipo):""}`),el("span",null,i.creado?new Date(i.creado).toLocaleDateString("es-AR",{day:"2-digit",month:"2-digit"}).replace(/\//g,"."):""));
   const cuerpo=c.children[1];cuerpo.replaceChildren(el("p","txt",esIdea?(i.texto||""):`“${(i.texto||"").replace(/^[«“"]|[»”"]$/g,"")}”`));
@@ -1454,13 +1435,13 @@ function sincronizarAbierto(k){
 function aplicarRemoto(nuevo){if(!abierto)return;abierto.doc=nuevo;abierto.remoto=null;pintarCabecera();pintarHoja();requestAnimationFrame(()=>{document.querySelectorAll("#capa-hoja textarea").forEach(autosize);pintarHilos()})}
 document.addEventListener("focusout",()=>setTimeout(()=>{if(abierto&&abierto.remoto&&!escribiendo())aplicarRemoto(abierto.remoto)},80));
 function pintarCabecera(){
-  const {k,doc}=abierto;$("h-titulo").textContent=k==="diario"?"Diario · "+fechaLarga(abierto.id,{day:"numeric",month:"short"}):`${k==="ideas"?"Idea":"Frase"} #${doc.numero||"?"}`;$("mas-cat").hidden=k!=="ideas";$("mas-est").hidden=k!=="ideas";$("mas-papel").hidden=k!=="ideas";if(k==="ideas"){estadosUI();papelUI()}
+  const {k,doc}=abierto;$("h-titulo").textContent=k==="diario"?"Diario · "+fechaLarga(abierto.id,{day:"numeric",month:"short"}):`${k==="ideas"?"Idea":"Frase"} #${doc.numero||"?"}`;$("mas-cat").hidden=k!=="ideas";$("mas-est").hidden=k!=="ideas";if(k==="ideas")estadosUI();
   if(k==="ideas")coloresUI($("h-colores"),doc.tipo||"otro",v=>{doc.tipo=v;pintarCabecera();const p=$("capa-hoja").querySelector(".principal");if(p)p.style.setProperty("--c",colorDe(k,doc));guardarHoja("tipo",v)});
 }
 function pintarHoja(){if(lzHoja.sel.size||lzHoja._barra)selLimpiar(lzHoja);
   const {k,doc}=abierto,capa=$("capa-hoja");capa.replaceChildren();
   const esDia=k==="diario";
-  const p=el("div","principal"+(k==="frases"?" frase":"")+(esDia?" dia":"")+(k==="ideas"&&doc.papel==="servilleta"?" servilleta":""));p.style.setProperty("--c",colorDe(k,doc));p.style.setProperty("--r",esDia?"0deg":"-1deg");p.style.zIndex=2;if(esDia)p.style.width=(innerWidth<600?Math.max(260,innerWidth-80):Math.min(980,innerWidth-260))+"px";
+  const p=el("div","principal"+(k==="frases"?" frase":"")+(esDia?" dia":""));p.style.setProperty("--c",colorDe(k,doc));p.style.setProperty("--r",esDia?"0deg":"-1deg");p.style.zIndex=2;if(esDia)p.style.width=(innerWidth<600?Math.max(260,innerWidth-80):Math.min(980,innerWidth-260))+"px";
   const m=el("div","meta");if(esDia)m.append(el("span",null,fechaLarga(abierto.id)));
   else m.append(el("span",null,`${k==="ideas"?"Idea":"Frase"} #${doc.numero||"?"}${k==="ideas"?" · "+label(doc.tipo):""}`),el("span",null,doc.creado?new Date(doc.creado).toLocaleDateString("es-AR"):""));
   const t=el("textarea");t.rows=1;t.value=doc.texto||"";t.placeholder=esDia?"¿Qué pasó hoy? Escribí lo que quieras. Podés pegar fotos, post-its, lo que sea.":k==="ideas"?"La idea":"La frase";t.setAttribute("aria-label","Texto principal");
@@ -1549,10 +1530,6 @@ $("h-del").onclick=async()=>{
 function estadosUI(){const d=abierto.doc;$("h-estados").replaceChildren(...ESTADOS.map(e=>{const b=el("button","cchip");b.type="button";b.style.setProperty("--c",e.color);b.setAttribute("aria-pressed",d.estado===e.id);b.append(el("i"),e.nombre);
   b.onclick=()=>{d.estado=d.estado===e.id?null:e.id;estadosUI();guardarHoja("estado",d.estado)};return b}))}
 
-/* ---------- Papel: post-it o servilleta de bar ---------- */
-function papelUI(){const d=abierto.doc;$("h-papel").replaceChildren(...[["","Post-it"],["servilleta","Servilleta"]].map(([id,nom])=>{const b=el("button","cchip"+(id?" serv":""));b.type="button";
-  if(!id)b.style.setProperty("--c",colorDe("ideas",d));b.setAttribute("aria-pressed",(d.papel||"")===id);b.append(el("i"),nom);
-  b.onclick=()=>{d.papel=id;papelUI();const p=$("capa-hoja").querySelector(".principal");if(p)p.classList.toggle("servilleta",id==="servilleta");guardarHoja("papel",id)};return b}))}
 /* ---------- Calendarios ---------- */
 const calMes=new Map(),calSel=new Map();
 function gcalURL(e,extra){const a=e.d.replace(/-/g,"");const [y,m,d]=e.d.split("-").map(Number);const f=new Date(Date.UTC(y,m-1,d+1));
