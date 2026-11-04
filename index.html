@@ -320,23 +320,40 @@ body.sin-ui .barra,body.sin-ui .lateral,body.sin-ui .herramientas,body.sin-ui .z
 .chip-modo{display:none;position:fixed;z-index:13;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 62px);align-items:center;gap:8px;background:var(--ink);color:var(--paper);border-radius:999px;padding:5px 5px 5px 14px;font:600 .82rem var(--ui);box-shadow:0 4px 14px rgba(0,0,0,.35)}
 .chip-modo[hidden]{display:none!important}
 .chip-modo button{border:0;border-radius:999px;padding:7px 12px;font:600 .82rem var(--ui);background:var(--paper);color:var(--ink);cursor:pointer}
-.menu-fila{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:4px}
-.menu-fila .menu-it{text-align:center;padding:11px 6px;font-size:.85rem}
+.menu-fila{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
 #btn-menu{display:inline-block;padding:9px 13px;letter-spacing:.08em}
 #mezclar,#btn-cal,#btn-tiempo,#vistaseg,#salir{display:none!important}
-#panel-menu{left:auto;right:max(12px,env(safe-area-inset-right,0px));transform:none;width:min(340px,calc(100vw - 24px))}
-.menu-lista .buscar{width:100%;box-shadow:none;background:rgba(43,37,32,.06);margin-bottom:4px}
+#panel-menu{left:auto;right:max(12px,env(safe-area-inset-right,0px));top:calc(env(safe-area-inset-top,0px) + 58px);transform:none;width:min(300px,calc(100vw - 24px));padding:6px;border-radius:14px;gap:0;box-shadow:0 1px 2px rgba(0,0,0,.12),0 18px 40px -10px rgba(0,0,0,.45)}
+.menu-lista{display:grid;gap:1px}
+.menu-busca{display:flex;align-items:center;gap:8px;margin:2px 2px 6px;padding:0 12px;border-radius:10px;background:rgba(43,37,32,.06)}
+.menu-busca svg,.menu-it svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;opacity:.7}
+.menu-busca .buscar{flex:1;width:auto;min-width:0;box-shadow:none;background:none;padding:10px 0;border-radius:0;border:0!important;outline:none!important;-webkit-appearance:none;appearance:none}
+.menu-busca .buscar:focus{outline:none}
+.menu-busca:focus-within{box-shadow:0 0 0 2px var(--ink)}
+.menu-it{display:flex;align-items:center;gap:11px;border:0;background:none;border-radius:8px;padding:10px 12px;text-align:left;font:600 .92rem var(--ui);color:var(--ink);cursor:pointer}
+.menu-it:hover:not(:disabled){background:rgba(43,37,32,.07)}
+.menu-it.suave{color:var(--soft);font-weight:500;font-size:.85rem}
+.menu-sep{height:1px;background:rgba(43,37,32,.1);margin:5px 6px}
+.menu-orden{display:grid;gap:7px;padding:6px 8px 8px}
+.menu-lbl{font:600 .64rem var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding-left:4px}
+.menu-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:rgba(43,37,32,.07);border-radius:9px;padding:3px}
+.menu-seg .seg{border:0;background:none;border-radius:7px;padding:7px 4px;font:600 .82rem var(--ui);color:var(--muted);cursor:pointer}
+.menu-seg .seg[aria-pressed="true"]{background:var(--paper);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.18)}
+.menu-ic{display:grid;justify-items:center;gap:2px;border:0;background:none;border-radius:8px;padding:8px 2px;font:600 1.1rem var(--ui);color:var(--ink);cursor:pointer}
+.menu-ic small{font:600 .66rem var(--ui);color:var(--muted)}
+.menu-ic:hover{background:rgba(43,37,32,.07)}
+
 #chip-busca{background:var(--ink);color:var(--paper);max-width:46vw;overflow:hidden;text-overflow:ellipsis}
-@media (min-width:561px){.menu-fila{display:none!important}}
+@media (min-width:561px){.menu-fila,.menu-fila+.menu-sep{display:none!important}}
 body.en-diario #chip-busca{display:none}
-.menu-lista{display:grid;gap:4px}
-.menu-it{border:0;background:rgba(43,37,32,.06);border-radius:10px;padding:13px 14px;text-align:left;font:600 .95rem var(--ui);color:var(--ink);cursor:pointer}
-.menu-it.suave{background:none;color:var(--soft);font-weight:500}
+
+
+
 .menu-it:disabled{opacity:.45}
-.menu-orden{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 4px 6px 14px;font:600 .95rem var(--ui);color:var(--ink)}
-.menu-orden .grupo{box-shadow:none;background:rgba(43,37,32,.06)}
-.menu-orden .seg[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
-body.en-diario .menu-it:not([data-ir="salir"]):not(.solo-dia),body.en-diario .menu-orden,body.en-diario .menu-fila{display:none}
+
+
+
+body.en-diario .menu-it:not([data-ir="salir"]):not(.solo-dia),body.en-diario .menu-orden,body.en-diario .menu-fila,body.en-diario .menu-busca,body.en-diario .menu-sep{display:none!important}
 .menu-it.solo-dia{display:none}body.en-diario .menu-it.solo-dia{display:block}
 #btn-dia-cal{display:none;align-items:center;gap:7px}
 body.en-diario #btn-dia-cal{display:inline-flex}
@@ -787,15 +804,18 @@ window.claude={use:async n=>{if(n==="db"){if(!listo)listo=conectar();return list
   <div class="dc-lista" id="dc-lista"></div>
   <button type="button" class="dc-hoy" id="dc-hoy">Ir a hoy ↓</button>
 </div>
-<div class="panel" id="panel-menu" hidden>
-  <div class="meta"><span>Más</span><button type="button" class="cerrar" id="cerrar-menu" aria-label="Cerrar">×</button></div>
+<div class="panel" id="panel-menu" hidden role="menu" aria-label="Más opciones">
   <div class="menu-lista">
-    <div class="menu-fila"><button type="button" class="menu-it" data-mm="undo">↶ Deshacer</button><button type="button" class="menu-it" data-mm="redo">↷ Rehacer</button><button type="button" class="menu-it" data-mm="sel">Elegir varios</button><button type="button" class="menu-it" data-mm="flecha">Flechas</button></div>
-    <button type="button" class="menu-it" data-ir="mezclar">Mezclar</button>
-    <button type="button" class="menu-it" data-ir="btn-cal">Calendario</button>
-    <button type="button" class="menu-it" data-ir="btn-tiempo">Línea de tiempo</button>
-    <div class="menu-orden"><span>Ordenar</span><div class="grupo"><button type="button" class="seg" data-o2="num">N.º</button><button type="button" class="seg" data-o2="cat">Categoría</button><button type="button" class="seg" data-o2="grid">Grilla</button></div></div>
-    <button type="button" class="menu-it suave" data-ir="salir">Salir de esta cuenta</button>
+    <label class="menu-busca"><svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg><span class="menu-lupa-lugar"></span></label>
+    <div class="menu-fila"><button type="button" class="menu-ic" data-mm="undo" aria-label="Deshacer">↶<small>Deshacer</small></button><button type="button" class="menu-ic" data-mm="redo" aria-label="Rehacer">↷<small>Rehacer</small></button><button type="button" class="menu-ic" data-mm="sel">⬚<small>Elegir</small></button><button type="button" class="menu-ic" data-mm="flecha">↗<small>Flechas</small></button></div>
+    <div class="menu-sep"></div>
+    <button type="button" class="menu-it" data-ir="btn-cal" role="menuitem"><svg viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3"/></svg>Calendario</button>
+    <button type="button" class="menu-it" data-ir="btn-tiempo" role="menuitem"><svg viewBox="0 0 16 16"><path d="M1.5 8h13"/><circle cx="4" cy="8" r="1.6"/><circle cx="8.5" cy="8" r="1.6"/><circle cx="13" cy="8" r="1.6"/></svg>Línea de tiempo</button>
+    <button type="button" class="menu-it" data-ir="mezclar" role="menuitem"><svg viewBox="0 0 16 16"><path d="M2 4h3l6 8h3M2 12h3l2-2.7M9 6.7 11 4h3M12.5 2.5 14 4l-1.5 1.5M12.5 10.5 14 12l-1.5 1.5"/></svg>Mezclar dos al azar</button>
+    <div class="menu-sep"></div>
+    <div class="menu-orden"><span class="menu-lbl">Ordenar la plancha</span><div class="menu-seg"><button type="button" class="seg" data-o2="num">N.º</button><button type="button" class="seg" data-o2="cat">Categoría</button><button type="button" class="seg" data-o2="grid">Grilla</button></div></div>
+    <div class="menu-sep"></div>
+    <button type="button" class="menu-it suave" data-ir="salir" role="menuitem"><svg viewBox="0 0 16 16"><path d="M6 2.5H3.5a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1H6M10 5l3 3-3 3M13 8H6"/></svg>Salir de esta cuenta</button>
   </div>
 </div>
 <div class="panel" id="panel-cats" hidden>
@@ -1842,7 +1862,7 @@ document.addEventListener("keydown",e=>{if(e.key!=="Tab"||e.shiftKey||e.ctrlKey|
   e.preventDefault();const on=document.body.classList.toggle("sin-ui");
   if(on&&!avisoTab){avisoTab=true;toast("Tab de nuevo para volver a ver todo.")}},true);
 /* ---------- Menú ••• (la búsqueda vive adentro) ---------- */
-$("panel-menu").querySelector(".menu-lista").prepend($("buscar"));
+$("panel-menu").querySelector(".menu-lupa-lugar").replaceWith($("buscar"));$("buscar").placeholder="Buscar en todo…";
 function pintarChipBusca(){const c=$("chip-busca"),v=q.trim();c.hidden=!v;c.textContent=v?`“${v}” ×`:""}
 $("buscar").addEventListener("input",pintarChipBusca);
 $("chip-busca").onclick=()=>{$("buscar").value="";q="";pintarMain();pintarChipBusca()};
@@ -1852,7 +1872,7 @@ try{if(matchMedia("(pointer:coarse)").matches&&Math.min(screen.width,screen.heig
 function pintarMenu(){const p=$("panel-menu");p.querySelector('[data-ir="mezclar"]').disabled=$("mezclar").disabled;
   const o=document.querySelector('#vistaseg .seg[aria-pressed="true"]')?.dataset.o;p.querySelectorAll("[data-o2]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.o2===o));p.querySelector(".menu-orden").hidden=$("vistaseg").hidden}
 $("btn-menu").onclick=()=>{const p=$("panel-menu");p.hidden=!p.hidden;if(!p.hidden){pintarMenu();if(!enDiario&&matchMedia("(hover:hover)").matches)setTimeout(()=>$("buscar").focus(),30)}};
-$("cerrar-menu").onclick=()=>{$("panel-menu").hidden=true};
+document.addEventListener("pointerdown",e=>{const p=$("panel-menu");if(!p.hidden&&!p.contains(e.target)&&!e.target.closest("#btn-menu"))p.hidden=true},true);
 document.querySelectorAll("#detalle .tool[data-mh]").forEach(b=>b.onclick=()=>{const m=b.dataset.mh;if(m==="undo"){deshacerUI(false);return}if(m==="redo"){deshacerUI(true);return}lzHoja.setModo(lzHoja.modo===m?null:m)});
 $("panel-menu").addEventListener("click",e=>{const mm=e.target.closest("[data-mm]");if(mm){const m=mm.dataset.mm;$("panel-menu").hidden=true;if(m==="undo")deshacerUI(false);else if(m==="redo")deshacerUI(true);else lzMain.setModo(lzMain.modo===m?null:m);return}
   const b=e.target.closest("[data-ir],[data-o2]");if(!b)return;
