@@ -503,7 +503,10 @@ body.en-diario .dia-herr{display:flex}
 .pv-pie span{font:500 9.5px var(--mono);text-transform:uppercase;color:var(--soft)}
 .pv-sacar{border:0;border-radius:999px;background:var(--ink);color:var(--paper);font:600 11px var(--ui);padding:5px 10px;cursor:pointer}
 .pv-vacio{color:var(--paper);font:600 .95rem var(--ui)}
-@media (max-width:560px){.pv-grilla{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:12px 14px 40px}.pv-cab .buscar{order:5;flex:1 1 100%;width:auto}}
+.pv-titulo{flex:0 1 340px;min-width:0;font:700 1.05rem var(--hand);color:var(--ink);background:var(--paper);border:0;border-radius:999px;padding:9px 16px;box-shadow:0 2px 8px rgba(0,0,0,.28)}
+.pv-titulo:focus{outline:2px solid var(--ink);outline-offset:2px}
+.pila-titulo{margin:0;font:700 24px/1.1 var(--hand);word-break:break-word;overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical}
+@media (max-width:560px){.pv-titulo{flex:1 1 0}.pv-grilla{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:12px 14px 40px}.pv-cab .buscar{order:5;flex:1 1 100%;width:auto}}
 /* Línea de tiempo */
 .tiempo{position:fixed;inset:0;z-index:25;background:var(--mat);background-image:linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.18))}
 .t-cab{position:absolute;top:calc(env(safe-area-inset-top,0px) + 12px);left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));display:flex;align-items:center;gap:8px;pointer-events:none}
@@ -830,14 +833,14 @@ window.claude={use:async n=>{if(n==="db"){if(!listo)listo=conectar();return list
 </div>
 
 <div class="pila-vista" id="pila-vista" hidden role="dialog" aria-label="Pila de Keep">
-  <div class="pv-cab"><span class="t-tit" id="pv-tit">Pila de Keep</span><input type="search" class="buscar" id="pv-buscar" placeholder="Buscar en la pila…" aria-label="Buscar en la pila"><span class="sep"></span><button type="button" class="btn" id="pv-deshacer" hidden>Deshacer pila</button><button type="button" class="btn oscuro" id="pv-cerrar">Cerrar</button></div>
+  <div class="pv-cab"><button type="button" class="btn oscuro" id="pv-cerrar">← Volver</button><input type="text" class="pv-titulo" id="pv-titulo" placeholder="Ponele un título a la pila…" aria-label="Título de la pila" maxlength="80"><span class="t-tit" id="pv-tit"></span><span class="sep"></span><input type="search" class="buscar" id="pv-buscar" placeholder="Buscar en la pila…" aria-label="Buscar en la pila"><button type="button" class="btn" id="pv-deshacer" hidden>Deshacer pila</button></div>
   <p class="pv-ayuda">Tocá una para abrirla. «Sacar» la pone en la plancha, al lado de la pila. Para sumar más, arrastrá un post-it arriba de la pila.</p>
   <div class="pv-grilla" id="pv-grilla"></div>
 </div>
 
 <div class="tiempo" id="tiempo" hidden role="dialog" aria-modal="true" aria-label="Línea de tiempo">
   <div class="t-pista" id="t-pista"><div class="t-riel" id="t-riel"></div></div>
-  <div class="t-cab"><span class="t-tit" id="t-tit">Línea de tiempo</span><span class="sep"></span><button type="button" class="btn oscuro" id="t-cerrar">Cerrar</button></div>
+  <div class="t-cab"><button type="button" class="btn oscuro" id="t-cerrar">← Volver</button><span class="t-tit" id="t-tit">Línea de tiempo</span></div>
 </div>
 
 <!-- Plancha de un post-it -->
@@ -1166,7 +1169,7 @@ async function borrarDePlancha(nodos){
     else if(n.classList.contains("deco")&&n._id){const d=decos.find(z=>z.id===n._id);try{await colDeco.doc(n._id).delete()}catch(_){continue}borrarFlechasDe(n._id);if(d&&assets)assets.delete(d.a).catch(()=>{})}
   }
 }
-lzMain.onSeleccion=(r,sumar)=>selPoner(lzMain,[...nodosNota.values(),...nodosDeco.values()].filter(n=>n.isConnected&&seTocan(cajaNodo(n),r)),sumar);
+lzMain.onSeleccion=(r,sumar)=>selPoner(lzMain,[...nodosNota.values(),...nodosDeco.values(),...nodosPila.values()].filter(n=>n.isConnected&&seTocan(cajaNodo(n),r)),sumar);
 lzMain.onBorrarSel=ns=>borrarDePlancha(ns);
 document.addEventListener("keydown",e=>{if(escribiendo())return;const lz=abierto?lzHoja:lzMain;if(!lz.sel.size)return;
   if(e.key==="Escape"){selLimpiar(lz);e.preventDefault();e.stopImmediatePropagation()}
@@ -1923,7 +1926,7 @@ async function mandarAIdeasFeed(){const a=document.activeElement,ta=a&&a.tagName
 window.addEventListener("gh-historial",()=>{if(enDiario)for(const p of feed.pags.values())refrescarPagina(p,true)});
 
 /* ---------- Pilas: la de Keep y las que armás tirando un post-it arriba de otro ---------- */
-let pilaPos=null,docPila=null,pilaCargada=false,pilas=[],colPilas=null,pilasCargadas=false,pvPila="keep";const nodosPila=new Map(),disolviendo=new Set();
+let pilaPos=null,pilaTitulo="",docPila=null,pilaCargada=false,pilas=[],colPilas=null,pilasCargadas=false,pvPila="keep";const nodosPila=new Map(),disolviendo=new Set();
 function enPilaId(i){if(i.pila){if(i.pila==="keep")return "keep";return pilasCargadas&&!pilas.some(p=>p.id===i.pila)?null:i.pila}return i.origen==="keep"&&!i.sacada?"keep":null}
 const itemsPila=id=>data.ideas.filter(i=>enPilaId(i)===id);
 const topePila=id=>itemsPila(id).sort((a,b)=>(b.pilaT||0)-(a.pilaT||0)||(b.creado||0)-(a.creado||0))[0];
@@ -1933,23 +1936,25 @@ function pilaXY(id){id=id||"keep";if(id!=="keep"){const p=pilas.find(x=>x.id===i
 function crearNodoPila(id){const keep=id==="keep",c=el("div","pila"+(keep?" keep":" propia"));c._pila=id;c.tabIndex=0;c.setAttribute("role","button");c.setAttribute("aria-label",keep?"Abrir la pila de Keep":"Abrir esta pila");
   const f=el("div","pila-frente");
   if(keep)f.append(el("span","pila-cap","Pila"),el("b","pila-tit","De Keep"),el("span","pila-n"),el("span","pila-q"),el("span","pila-abrir","Tocá para abrirla"));
-  else{const m=el("div","meta");m.append(el("span","pt-num"),el("span"));f.append(m,el("p","pila-txt"),el("span","pila-q"));c.append(el("span","pila-badge"))}
+  else{const m=el("div","meta");m.append(el("span","pt-num"),el("span"));f.append(m,el("p","pila-titulo"),el("p","pila-txt"),el("span","pila-q"));c.append(el("span","pila-badge"))}
   c.prepend(el("i","pila-hoja h3"),el("i","pila-hoja h2"),f);
   arrastrable(c,lzMain,{inicio:()=>({x:parseFloat(c.style.left),y:parseFloat(c.style.top)}),mover:(x,y)=>{c.style.left=x+"px";c.style.top=y+"px";pedirFlechas()},
     soltar:()=>{const x=Math.round(parseFloat(c.style.left)),y=Math.round(parseFloat(c.style.top));limCache=null;
-      if(keep){pilaPos={x,y};if(docPila)docPila.set(pilaPos).catch(()=>{})}else{const p=pilas.find(z=>z.id===id);if(p){p.x=x;p.y=y}if(colPilas)escribir(colPilas,id,{x,y})}},
+      if(keep){pilaPos={x,y};if(docPila)docPila.set({...pilaPos,titulo:pilaTitulo}).catch(()=>{})}else{const p=pilas.find(z=>z.id===id);if(p){p.x=x;p.y=y}if(colPilas)escribir(colPilas,id,{x,y})}},
     tocar:()=>abrirPila(id)});
   c.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();abrirPila(id)}};return c}
 function pintarPila(){pintarPilas()}
 function pintarPilas(){const vivos=new Set();
   if(vista==="ideas"){const cuenta=new Map();for(const i of data.ideas){const id=enPilaId(i);if(id)cuenta.set(id,(cuenta.get(id)||0)+1)}
-    if(!pilaPos&&pilaCargada&&docPila&&cuenta.has("keep")&&enPlancha("ideas").length){pilaPos=pilaXY("keep");docPila.set(pilaPos).catch(()=>{})}
+    if(!pilaPos&&pilaCargada&&docPila&&cuenta.has("keep")&&enPlancha("ideas").length){pilaPos=pilaXY("keep");docPila.set({...pilaPos,titulo:pilaTitulo}).catch(()=>{})}
     if(pilasCargadas)for(const p of pilas)if(!cuenta.get(p.id)||cuenta.get(p.id)<2){if(!disolviendo.has(p.id)){disolviendo.add(p.id);setTimeout(()=>{if(itemsPila(p.id).length<2)disolverPila(p.id,true);else disolviendo.delete(p.id)},400)}}
     for(const [id,n] of cuenta){if(id!=="keep"&&n<2)continue;vivos.add(id);let c=nodosPila.get(id);if(!c){c=crearNodoPila(id);nodosPila.set(id,c);$("capa-main").append(c)}
       const p=pilaXY(id);if(!c.classList.contains("arrastrando")){c.style.left=p.x+"px";c.style.top=p.y+"px"}
       const hay=!!q.trim(),m=hay?itemsPila(id).filter(coincide).length:0,sq=c.querySelector(".pila-q");sq.hidden=!hay||!m;sq.textContent=m===1?"1 coincide":`${m} coinciden`;c.classList.toggle("apagada",hay&&!m);
-      if(id==="keep"){c.style.setProperty("--c",colorPila());c.querySelector(".pila-n").textContent=n===1?"1 nota adentro":`${n} notas adentro`}
-      else{const t=topePila(id);c.style.setProperty("--c",t?colorDe("ideas",t):"#ffe76a");c.querySelector(".pila-badge").textContent=String(n);c.querySelector(".pt-num").textContent=t?`#${t.numero||"?"} · ${label(t.tipo)}`:"";c.querySelector(".pila-txt").textContent=t?(t.texto||""):""}}}
+      if(id==="keep"){c.style.setProperty("--c",colorPila());c.querySelector(".pila-tit").textContent=pilaTitulo||"De Keep";c.querySelector(".pila-n").textContent=n===1?"1 nota adentro":`${n} notas adentro`}
+      else{const t=topePila(id),tit=(pilas.find(z=>z.id===id)||{}).titulo||"";c.style.setProperty("--c",t?colorDe("ideas",t):"#ffe76a");c.querySelector(".pila-badge").textContent=String(n);
+        c.querySelector(".pt-num").textContent=tit?"Pila":t?`#${t.numero||"?"} · ${label(t.tipo)}`:"";const pt=c.querySelector(".pila-titulo");pt.hidden=!tit;pt.textContent=tit;
+        const tx=c.querySelector(".pila-txt");tx.hidden=!!tit;tx.textContent=t?(t.texto||""):""}}}
   for(const [id,c] of nodosPila)if(!vivos.has(id)){c.remove();nodosPila.delete(id)}}
 /* soltar un post-it arriba de otro (o de una pila) */
 function pilaDestino(c){const cx=(parseFloat(c.style.left)||0)+100,cy=(parseFloat(c.style.top)||0)+100,den=(x,y,w,h,m)=>cx>x+m&&cx<x+w-m&&cy>y+m&&cy<y+h-m;
@@ -1966,11 +1971,11 @@ async function apilar(t,nodos){const ids=[...new Set(nodos.map(n=>n._id).filter(
   ids.forEach((id,n)=>escribir(cols.ideas,id,{pila:pid,pilaT:ahora+n}));selLimpiar(lzMain);
   toast(pid==="keep"?"Adentro de la pila de Keep.":t._pila?"Adentro de la pila.":"Pila armada. Tocala para ver lo que tiene.")}
 /* ver lo que hay adentro */
-function abrirPila(id){pvPila=id||"keep";$("pv-buscar").value=q;$("pila-vista").hidden=false;$("pv-deshacer").hidden=pvPila==="keep";pintarPilaVista()}
+function abrirPila(id){pvPila=id||"keep";$("pv-buscar").value=q;$("pila-vista").hidden=false;$("pv-deshacer").hidden=pvPila==="keep";$("pv-titulo").value=pvPila==="keep"?(pilaTitulo||"De Keep"):((pilas.find(z=>z.id===pvPila)||{}).titulo||"");pintarPilaVista()}
 function cerrarPila(){$("pila-vista").hidden=true}
 function pintarPilaVista(){const g=$("pv-grilla"),qq=$("pv-buscar").value.trim().toLowerCase(),todas=itemsPila(pvPila).sort((a,b)=>pvPila==="keep"?(b.creado||0)-(a.creado||0):(b.pilaT||0)-(a.pilaT||0));
   const lista=qq?todas.filter(i=>[i.texto,textoBloques(i)].join(" ").toLowerCase().includes(qq)):todas;
-  $("pv-tit").textContent=`${pvPila==="keep"?"Pila de Keep":"Pila"} · ${todas.length}`;const st=g.scrollTop;g.replaceChildren();
+  $("pv-tit").textContent=todas.length===1?"1 adentro":`${todas.length} adentro`;const st=g.scrollTop;g.replaceChildren();
   if(!lista.length){g.append(el("p","pv-vacio",todas.length?"Nada coincide con esa búsqueda.":"La pila quedó vacía."));return}
   for(const i of lista){const c=el("div","pv-nota");c.setAttribute("role","button");c.tabIndex=0;c.style.setProperty("--c",colorDe("ideas",i));c.style.setProperty("--r",giro(i.id)*.5+"deg");
     const m=el("div","meta");m.append(el("span",null,"#"+(i.numero||"?")),el("span",null,i.creado?new Date(i.creado).toLocaleDateString("es-AR",{day:"2-digit",month:"2-digit",year:"2-digit"}).replace(/\//g,"."):""));
@@ -1988,7 +1993,11 @@ function sacarDePila(id){const i=data.ideas.find(x=>x.id===id);if(!i||!cols.idea
 function disolverPila(pid,auto,ya){if(pid==="keep")return;const P=pilaXY(pid),resto=itemsPila(pid).filter(x=>!(ya||[]).includes(x.id)),usados=[];
   resto.forEach((i,n)=>{const p=n===0?{x:P.x,y:P.y}:lugarLibre(pid,usados);usados.push(p);escribir(cols.ideas,i.id,patchSacar(i,p))});
   if(colPilas)colPilas.doc(pid).delete().catch(()=>{});if(pvPila===pid&&!$("pila-vista").hidden&&!auto)cerrarPila();disolviendo.delete(pid)}
-$("pv-cerrar").onclick=cerrarPila;$("pv-buscar").addEventListener("input",pintarPilaVista);
+let tTitPila=null;
+$("pv-titulo").addEventListener("input",()=>{const id=pvPila,v=$("pv-titulo").value.trim();clearTimeout(tTitPila);tTitPila=setTimeout(()=>{
+  if(id==="keep"){pilaTitulo=v;if(docPila)docPila.set({...pilaXY("keep"),titulo:v}).catch(()=>{})}else{const p=pilas.find(z=>z.id===id);if(p)p.titulo=v;if(colPilas)escribir(colPilas,id,{titulo:v})}pintarPilas()},500)});
+$("pv-titulo").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("pv-titulo").blur()}});
+$("pv-cerrar").onclick=()=>{if(document.activeElement===$("pv-titulo"))$("pv-titulo").blur();cerrarPila()};$("pv-buscar").addEventListener("input",pintarPilaVista);
 $("pv-deshacer").onclick=()=>{const id=pvPila;cerrarPila();disolverPila(id,false);toast("Pila deshecha: quedaron todas en la plancha.")};
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("pila-vista").hidden&&$("detalle").hidden){e.preventDefault();e.stopImmediatePropagation();cerrarPila()}},true);
 $("h-a-pila").onclick=()=>{if(!abierto||abierto.k!=="ideas")return;abierto.doc.sacada=false;abierto.doc.pila="";escribir(cols.ideas,abierto.id,{sacada:false,pila:""});$("panel-mas").hidden=true;$("h-a-pila").hidden=true;toast("Volvió a la pila de Keep.")};
@@ -2459,7 +2468,7 @@ drawComposer();setVista(vista);try{if(localStorage.getItem("pestana")==="diario"
   colFlechas.onSnapshot(s=>{flechas=s.docs.map(d=>({id:d.id,...d.data()}));if(selFlecha&&!flechas.some(f=>f.id===selFlecha))selFlecha=null;pintarFlechas()},()=>{});
   colTrazos=db.collection("trazos");
   colTrazos.onSnapshot(s=>{trazos=s.docs.map(d=>({id:d.id,...d.data()}));pintarTrazosMain()},()=>{});
-  docPila=db.doc("config/pila");docPila.onSnapshot(s=>{pilaCargada=true;const d=s.exists&&s.data();if(d&&isFinite(d.x)&&isFinite(d.y)){pilaPos={x:d.x,y:d.y};limCache=null}pintarPila()},()=>{});
+  docPila=db.doc("config/pila");docPila.onSnapshot(s=>{pilaCargada=true;const d=s.exists&&s.data();if(d&&isFinite(d.x)&&isFinite(d.y)){pilaPos={x:d.x,y:d.y};limCache=null}pilaTitulo=(d&&d.titulo)||"";pintarPila()},()=>{});
   colPilas=db.collection("pilas");colPilas.onSnapshot(s=>{pilas=s.docs.map(d=>({id:d.id,...d.data()}));pilasCargadas=true;limCache=null;pintarMain()},()=>{});
   colDeco=db.collection("deco");
   colDeco.onSnapshot(s=>{decos=s.docs.map(d=>({id:d.id,...d.data()}));pintarMain()},()=>{});
