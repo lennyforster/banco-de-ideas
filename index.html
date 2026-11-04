@@ -388,7 +388,8 @@ body.es-celu>.lateral [data-m="lapiz"]{display:none}
 /* Diario */
 body.en-diario #vp-main,body.en-diario .composer,body.en-diario>.lateral,body.en-diario>.lapiz-menu,body.en-diario>.barra-sel,body.en-diario>.volver-centro,body.en-diario #zoom-main,body.en-diario #mezclar,body.en-diario #btn-cal,body.en-diario #btn-tiempo,body.en-diario #vistaseg,body.en-diario #buscar{display:none!important}
 .diario{--margen:72px;position:fixed;inset:0;z-index:5;overflow-y:auto;overflow-x:hidden;padding:96px clamp(16px,4vw,56px) 160px calc(var(--margen) + clamp(20px,3vw,40px));-webkit-overflow-scrolling:touch;color:var(--ink);
-  background-color:#f8f3e6;background-image:linear-gradient(90deg,transparent calc(var(--margen) - 1px),rgba(226,59,59,.55) calc(var(--margen) - 1px) var(--margen),transparent var(--margen)),repeating-linear-gradient(transparent 0 31px,rgba(70,110,170,.24) 31px 32px);background-attachment:local}
+  background-color:#f8f3e6;background-image:linear-gradient(90deg,transparent calc(var(--margen) - 1px),rgba(226,59,59,.55) calc(var(--margen) - 1px) var(--margen),transparent var(--margen)),repeating-linear-gradient(transparent 0 31px,rgba(70,110,170,.24) 31px 32px),url("textura-papel.jpg");
+  background-size:auto,auto,100% auto;background-repeat:no-repeat,repeat,repeat-y;background-blend-mode:normal,normal,multiply;background-attachment:local}
 .dia-feed{display:grid;grid-template-columns:minmax(0,1fr);gap:32px}
 .dpag-cab{height:64px;display:flex;align-items:flex-end;gap:10px;padding-bottom:8px}
 .dpag-fecha{font:700 22px/1 var(--hand);color:var(--ink)}
