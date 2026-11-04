@@ -448,6 +448,10 @@ body.en-diario #vp-main,body.en-diario .composer,body.en-diario>.lateral,body.en
 .dblq-x.sure{background:var(--danger)}
 @media (hover:none){.dblq-x{opacity:.75}}
 @media (max-width:560px){.dblq-post{width:160px!important;min-height:160px}.dblq-img{max-width:78%}.dblq-txt{width:200px!important;min-height:200px!important}}
+.marca-hora{position:fixed;z-index:7;height:32px;display:flex;align-items:center;border:0;background:none;padding:0 2px;font:600 12px var(--mono);color:#c2462a;cursor:pointer;opacity:.85}
+.marca-hora:hover{opacity:1;text-decoration:underline}
+.marca-hora[hidden]{display:none}
+.espejo-dia{position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre-wrap;word-wrap:break-word;overflow-wrap:break-word;line-height:32px;padding:0}
 .dia-herr{display:none}
 body.en-diario .dia-herr{display:flex}
 .dia-wrap{display:grid;grid-template-columns:minmax(0,1fr);gap:40px;max-width:1400px}
@@ -1993,7 +1997,32 @@ async function mandarAIdeasFeed(){const a=document.activeElement,ta=a&&a.tagName
   if(!sel){toast("Marcá un pedazo de lo que escribiste y tocá de nuevo «A Ideas».");return}if(!cols.ideas)return;
   const numero=data.ideas.reduce((m,i)=>Math.max(m,i.numero||0),0)+1;const p=pagActual();
   try{await cols.ideas.add({texto:sel,tipo:"otro",creado:Date.now(),numero,origen:"diario",diario:p?p.k:""});toast(`Pegado en Ideas como #${numero}.`)}catch(_){toast("No se pudo pegar. Probá de nuevo.")}}
-window.addEventListener("gh-historial",()=>{if(enDiario)for(const p of feed.pags.values())refrescarPagina(p,true)});
+window.addEventListener("gh-historial",()=>{if(enDiario)for(const p of feed.pags.values())refrescarPagina(p,true)})
+/* La hora en el margen: pasás el mouse (o tocás) pegado al margen rojo y te ofrece la hora para ese renglón */
+const marcaHora=el("button","marca-hora");marcaHora.type="button";marcaHora.hidden=true;document.body.append(marcaHora);
+const espejo=el("div","espejo-dia");document.body.append(espejo);let cacheFilas=null,marcaDest=null;
+function filasDe(ta){const v=ta.value,w=ta.clientWidth,key=v.length+"|"+w+"|"+v.slice(-40)+v.slice(0,40);if(cacheFilas&&cacheFilas.ta===ta&&cacheFilas.key===key)return cacheFilas;
+  const cs=getComputedStyle(ta);espejo.style.width=w+"px";espejo.style.font=cs.font;espejo.style.letterSpacing=cs.letterSpacing;
+  const lineas=v.split("\n"),tops=[];let fila=0;for(const l of lineas){tops.push(fila);espejo.textContent=l||" ";fila+=Math.max(1,Math.round(espejo.offsetHeight/32))}
+  return cacheFilas={ta,key,lineas,tops,total:fila}}
+const horaAhora=()=>{const f=new Date();return pad(f.getHours())+":"+pad(f.getMinutes())};
+function ubicarMarca(e){if(!enDiario||e.target.closest&&e.target.closest(".dblq,.marca-hora"))return e.target.closest&&e.target.closest(".marca-hora")?null:ocultarMarca();
+  const p=feed.pags.get(hoyDia());if(!p)return ocultarMarca();const c=$("diario"),cr=c.getBoundingClientRect(),margen=cr.left+(parseFloat(getComputedStyle(c).getPropertyValue("--margen"))||72),
+    r=p.cuerpo.getBoundingClientRect(),tx=r.left;
+  if(e.clientX<margen-26||e.clientX>tx+8||e.clientY<r.top||e.clientY>r.bottom)return ocultarMarca();
+  const fila=Math.floor((e.clientY-r.top)/32),F=filasDe(p.ta);let linea;
+  if(fila<F.total){linea=F.tops.indexOf(fila);if(linea<0)return ocultarMarca();if(/^\d{1,2}:\d{2}\b/.test(F.lineas[linea]))return ocultarMarca()}
+  else linea=F.lineas.length+(fila-F.total);
+  marcaDest={p,linea};marcaHora.textContent=horaAhora();marcaHora.style.top=(r.top+fila*32)+"px";marcaHora.hidden=false;marcaHora.style.left=Math.max(4,tx-marcaHora.offsetWidth-6)+"px"}
+function ocultarMarca(){marcaHora.hidden=true;marcaDest=null}
+$("diario").addEventListener("pointermove",e=>{if(e.pointerType==="mouse")ubicarMarca(e)});
+$("diario").addEventListener("pointerdown",e=>{if(e.pointerType!=="mouse")ubicarMarca(e)});
+$("diario").addEventListener("scroll",()=>{if(!marcaHora.hidden)ocultarMarca()},{passive:true});
+document.addEventListener("pointermove",e=>{if(e.pointerType==="mouse"&&!marcaHora.hidden&&!$("diario").contains(e.target)&&e.target!==marcaHora)ocultarMarca()});
+marcaHora.addEventListener("pointerdown",e=>e.preventDefault());
+marcaHora.onclick=()=>{const d=marcaDest;if(!d)return;const ta=d.p.ta,lineas=ta.value.split("\n");while(lineas.length<=d.linea)lineas.push("");
+  const h=horaAhora()+" ";lineas[d.linea]=h+lineas[d.linea];ta.value=lineas.join("\n");const pos=lineas.slice(0,d.linea).join("\n").length+(d.linea?1:0)+h.length;
+  ta.focus({preventScroll:true});ta.setSelectionRange(pos,pos);ta.dispatchEvent(new Event("input"));cacheFilas=null;ocultarMarca()};;
 
 /* ---------- Pilas: la de Keep y las que armás tirando un post-it arriba de otro ---------- */
 let pilaPos=null,pilaTitulo="",docPila=null,pilaCargada=false,pilas=[],colPilas=null,pilasCargadas=false,pvPila="keep";const nodosPila=new Map(),disolviendo=new Set();
