@@ -1422,7 +1422,76 @@ window.addEventListener("gh-historial",()=>{selFlecha=null;pintarFlechas();if(!a
 document.addEventListener("keydown",e=>{
   if(!(e.metaKey||e.ctrlKey)||e.altKey)return;const k=(e.key||"").toLowerCase();
   if(k==="z"||k==="y"){if(escribiendo()||!$("tiempo").hidden)return;const c=document.getElementById("conectar");if(c&&!c.hidden)return;e.preventDefault();deshacerUI(k==="y"||e.shiftKey);return}
-  if(k==="d"){if(escribiendo()||!$("tiempo").hidden)return;e.preventDefault();duplicarActual()}});
+  if(k==="d"){if(escribiendo()||!$("tiempo").hidden)return;e.preventDefault();duplicarActual();return}
+  if(k==="c"||k==="x"){if(escribiendo()||!$("tiempo").hidden||String(window.getSelection?getSelection():"").trim())return;
+    if(!nodosParaCopiar().length)return;e.preventDefault();if(k==="x")cortarSel();else if(copiarSel())toast("Copiado. Pegalo con Ctrl+V.");return}
+  if(k==="v"){if(escribiendo()||!$("tiempo").hidden)return;if(porta){clearTimeout(tPegar);tPegar=setTimeout(()=>{tPegar=null;pegarInterno()},120)}}});
+
+/* ---------- Copiar, cortar y pegar ---------- */
+let porta=null,ultPtr=null,tPegar=null;
+window.addEventListener("pointermove",e=>{ultPtr={x:e.clientX,y:e.clientY}},{passive:true});
+function nodosParaCopiar(){const lz=abierto?lzHoja:lzMain;let ns=selNodos(lz);
+  if(!ns.length){if(abierto&&selB){const n=nodoHoja(selB);if(n)ns=[n]}else if(!abierto&&selDeco){const n=nodosDeco.get(selDeco);if(n)ns=[n]}}return ns}
+function copiarSel(){const ns=nodosParaCopiar();if(!ns.length)return null;
+  if(abierto){const ids=new Set(ns.map(n=>n.dataset.bid).filter(Boolean)),bl=abierto.doc.bloques.filter(b=>ids.has(b.id));if(!bl.length)return null;
+    porta={de:"hoja",bloques:JSON.parse(JSON.stringify(bl)),hilos:JSON.parse(JSON.stringify((abierto.doc.hilos||[]).filter(h=>ids.has(h.a)&&ids.has(h.b))))}}
+  else{const ideas=[],ds=[],ids=new Set();
+    for(const n of ns){
+      if(n._k&&n._id){const it=data[n._k].find(x=>x.id===n._id);if(!it)continue;const c=JSON.parse(JSON.stringify(it));delete c._pend;c.x=parseFloat(n.style.left)||0;c.y=parseFloat(n.style.top)||0;ideas.push({k:n._k,o:c});ids.add(n._id)}
+      else if(n.classList.contains("deco")&&n._id){const d=decos.find(z=>z.id===n._id);if(d){ds.push(JSON.parse(JSON.stringify(d)));ids.add(d.id)}}}
+    if(!ideas.length&&!ds.length)return null;
+    porta={de:"main",ideas,decos:ds,flechas:flechas.filter(f=>ids.has(f.a)&&ids.has(f.b)).map(f=>({a:f.a,b:f.b}))}}
+  porta.texto=porta.de==="hoja"?porta.bloques.map(b=>b.t==="link"?b.url:(b.v||"")).filter(Boolean).join("\n\n"):porta.ideas.map(x=>x.o.texto||"").filter(Boolean).join("\n\n");
+  porta.veces=0;porta.ultK=null;const pp=porta;try{if(navigator.clipboard)navigator.clipboard.writeText(porta.texto).then(()=>{pp.enSistema=true},()=>{})}catch(_){}
+  return ns}
+function puntoPegar(lz){const r=lz.rect(),u=ultPtr;
+  if(u&&u.x>=r.left&&u.x<=r.right&&u.y>=r.top&&u.y<=r.bottom){const e=document.elementFromPoint(u.x,u.y);if(e&&lz.vp.contains(e))return lz.aMundo(u.x,u.y)}
+  return lz.centro()}
+function ubicar(items,p0){/* centra el grupo en p0; si pegás varias veces en el mismo lugar, corre cada copia */
+  const key=Math.round(p0.x)+","+Math.round(p0.y);if(porta.ultK===key)porta.veces++;else{porta.veces=0;porta.ultK=key}const off=porta.veces*30;
+  const x0=Math.min(...items.map(o=>o.x||0)),y0=Math.min(...items.map(o=>o.y||0)),x1=Math.max(...items.map(o=>(o.x||0)+(o.w||200))),y1=Math.max(...items.map(o=>(o.y||0)+200));
+  const dx=p0.x-(x0+x1)/2+off,dy=p0.y-(y0+y1)/2+off;for(const o of items){o.x=Math.round((o.x||0)+dx);o.y=Math.round((o.y||0)+dy)}}
+async function pegarInterno(){
+  if(!porta)return;
+  if(abierto){const d=abierto.doc,mapa={};let bl;
+    if(porta.de==="hoja")bl=porta.bloques.map(b=>JSON.parse(JSON.stringify(b)));
+    else bl=[...porta.ideas.map(x=>({t:"post",v:x.o.texto||"",c:x.k==="ideas"?colorDe("ideas",x.o):PALETA[1],x:x.o.x,y:x.o.y})),...porta.decos.map(o=>({t:"img",a:o.a,alt:"Imagen",x:o.x,y:o.y,w:o.w||260}))];
+    if(!bl.length)return;ubicar(bl,puntoPegar(lzHoja));
+    for(const b of bl){const nid=bid();if(b.id)mapa[b.id]=nid;b.id=nid;d.bloques.push(b)}
+    let hil=false;if(porta.de==="hoja")for(const h of porta.hilos)if(mapa[h.a]&&mapa[h.b]){d.hilos.push({...h,id:bid(),a:mapa[h.a],b:mapa[h.b]});hil=true}
+    selB=null;guardarBloques();if(hil)guardarHoja("hilos",d.hilos);pintarHoja();
+    requestAnimationFrame(()=>{document.querySelectorAll("#capa-hoja textarea").forEach(autosize);pintarHilos();selPoner(lzHoja,bl.map(b=>nodoHoja(b.id)).filter(Boolean),false)});return}
+  const k=vista;let numero=data[k].reduce((m,i)=>Math.max(m,i.numero||0),0)+1,items;
+  if(porta.de==="main")items=[...porta.ideas.map(x=>({tipo:"idea",o:JSON.parse(JSON.stringify(x.o))})),...porta.decos.map(o=>({tipo:"deco",o:JSON.parse(JSON.stringify(o))}))];
+  else items=porta.bloques.filter(b=>["post","txt","tx","img"].includes(b.t)).map(b=>b.t==="img"?{tipo:"deco",o:{a:b.a,x:b.x,y:b.y,w:b.w||260,arriba:false}}:{tipo:"idea",o:{texto:b.v||"",x:b.x,y:b.y}});
+  if(!items.length){toast("Eso no se puede pegar en la plancha.");return}
+  items.forEach(it=>{it.oid=it.o.id;delete it.o.id;delete it.o._pend});ubicar(items.map(it=>it.o),puntoPegar(lzMain));fijarSinPosicion(k);
+  const mapa={},nuevos=[];
+  for(const it of items){const o=it.o;o.creado=Date.now();
+    try{if(it.tipo==="idea"){if(!cols[k])continue;if(k==="ideas"&&!o.tipo)o.tipo="otro";if(k==="frases"&&o.autor===undefined)o.autor="";o.numero=numero++;
+        const r=await cols[k].add(o);if(it.oid)mapa[it.oid]=r.id;nuevos.push(()=>nodosNota.get(k+":"+r.id))}
+      else{if(!colDeco)continue;o.tablero=k;const r=await colDeco.add(o);if(it.oid)mapa[it.oid]=r.id;nuevos.push(()=>nodosDeco.get(r.id))}}
+    catch(_){toast("No se pudo pegar. Probá de nuevo.")}}
+  if(porta.de==="main"&&colFlechas)for(const f of porta.flechas)if(mapa[f.a]&&mapa[f.b])colFlechas.add({tablero:k,a:mapa[f.a],b:mapa[f.b],creado:Date.now()}).catch(()=>{});
+  const ns=nuevos.map(f=>f()).filter(Boolean);if(ns.length)selPoner(lzMain,ns,false)}
+function pegarTexto(txt){
+  if(abierto){const p=puntoPegar(lzHoja),esLink=/^https?:\/\/\S+$/i.test(txt),largo=txt.length>140||txt.includes("\n\n");
+    const b=esLink?{id:bid(),t:"link",url:txt,titulo:"",x:Math.round(p.x-130),y:Math.round(p.y-50),w:260}
+      :largo?{id:bid(),t:"txt",v:txt,x:Math.round(p.x-160),y:Math.round(p.y-60),w:320}:{id:bid(),t:"post",v:txt,c:PALETA[Math.floor(Math.random()*8)],x:Math.round(p.x-100),y:Math.round(p.y-100)};
+    const n=agregarBloque(b);requestAnimationFrame(()=>{const t=n.querySelector("textarea");if(t)autosize(t);pintarHilos()});return}
+  if(!cols[vista])return;const k=vista,p=puntoPegar(lzMain),numero=data[k].reduce((m,i)=>Math.max(m,i.numero||0),0)+1;
+  pegarEn(k,k==="ideas"?{texto:txt,tipo:tipoNueva,creado:Date.now(),numero}:{texto:txt,autor:"",creado:Date.now(),numero},p.x-100,p.y-100)}
+function cortarSel(){const ns=copiarSel();if(!ns){toast("Seleccioná algo para cortar.");return}
+  if(abierto)lzHoja.onBorrarSel(ns);else{selLimpiar(lzMain);selDeco=null;borrarDePlancha(ns)}}
+document.addEventListener("paste",e=>{
+  const t=tPegar;clearTimeout(tPegar);tPegar=null;if(e.defaultPrevented)return;
+  if(escribiendo()||!$("tiempo").hidden)return;const c=document.getElementById("conectar");if(c&&!c.hidden)return;
+  const txt=((e.clipboardData&&e.clipboardData.getData("text/plain"))||"").trim();
+  if(porta&&(!txt||txt===(porta.texto||"").trim()||(!porta.enSistema&&!porta.vieja))){e.preventDefault();pegarInterno();return}
+  if(txt){e.preventDefault();pegarTexto(txt);return}
+  if(t&&porta){e.preventDefault();pegarInterno()}});
+window.addEventListener("blur",()=>{if(porta)porta.vieja=true});
+for(const ev of ["copy","cut"])document.addEventListener(ev,()=>{if(escribiendo()||String(window.getSelection?getSelection():"").trim())porta=null});
 
 /* ---------- Línea de tiempo ---------- */
 function abrirTiempo(){
