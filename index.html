@@ -1056,8 +1056,8 @@ async function decoEnPlancha(file,p){
 lzMain.onArchivo=(f,p)=>decoEnPlancha(f,p);
 $("file").onchange=e=>{const f=e.target.files&&e.target.files[0];e.target.value="";if(!f)return;
   if(destinoArchivo==="hoja"&&abierto)bloqueImagen(f,lzHoja.centro());else decoEnPlancha(f,lzMain.centro())};
-document.addEventListener("paste",e=>{if(escribiendo()&&!abierto)return;const f=[...(e.clipboardData?.files||[])].find(x=>x.type.startsWith("image/"));if(!f)return;e.preventDefault();
-  if(abierto)bloqueImagen(f,lzHoja.centro());else decoEnPlancha(f,lzMain.centro())});
+document.addEventListener("paste",e=>{if(escribiendo()&&!abierto)return;const fs=[...(e.clipboardData?.files||[])].filter(x=>x.type.startsWith("image/"));if(!fs.length)return;e.preventDefault();
+  const p=puntoPegar(abierto?lzHoja:lzMain);fs.forEach((f,n)=>{const q={x:p.x+n*30,y:p.y+n*30};if(abierto)bloqueImagen(f,q);else decoEnPlancha(f,q)})});
 
 /* ---------- Plancha de un post-it ---------- */
 const lzHoja=new Lienzo($("vp-hoja"),$("capa-hoja"),$("zoom-hoja"));
