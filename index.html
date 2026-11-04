@@ -322,7 +322,13 @@ body.sin-ui .barra,body.sin-ui .lateral,body.sin-ui .herramientas,body.sin-ui .z
 .chip-modo button{border:0;border-radius:999px;padding:7px 12px;font:600 .82rem var(--ui);background:var(--paper);color:var(--ink);cursor:pointer}
 .menu-fila{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
 #btn-menu{display:inline-block;padding:9px 13px;letter-spacing:.08em}
-#mezclar,#btn-cal,#btn-tiempo,#vistaseg,#salir{display:none!important}
+.barra-extra{display:none;align-items:center;gap:8px}
+body.barra-abierta .barra-extra{display:flex;animation:abrirBarra .22s ease-out}
+@keyframes abrirBarra{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+body.barra-abierta #chip-busca{display:none}
+.barra-extra .solo-celu-b{display:none}
+.btn.ic{padding:9px 12px}
+body.en-diario .barra-extra .solo-celu-b{display:none!important}
 #panel-menu{left:auto;right:max(12px,env(safe-area-inset-right,0px));top:calc(env(safe-area-inset-top,0px) + 58px);transform:none;width:min(300px,calc(100vw - 24px));padding:6px;border-radius:14px;gap:0;box-shadow:0 1px 2px rgba(0,0,0,.12),0 18px 40px -10px rgba(0,0,0,.45)}
 .menu-lista{display:grid;gap:1px}
 .menu-busca{display:flex;align-items:center;gap:8px;margin:2px 2px 6px;padding:0 12px;border-radius:10px;background:rgba(43,37,32,.06)}
@@ -357,7 +363,6 @@ body.en-diario .menu-it:not([data-ir="salir"]):not(.solo-dia),body.en-diario .me
 .menu-it.solo-dia{display:none}body.en-diario .menu-it.solo-dia{display:block}
 #btn-dia-cal{display:none;align-items:center;gap:7px}
 body.en-diario #btn-dia-cal{display:inline-flex}
-body.en-diario #salir{display:none}
 body.en-diario #btn-menu{display:inline-block}
 body.en-diario #detalle{z-index:9}
 body.en-diario #detalle>.barra{display:none}
@@ -394,6 +399,11 @@ body.en-diario #zoom-hoja{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) +
 @media (max-width:560px){#btn-dia-cal .lbl-dc{display:none}#btn-dia-cal{padding:9px 12px}}
 .btn:focus:not(:focus-visible),.tool:focus:not(:focus-visible),.lat:focus:not(:focus-visible){outline:none}
 @media (max-width:560px){
+  .barra-extra{order:10;flex:1 1 100%;overflow-x:auto;flex-wrap:nowrap;padding:2px 2px 8px;scrollbar-width:none}
+  .barra-extra::-webkit-scrollbar{display:none}
+  .barra-extra>*{flex:none}
+  .barra-extra .buscar{width:170px}
+  .barra-extra .solo-celu-b{display:inline-flex}
   .tab{padding:7px 11px}
   .lateral{display:none!important}
   .tool.solo-celu{display:inline-block}
@@ -1862,16 +1872,24 @@ document.addEventListener("keydown",e=>{if(e.key!=="Tab"||e.shiftKey||e.ctrlKey|
   e.preventDefault();const on=document.body.classList.toggle("sin-ui");
   if(on&&!avisoTab){avisoTab=true;toast("Tab de nuevo para volver a ver todo.")}},true);
 /* ---------- Menú ••• (la búsqueda vive adentro) ---------- */
-$("panel-menu").querySelector(".menu-lupa-lugar").replaceWith($("buscar"));$("buscar").placeholder="Buscar en todo…";
+/* ••• abre una fila hacia el costado con todo lo demás */
+{const ex=el("div","barra-extra");ex.id="barra-extra";
+  const herr=(m,txt,lbl)=>{const b=el("button","btn ic solo-celu-b",txt);b.type="button";b.dataset.mm=m;b.setAttribute("aria-label",lbl);b.title=lbl;return b};
+  ex.append($("buscar"),$("btn-cal"),$("btn-tiempo"),$("mezclar"),$("vistaseg"),herr("undo","↶","Deshacer"),herr("redo","↷","Rehacer"),herr("sel","⬚","Elegir varios"),herr("flecha","↗","Flechas"),$("salir"));
+  $("btn-menu").before(ex);
+  ex.addEventListener("click",e=>{const b=e.target.closest("[data-mm]");if(!b)return;const m=b.dataset.mm;if(m==="undo")deshacerUI(false);else if(m==="redo")deshacerUI(true);else lzMain.setModo(lzMain.modo===m?null:m)})}
+$("buscar").placeholder="Buscar en todo…";
+document.addEventListener("keydown",e=>{if(e.key!=="Escape"||!document.body.classList.contains("barra-abierta"))return;const a=document.activeElement;if(a&&a!==$("buscar")&&escribiendo())return;if(a===$("buscar"))a.blur();$("btn-menu").click()});
 function pintarChipBusca(){const c=$("chip-busca"),v=q.trim();c.hidden=!v;c.textContent=v?`“${v}” ×`:""}
 $("buscar").addEventListener("input",pintarChipBusca);
 $("chip-busca").onclick=()=>{$("buscar").value="";q="";pintarMain();pintarChipBusca()};
-$("buscar").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("panel-menu").hidden=true}});
+$("buscar").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("buscar").blur()}});
 /* ---------- Menú del celular ---------- */
 try{if(matchMedia("(pointer:coarse)").matches&&Math.min(screen.width,screen.height)<600)document.body.classList.add("es-celu")}catch(_){}
 function pintarMenu(){const p=$("panel-menu");p.querySelector('[data-ir="mezclar"]').disabled=$("mezclar").disabled;
   const o=document.querySelector('#vistaseg .seg[aria-pressed="true"]')?.dataset.o;p.querySelectorAll("[data-o2]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.o2===o));p.querySelector(".menu-orden").hidden=$("vistaseg").hidden}
-$("btn-menu").onclick=()=>{const p=$("panel-menu");p.hidden=!p.hidden;if(!p.hidden){pintarMenu();if(!enDiario&&matchMedia("(hover:hover)").matches)setTimeout(()=>$("buscar").focus(),30)}};
+$("btn-menu").onclick=()=>{const on=document.body.classList.toggle("barra-abierta");$("btn-menu").textContent=on?"×":"•••";$("btn-menu").setAttribute("aria-expanded",on);
+  if(on&&!enDiario&&matchMedia("(hover:hover)").matches)setTimeout(()=>$("buscar").focus(),30);requestAnimationFrame(()=>{if(enDiario)ajustarDiario()})};
 document.addEventListener("pointerdown",e=>{const p=$("panel-menu");if(!p.hidden&&!p.contains(e.target)&&!e.target.closest("#btn-menu"))p.hidden=true},true);
 document.querySelectorAll("#detalle .tool[data-mh]").forEach(b=>b.onclick=()=>{const m=b.dataset.mh;if(m==="undo"){deshacerUI(false);return}if(m==="redo"){deshacerUI(true);return}lzHoja.setModo(lzHoja.modo===m?null:m)});
 $("panel-menu").addEventListener("click",e=>{const mm=e.target.closest("[data-mm]");if(mm){const m=mm.dataset.mm;$("panel-menu").hidden=true;if(m==="undo")deshacerUI(false);else if(m==="redo")deshacerUI(true);else lzMain.setModo(lzMain.modo===m?null:m);return}
