@@ -20,7 +20,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@500;600&family=IBM+Plex+Mono:wght@500&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap">
 <style>
 /* Plancha de corte infinita (verde o azul): se hace zoom con la rueda o pellizcando, se arrastra el fondo para moverse, y los post-its e imágenes se acomodan a mano. Cada post-it abre su propia plancha. Look único elegido a propósito. */
-:root{
+:root{--rl:32px;
   --mat:#1f6b4a; --mat-minor:rgba(190,235,190,.22); --mat-major:rgba(210,245,200,.5); --mat-diag:rgba(210,245,200,.16);
   --ink:#2b2520; --muted:#5b4a3a; --paper:#fffdf6; --chip-bg:rgba(255,253,246,.92); --soft:rgba(43,37,32,.6);
   --p-corto:#ffe76a; --p-largo:#ffb3cf; --p-obra:#ffc36b; --p-serie:#a9e6b8; --p-negocio:#a8d8ff; --p-otro:#fff4a8; --p-frase:#ffffff;
@@ -441,14 +441,14 @@ body.es-celu>.lateral [data-m="lapiz"]{display:none}
 /* Diario */
 body.en-diario #vp-main,body.en-diario .composer,body.en-diario>.lateral,body.en-diario>.lapiz-menu,body.en-diario>.barra-sel,body.en-diario>.volver-centro,body.en-diario #zoom-main,body.en-diario #mezclar,body.en-diario #btn-cal,body.en-diario #btn-tiempo,body.en-diario #vistaseg,body.en-diario #buscar{display:none!important}
 .diario{--margen:72px;position:fixed;inset:0;z-index:5;overflow-y:auto;overflow-x:hidden;padding:96px clamp(16px,4vw,56px) 160px calc(var(--margen) + clamp(20px,3vw,40px));-webkit-overflow-scrolling:touch;color:var(--ink);
-  background-color:#f8f3e6;background-image:linear-gradient(90deg,transparent calc(var(--margen) - 1px),rgba(226,59,59,.55) calc(var(--margen) - 1px) var(--margen),transparent var(--margen)),repeating-linear-gradient(transparent 0 31px,rgba(70,110,170,.24) 31px 32px),url("textura-papel.jpg");
-  background-size:auto,auto,100% auto;background-repeat:no-repeat,repeat,repeat-y;background-blend-mode:normal,normal,multiply;background-attachment:local}
-.dia-feed{display:grid;grid-template-columns:minmax(0,1fr);gap:32px}
-.dpag-cab{height:64px;display:flex;align-items:flex-end;gap:10px;padding-bottom:8px}
+  background-color:#f8f3e6;background-image:linear-gradient(90deg,transparent calc(var(--margen) - 1px),rgba(226,59,59,.55) calc(var(--margen) - 1px) var(--margen),transparent var(--margen)),repeating-linear-gradient(transparent 0 calc(var(--rl) - 1px),rgba(70,110,170,.24) calc(var(--rl) - 1px) var(--rl)),url("textura-papel-crema.jpg");
+  background-size:auto,auto,100% auto;background-repeat:no-repeat,repeat,repeat-y;background-attachment:local}
+.dia-feed{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--rl)}
+.dpag-cab{height:calc(var(--rl) * 2);display:flex;align-items:flex-end;gap:10px;padding-bottom:8px}
 .dpag-fecha{font:700 22px/1 var(--hand);color:var(--ink)}
 .dpag-hoy{font:600 10px var(--mono);text-transform:uppercase;letter-spacing:.12em;background:#c2462a;color:#fff;border-radius:999px;padding:4px 8px}
 .dpag-cuerpo{position:relative}
-.dpag-txt{display:block;width:100%;resize:none;overflow:hidden;border:0;background:transparent;color:var(--ink);font:500 19px/32px var(--hand);padding:0;min-height:32px;user-select:text;-webkit-user-select:text}
+.dpag-txt{display:block;width:100%;resize:none;overflow:hidden;border:0;background:transparent;color:var(--ink);font:500 var(--fdia,19px)/var(--rl) var(--hand);padding:0;min-height:var(--rl);user-select:text;-webkit-user-select:text}
 .dpag-txt:focus{outline:none}
 .dpag-txt::placeholder{color:rgba(43,37,32,.38)}
 .dpag-capa{position:absolute;inset:0;pointer-events:none}
@@ -471,14 +471,14 @@ body.en-diario #vp-main,body.en-diario .composer,body.en-diario>.lateral,body.en
 .dblq-x.sure{background:var(--danger)}
 @media (hover:none){.dblq-x{opacity:.75}}
 @media (max-width:560px){.dblq-post{width:160px!important;min-height:160px}.dblq-img{max-width:78%}.dblq-txt{width:200px!important;min-height:200px!important}}
-.marca-hora{position:fixed;z-index:7;height:32px;display:flex;align-items:center;border:0;background:none;padding:0 2px;font:600 12px var(--mono);color:#c2462a;cursor:pointer;opacity:.85}
+.marca-hora{position:fixed;z-index:7;height:var(--rl);display:flex;align-items:center;border:0;background:none;padding:0 2px;font:600 12px var(--mono);color:#c2462a;cursor:pointer;opacity:.85}
 .marca-hora:hover{opacity:1;text-decoration:underline}
 .marca-hora[hidden]{display:none}
 .dpag-horas{position:absolute;top:0;height:0;width:0}
-.dpag-hora{position:absolute;right:0;height:32px;display:flex;align-items:center;border:0;background:none;padding:0;font:600 12px var(--mono);color:#c2462a;cursor:pointer;white-space:nowrap}
+.dpag-hora{position:absolute;right:0;height:var(--rl);display:flex;align-items:center;border:0;background:none;padding:0;font:600 12px var(--mono);color:#c2462a;cursor:pointer;white-space:nowrap}
 .dpag-hora:hover{text-decoration:line-through;opacity:.7}
 @media (max-width:760px){.dpag-hora,.marca-hora{font-size:9.5px;letter-spacing:-.3px}}
-.espejo-dia{position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre-wrap;word-wrap:break-word;overflow-wrap:break-word;line-height:32px;padding:0}
+.espejo-dia{position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre-wrap;word-wrap:break-word;overflow-wrap:break-word;line-height:var(--rl);padding:0}
 .dia-herr{display:none}
 body.en-diario .dia-herr{display:flex}
 .dia-wrap{display:grid;grid-template-columns:minmax(0,1fr);gap:40px;max-width:1400px}
@@ -542,7 +542,7 @@ body.en-diario .dia-herr{display:flex}
 .vista.papel .fl-linea{stroke:var(--ink)}.vista.papel .fl-cabeza{fill:var(--ink);stroke:var(--ink)}
 .vista.papel .origen-f{outline-color:var(--ink)}
 @media (max-width:1100px){.dia-meses{grid-template-columns:repeat(4,minmax(0,1fr))}}
-@media (max-width:760px){.diario{--margen:30px;padding-right:16px;padding-left:44px}.dpag-fecha{font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dia-feed{gap:32px}.dia-meses{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 12px}.dmm-grilla{gap:2px}.dg-stats{gap:16px}.dg-stats span{width:112px;min-height:100px}.dg-stats b{font-size:2rem}.dia-muro{columns:2 130px;column-gap:16px}.dia-entrada{padding:14px 10px 10px;margin-bottom:24px}.dia-hoy-txt{font-size:17px}}
+@media (max-width:760px){:root{--rl:28px;--fdia:16px}.diario{--margen:30px;padding-right:16px;padding-left:44px}.dpag-fecha{font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dia-feed{gap:var(--rl)}.dia-meses{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 12px}.dmm-grilla{gap:2px}.dg-stats{gap:16px}.dg-stats span{width:112px;min-height:100px}.dg-stats b{font-size:2rem}.dia-muro{columns:2 130px;column-gap:16px}.dia-entrada{padding:14px 10px 10px;margin-bottom:24px}.dia-hoy-txt{font-size:17px}}
 /* Pila de Keep */
 .pila{position:absolute;width:230px;height:230px;z-index:2;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none}
 .pila-hoja{position:absolute;inset:0;background:var(--c);box-shadow:0 1px 1px rgba(0,0,0,.12),0 10px 14px -8px rgba(20,10,0,.55)}
@@ -1871,7 +1871,8 @@ const pesoDia=e=>!e?0:palabras(textoDia(e))+(e.bloques||[]).reduce((n,b)=>n+pala
 const entradaDia=k=>data.diario.find(x=>x.id===k);
 const nivelDia=e=>{const p=pesoDia(e);return !p?0:p<40?1:p<150?2:3};
 function racha(){let k=hoyDia();if(!nivelDia(entradaDia(k)))k=sumarDias(k,-1);let n=0;while(nivelDia(entradaDia(k))){n++;k=sumarDias(k,-1)}return n}
-function ajustarDiario(){const b=document.querySelector("body > .barra");if(b)$("diario").style.paddingTop=Math.ceil((b.getBoundingClientRect().bottom+8)/32)*32+"px"}
+const RL=()=>parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--rl"))||32;
+function ajustarDiario(){const b=document.querySelector("body > .barra");if(b)$("diario").style.paddingTop=Math.ceil((b.getBoundingClientRect().bottom+8)/RL())*RL()+"px"}
 window.addEventListener("resize",()=>{if(enDiario)ajustarDiario()});
 function entrarDiario(){
   if(lzMain.modo)lzMain.setModo(null);selLimpiar(lzMain);for(const pnl of ["panel-cal","panel-mezcla","panel-cats","panel-keep","panel-menu"])$(pnl).hidden=true;
@@ -2041,7 +2042,7 @@ function moverHoras(p,viejo,nuevo){const hs=p.e.horas;if(!hs||!hs.length||viejo=
 function pintarHoras(p){const hs=p.e.horas||[],cont=p.horasEl;if(!hs.length){cont.replaceChildren();return}
   const F=filasDe(p.ta),c=$("diario"),margen=c.getBoundingClientRect().left+(parseFloat(getComputedStyle(c).getPropertyValue("--margen"))||72);
   cont.style.left=(margen-p.cuerpo.getBoundingClientRect().left-(innerWidth<=760?3:8))+"px";cont.replaceChildren();
-  for(const x of hs){const fila=x.l<F.lineas.length?F.tops[x.l]:F.total+(x.l-F.lineas.length);const b=el("button","dpag-hora",x.h);b.type="button";b.title="Sacar esta hora";b.style.top=fila*32+"px";
+  for(const x of hs){const fila=x.l<F.lineas.length?F.tops[x.l]:F.total+(x.l-F.lineas.length);const b=el("button","dpag-hora",x.h);b.type="button";b.title="Sacar esta hora";b.style.top=fila*RL()+"px";
     b.onpointerdown=e=>e.preventDefault();b.onclick=()=>{p.e.horas=p.e.horas.filter(y=>y!==x);pintarHoras(p);guardarDiaFeed(p)};cont.append(b)}}
 function crearPagina(k){const e=entradaLocal(k),hoy=k===hoyDia();
   const sec=el("section","dpag"+(hoy?" hoy":""));sec.dataset.k=k;const cab=el("header","dpag-cab");cab.append(el("span","dpag-fecha",fechaLarga(k)));if(hoy)cab.append(el("span","dpag-hoy","Hoy"));
@@ -2053,15 +2054,15 @@ function crearPagina(k){const e=entradaLocal(k),hoy=k===hoyDia();
 function refrescarPagina(p,forzar){if(!forzar&&(feed.pend.has(p.k)||p.el.contains(document.activeElement)))return;
   const srv=entradaDia(p.k);const sig=srv?firmaDia(srv):firmaDia({texto:"",bloques:[]});if(sig===p.sig)return;
   p.e=entradaLocal(p.k);p.sig=sig;p.ta.value=p.e.texto;pintarBloquesPag(p);ajustarPagina(p)}
-function ajustarPagina(p){const ta=p.ta;ta.style.height="auto";ta.style.height=Math.max(32,Math.ceil(ta.scrollHeight/32)*32)+"px";
+function ajustarPagina(p){const ta=p.ta;ta.style.height="auto";const rl=RL();ta.style.height=Math.max(rl,Math.ceil(ta.scrollHeight/rl)*rl)+"px";
   const W=p.cuerpo.clientWidth||ANCHO_REF;let h=ta.offsetHeight;
-  if(p.k===hoyDia()){const c=$("diario"),cs=getComputedStyle(c);h=Math.max(h,c.clientHeight-(parseFloat(cs.paddingTop)||96)-(parseFloat(cs.paddingBottom)||160)-64-8)}
+  if(p.k===hoyDia()){const c=$("diario"),cs=getComputedStyle(c);h=Math.max(h,c.clientHeight-(parseFloat(cs.paddingTop)||96)-(parseFloat(cs.paddingBottom)||160)-2*rl-8)}
   const angosto=W<560;let piso=ta.offsetHeight+24;
   const ns=[...p.capa.children].sort((a,b)=>(a._b.y||0)-(b._b.y||0));
   for(const n of ns){if(!n.classList.contains("arrastrando")){const b=n._b,fx=typeof b.fx==="number"?b.fx:(b.x||0)/ANCHO_REF;n.style.left=Math.max(0,Math.min(W-n.offsetWidth,fx*W))+"px";
       if(angosto){const y=Math.max(b.y||0,piso);n.style.top=y+"px";piso=y+n.offsetHeight+28}else n.style.top=(b.y||0)+"px"}
     h=Math.max(h,(parseFloat(n.style.top)||0)+n.offsetHeight+24)}
-  p.cuerpo.style.minHeight=Math.ceil(h/32)*32+"px";pintarHoras(p)}
+  p.cuerpo.style.minHeight=Math.ceil(h/rl)*rl+"px";pintarHoras(p)}
 function guardarDiaFeed(p){clearTimeout(feed.pend.get(p.k));feed.pend.set(p.k,setTimeout(()=>guardarDiaYaFeed(p),700))}
 function guardarDiaYaFeed(p){const k=p.k;if(!feed.pend.has(k))return;clearTimeout(feed.pend.get(k));feed.pend.delete(k);if(!colDiario||!diarioCargado)return;
   const doc={texto:p.e.texto||"",bloques:p.e.bloques||[],horas:p.e.horas||[]};p.sig=firmaDia(doc);const srv=entradaDia(k);
@@ -2119,18 +2120,18 @@ const marcaHora=el("button","marca-hora");marcaHora.type="button";marcaHora.hidd
 const espejo=el("div","espejo-dia");document.body.append(espejo);let cacheFilas=null,marcaDest=null;
 function filasDe(ta){const v=ta.value,w=ta.clientWidth,key=v.length+"|"+w+"|"+v.slice(-40)+v.slice(0,40);if(cacheFilas&&cacheFilas.ta===ta&&cacheFilas.key===key)return cacheFilas;
   const cs=getComputedStyle(ta);espejo.style.width=w+"px";espejo.style.font=cs.font;espejo.style.letterSpacing=cs.letterSpacing;
-  const lineas=v.split("\n"),tops=[];let fila=0;for(const l of lineas){tops.push(fila);espejo.textContent=l||" ";fila+=Math.max(1,Math.round(espejo.offsetHeight/32))}
+  const lineas=v.split("\n"),tops=[];let fila=0;for(const l of lineas){tops.push(fila);espejo.textContent=l||" ";fila+=Math.max(1,Math.round(espejo.offsetHeight/RL()))}
   return cacheFilas={ta,key,lineas,tops,total:fila}}
 const horaAhora=()=>{const f=new Date();return pad(f.getHours())+":"+pad(f.getMinutes())};
 function ubicarMarca(e){if(!enDiario||e.target.closest&&e.target.closest(".dblq,.marca-hora"))return e.target.closest&&e.target.closest(".marca-hora")?null:ocultarMarca();
   const p=feed.pags.get(hoyDia());if(!p)return ocultarMarca();const c=$("diario"),cr=c.getBoundingClientRect(),margen=cr.left+(parseFloat(getComputedStyle(c).getPropertyValue("--margen"))||72),
     r=p.cuerpo.getBoundingClientRect(),tx=r.left;
   if(e.clientX<margen-(innerWidth<=760?30:64)||e.clientX>tx+8||e.clientY<r.top||e.clientY>r.bottom)return ocultarMarca();
-  const fila=Math.floor((e.clientY-r.top)/32),F=filasDe(p.ta);let linea;
+  const rl=RL(),fila=Math.floor((e.clientY-r.top)/rl),F=filasDe(p.ta);let linea;
   if(fila<F.total){linea=F.tops.indexOf(fila);if(linea<0)return ocultarMarca()}
   else linea=F.lineas.length+(fila-F.total);
   if((p.e.horas||[]).some(x=>x.l===linea))return ocultarMarca();
-  marcaDest={p,linea};marcaHora.textContent=horaAhora();marcaHora.style.top=(r.top+fila*32)+"px";marcaHora.hidden=false;marcaHora.style.left=Math.max(1,margen-(innerWidth<=760?3:8)-marcaHora.offsetWidth)+"px"}
+  marcaDest={p,linea};marcaHora.textContent=horaAhora();marcaHora.style.top=(r.top+fila*rl)+"px";marcaHora.hidden=false;marcaHora.style.left=Math.max(1,margen-(innerWidth<=760?3:8)-marcaHora.offsetWidth)+"px"}
 function ocultarMarca(){marcaHora.hidden=true;marcaDest=null}
 $("diario").addEventListener("pointermove",e=>{if(e.pointerType==="mouse")ubicarMarca(e)});
 $("diario").addEventListener("pointerdown",e=>{if(e.pointerType!=="mouse")ubicarMarca(e)});
