@@ -132,6 +132,15 @@ textarea::placeholder,input::placeholder{color:rgba(43,37,32,.45)}
 @media (hover:hover){.nota:hover .x-del{opacity:1}.nota .x-del:hover{background:rgba(43,37,32,.2);color:var(--ink)}}
 .nota.msel .x-del{opacity:1}
 .nota .x-del.sure{opacity:1;padding:0 9px;background:var(--danger);color:#fff;font-size:11.5px}
+.nota.inline{z-index:60!important;cursor:auto;transform:none;box-shadow:0 0 0 3px var(--paper),0 18px 30px -12px rgba(0,0,0,.6)}
+.nota.inline:hover{transform:none}
+.nota.inline textarea{width:100%;height:100%;resize:none;border:0;background:transparent;font:500 17px/1.28 var(--hand);color:var(--ink);padding:0;user-select:text;-webkit-user-select:text;touch-action:auto}
+.nota.inline textarea:focus{outline:none}
+.nota.inline textarea::placeholder{color:rgba(43,37,32,.45)}
+.nota.fantasma{z-index:60!important;pointer-events:none;transform:rotate(var(--r)) scale(1.07);transition:none;box-shadow:0 2px 2px rgba(0,0,0,.12),0 34px 40px -14px rgba(20,10,0,.6)}
+.capa-pegar{position:fixed;inset:0;z-index:25;cursor:grabbing;touch-action:none}
+.aviso-pegar{position:fixed;z-index:26;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 62px);background:var(--ink);color:var(--paper);font:600 .85rem var(--ui);padding:9px 16px;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.35);white-space:nowrap;pointer-events:none}
+@media (prefers-reduced-motion:no-preference){.nota.pegado{animation:pegar .55s cubic-bezier(.2,.9,.3,1.2)}@keyframes pegar{0%{transform:rotate(var(--r)) scale(1.08);box-shadow:0 2px 2px rgba(0,0,0,.12),0 34px 40px -14px rgba(20,10,0,.6)}60%{transform:rotate(var(--r)) scale(.98)}100%{transform:rotate(var(--r)) scale(1)}}}
 .volver-centro{position:fixed;z-index:12;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 74px);box-shadow:0 4px 14px rgba(0,0,0,.35)}
 .btexto{background:transparent}
 .btexto .grip{height:18px;opacity:0;transition:opacity .15s;background:repeating-linear-gradient(90deg,rgba(255,253,246,.55) 0 2px,transparent 2px 6px) center/36px 6px no-repeat;border:0}
@@ -697,7 +706,7 @@ class Lienzo{
         if(Math.abs(m.x1-m.x0)+Math.abs(m.y1-m.y0)<6){if(!m.add)selLimpiar(this);if(this.onBgTap)this.onBgTap(e);return}
         const a=this.aMundo(Math.min(m.x0,m.x1),Math.min(m.y0,m.y1)),b=this.aMundo(Math.max(m.x0,m.x1),Math.max(m.y0,m.y1));
         this.onSeleccion({x:a.x,y:a.y,w:b.x-a.x,h:b.y-a.y},m.add);return}
-      if(this.pan){const tap=!this.pan.mov&&e.type==="pointerup";this.pan=null;vp.classList.remove("paneando");if(tap){if(this.sel.size)selLimpiar(this);if(this.onBgTap)this.onBgTap(e)}}};
+      if(this.pan){const tap=!this.pan.mov&&e.type==="pointerup";this.pan=null;vp.classList.remove("paneando");if(tap){if(this.sel.size)selLimpiar(this);if(this.onBgTap)this.onBgTap(e);const ahora=Date.now(),u=this._tap;if(u&&ahora-u.t<380&&Math.hypot(e.clientX-u.x,e.clientY-u.y)<30){this._tap=null;if(this.onBgDoble)this.onBgDoble(e)}else this._tap={t:ahora,x:e.clientX,y:e.clientY}}}};
     vp.addEventListener("pointerup",fin);vp.addEventListener("pointercancel",fin);
     this.zoomUI&&this.zoomUI.addEventListener("click",e=>{const z=e.target.closest("[data-z]")?.dataset.z;if(z==="in")this.zoomCentro(1.25);if(z==="out")this.zoomCentro(.8);if(z==="fit")this.encuadrar(this.limites&&this.limites());if(z==="sel"){this.modoSel=!this.modoSel;e.target.closest("[data-z]").setAttribute("aria-pressed",this.modoSel);vp.classList.toggle("modo-sel",this.modoSel);if(!this.modoSel)selLimpiar(this)}});
     vp.addEventListener("dragover",e=>{if([...(e.dataTransfer?.types||[])].includes("Files")){e.preventDefault();vp.classList.add("soltando")}});
@@ -902,16 +911,57 @@ function ordenar(k,modo){
 $("abrir-composer").onclick=()=>{$("nueva").hidden=false;document.querySelector(".comp-btns").hidden=true;$("texto").focus()};
 $("cerrar-composer").onclick=()=>{$("nueva").hidden=true;document.querySelector(".comp-btns").hidden=false};
 $("texto").addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.metaKey||e.ctrlKey)){e.preventDefault();$("nueva").requestSubmit()}});
-$("nueva").addEventListener("submit",async e=>{
-  e.preventDefault();const t=$("texto").value.trim();if(!t)return;const c=cols[vista];if(!c){toast("No hay conexión con la base. Recargá la página.");return}
-  $("guardar").disabled=true;const numero=data[vista].reduce((m,i)=>Math.max(m,i.numero||0),0)+1;const ce=lzMain.centro();
-  const x=Math.round(ce.x-100+(Math.random()*40-20)),y=Math.round(ce.y-100+(Math.random()*40-20));
-  const body=vista==="ideas"?{texto:t,tipo:tipoNueva,creado:Date.now(),numero,x,y}:{texto:t,autor:$("autor").value.trim(),creado:Date.now(),numero,x,y};
-  try{fijarSinPosicion(vista);const ref=await c.add(body);$("texto").value="";$("autor").value="";$("nueva").hidden=true;document.querySelector(".comp-btns").hidden=false;
-    setTimeout(()=>{const n=nodosNota.get(vista+":"+ref.id);if(n){n.classList.add("lit");setTimeout(()=>n.classList.remove("lit"),1800)}},300)}
-  catch(err){toast(err&&err.code==="quota_exceeded"?"La plancha está llena. Despegá algo viejo.":"No se pudo pegar. Probá de nuevo.")}
-  $("guardar").disabled=false;
+$("nueva").addEventListener("submit",e=>{
+  e.preventDefault();const t=$("texto").value.trim();if(!t)return;if(!cols[vista]){toast("No hay conexión con la base. Recargá la página.");return}
+  const numero=data[vista].reduce((m,i)=>Math.max(m,i.numero||0),0)+1;
+  const body=vista==="ideas"?{texto:t,tipo:tipoNueva,creado:Date.now(),numero}:{texto:t,autor:$("autor").value.trim(),creado:Date.now(),numero};
+  $("texto").value="";$("autor").value="";$("nueva").hidden=true;document.querySelector(".comp-btns").hidden=false;
+  arrastrarParaPegar(vista,body);
 });
+/* Pegar a mano: el post-it nuevo sigue al mouse o al dedo y se pega donde lo soltás */
+function animarPegado(k,id){const n=nodosNota.get(k+":"+id);if(!n)return;n.classList.add("pegado");setTimeout(()=>n.classList.remove("pegado"),700)}
+async function pegarEn(k,body,x,y){
+  body.x=Math.round(x);body.y=Math.round(y);fijarSinPosicion(k);
+  try{const ref=await cols[k].add(body);animarPegado(k,ref.id)}
+  catch(err){toast(err&&err.code==="quota_exceeded"?"La plancha está llena. Despegá algo viejo.":"No se pudo pegar. Probá de nuevo.")}
+}
+function arrastrarParaPegar(k,body){
+  const esIdea=k==="ideas";
+  const g=el("div","nota fantasma"+(esIdea?"":" frase"));g.style.setProperty("--c",esIdea?cat(body.tipo).color:"#ffffff");g.style.setProperty("--r","-2deg");
+  const m=el("div","meta");m.append(el("span",null,`#${body.numero}${esIdea?" · "+label(body.tipo):""}`),el("span"));
+  const cu=el("div","cuerpo");cu.append(el("p","txt",esIdea?body.texto:`“${body.texto}”`));g.append(m,cu,el("div","extra"));
+  $("capa-main").append(g);
+  let wp={x:0,y:0};const pos=(cx,cy)=>{const p=lzMain.aMundo(cx,cy);wp={x:p.x-100,y:p.y-70};g.style.left=wp.x+"px";g.style.top=wp.y+"px"};
+  const r=lzMain.rect();pos(r.left+r.width/2,r.top+r.height/2);
+  const capa=el("div","capa-pegar");document.body.append(capa);
+  const aviso=el("div","aviso-pegar","Llevalo a donde quieras y soltalo · Esc para cancelar");document.body.append(aviso);
+  let abajo=false,listo=false;
+  capa.addEventListener("pointermove",e=>{if(e.pointerType==="mouse"||abajo)pos(e.clientX,e.clientY)});
+  capa.addEventListener("pointerdown",e=>{abajo=true;try{capa.setPointerCapture(e.pointerId)}catch(_){}pos(e.clientX,e.clientY)});
+  capa.addEventListener("pointerup",e=>{if(!abajo)return;pos(e.clientX,e.clientY);terminar(true)});
+  capa.addEventListener("wheel",e=>{e.preventDefault();lzMain.zoomEn(Math.exp(-(e.deltaMode===1?e.deltaY*16:e.deltaY)*0.0016),e.clientX,e.clientY);pos(e.clientX,e.clientY)},{passive:false});
+  const tecla=e=>{if(e.key==="Escape"){e.preventDefault();e.stopImmediatePropagation();terminar(false)}};document.addEventListener("keydown",tecla,true);
+  function terminar(ok){if(listo)return;listo=true;capa.remove();aviso.remove();g.remove();document.removeEventListener("keydown",tecla,true);
+    if(!ok){$("texto").value=body.texto;if(body.autor)$("autor").value=body.autor;$("nueva").hidden=false;document.querySelector(".comp-btns").hidden=true;$("texto").focus();return}
+    pegarEn(k,body,wp.x,wp.y)}
+}
+/* Doble clic (o doble toque) en el fondo: escribir un post-it ahí mismo */
+function crearAhi(x,y){
+  document.querySelector(".nota.inline")?.remove();
+  const k=vista,esIdea=k==="ideas";if(!cols[k])return;
+  const c=el("div","nota inline"+(esIdea?"":" frase"));c.style.left=x+"px";c.style.top=y+"px";c.style.setProperty("--c",esIdea?cat(tipoNueva).color:"#ffffff");c.style.setProperty("--r","0deg");
+  const m=el("div","meta");m.append(el("span",null,esIdea?"Nueva idea":"Nueva frase"),el("span",null,esIdea?label(tipoNueva):""));
+  const t=el("textarea");t.placeholder=esIdea?"¿Qué se te ocurrió?":"La frase, tal cual";t.setAttribute("aria-label",esIdea?"Nueva idea":"Nueva frase");
+  c.append(m,t,el("div","extra","Enter para pegar · Esc para cancelar"));$("capa-main").append(c);
+  c.addEventListener("pointerdown",e=>e.stopPropagation());c.addEventListener("dblclick",e=>e.stopPropagation());
+  let hecho=false;
+  const crear=()=>{if(hecho)return;hecho=true;const v=t.value.trim();c.remove();if(!v)return;
+    const numero=data[k].reduce((mx,i)=>Math.max(mx,i.numero||0),0)+1;
+    pegarEn(k,esIdea?{texto:v,tipo:tipoNueva,creado:Date.now(),numero}:{texto:v,autor:"",creado:Date.now(),numero},x,y)};
+  t.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();crear()}else if(e.key==="Escape"){e.preventDefault();e.stopPropagation();hecho=true;c.remove()}});
+  t.addEventListener("blur",()=>setTimeout(crear,120));
+  requestAnimationFrame(()=>t.focus());
+}
 
 /* ---------- Imágenes ---------- */
 let destinoArchivo=null;
@@ -1017,6 +1067,8 @@ function nodoBloque(b){
   return n;
 }
 function agregarBloque(b){abierto.doc.bloques.push(b);selB=b.id;document.querySelectorAll("#capa-hoja .pieza").forEach(x=>x.classList.remove("sel"));const n=nodoBloque(b);$("capa-hoja").append(n);guardarBloques();return n}
+lzMain.onBgDoble=e=>{const p=lzMain.aMundo(e.clientX,e.clientY);crearAhi(Math.round(p.x-100),Math.round(p.y-40))};
+lzHoja.onBgDoble=e=>{if(!abierto)return;const p=lzHoja.aMundo(e.clientX,e.clientY);const n=agregarBloque({id:bid(),t:"post",v:"",c:PALETA[Math.floor(Math.random()*8)],x:Math.round(p.x-100),y:Math.round(p.y-30)});requestAnimationFrame(()=>n.querySelector("textarea")?.focus())};
 lzHoja.onBgTap=()=>{selB=null;borrarB=null;selHilo=null;document.querySelectorAll("#capa-hoja .pieza").forEach(x=>x.classList.remove("sel"));pintarHilos()};
 lzHoja.limites=()=>{if(!abierto)return null;const pts=[{x:0,y:0,w:400,h:300},...abierto.doc.bloques.map(b=>({x:b.x,y:b.y,w:b.t==="esc"?anchoEsc(b):(b.w||300),h:b.t==="img"?(b.w||300):b.t==="post"?200:b.t==="cal"?340:b.t==="esc"?altoEsc(b):160}))];
   const x=Math.min(...pts.map(p=>p.x)),y=Math.min(...pts.map(p=>p.y));return {x,y,w:Math.max(...pts.map(p=>p.x+p.w))-x,h:Math.max(...pts.map(p=>p.y+p.h))-y}};
