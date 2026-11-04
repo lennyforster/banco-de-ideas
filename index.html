@@ -150,9 +150,9 @@ textarea::placeholder,input::placeholder{color:rgba(43,37,32,.45)}
 .btexto textarea{display:block;width:100%;resize:none;overflow:hidden;border:0;background:transparent;color:var(--paper);font:600 22px/1.3 var(--hand);padding:2px 4px;text-shadow:0 1px 2px rgba(0,0,0,.35);user-select:text;-webkit-user-select:text;touch-action:auto}
 .btexto textarea:focus{outline:1px dashed rgba(255,253,246,.5);outline-offset:2px}
 .btexto textarea::placeholder{color:rgba(255,253,246,.55)}
-.btxt{background:var(--paper);box-shadow:0 1px 1px rgba(0,0,0,.1),0 10px 16px -8px rgba(0,0,0,.45);transform:rotate(var(--r,0deg))}
+.btxt{display:flex;flex-direction:column;background:var(--paper);box-shadow:0 1px 1px rgba(0,0,0,.1),0 10px 16px -8px rgba(0,0,0,.45);transform:rotate(var(--r,0deg))}
 .grip{height:22px;cursor:grab;background:repeating-linear-gradient(90deg,rgba(43,37,32,.18) 0 2px,transparent 2px 6px) center/36px 6px no-repeat;border-bottom:1px dashed rgba(43,37,32,.15)}
-.btxt textarea{display:block;width:100%;resize:none;overflow:hidden;border:0;background:transparent;color:var(--ink);font:500 17px/1.45 var(--hand);padding:10px 14px 14px;user-select:text;-webkit-user-select:text;touch-action:auto}
+.btxt textarea{flex:1;display:block;width:100%;resize:none;overflow:hidden;border:0;background:transparent;color:var(--ink);font:500 17px/1.45 var(--hand);padding:10px 14px 14px;user-select:text;-webkit-user-select:text;touch-action:auto}
 .blink{cursor:grab;background:var(--paper);border-radius:8px;padding:12px 14px;display:grid;gap:4px;box-shadow:0 1px 1px rgba(0,0,0,.1),0 10px 16px -8px rgba(0,0,0,.45)}
 .blink b{font:600 16px var(--ui);color:var(--link);overflow-wrap:anywhere}
 .blink span{font:500 11px var(--mono);color:var(--soft);overflow-wrap:anywhere}
@@ -312,53 +312,75 @@ body.modo-hilo #vp-hoja textarea,body.modo-hilo #vp-hoja input{pointer-events:no
 .lm-c[aria-pressed="true"] i{box-shadow:0 0 0 2px var(--paper),0 0 0 4px var(--ink)}
 .lm-g i{display:block;border-radius:50%;background:var(--c);box-shadow:0 0 0 1px rgba(43,37,32,.3)}
 .lm-goma[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+/* Celular */
+#btn-menu{display:none}
+.menu-lista{display:grid;gap:4px}
+.menu-it{border:0;background:rgba(43,37,32,.06);border-radius:10px;padding:13px 14px;text-align:left;font:600 .95rem var(--ui);color:var(--ink);cursor:pointer}
+.menu-it.suave{background:none;color:var(--soft);font-weight:500}
+.menu-it:disabled{opacity:.45}
+.menu-orden{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 4px 6px 14px;font:600 .95rem var(--ui);color:var(--ink)}
+.menu-orden .grupo{box-shadow:none;background:rgba(43,37,32,.06)}
+.menu-orden .seg[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+body.en-diario .menu-it:not([data-ir="salir"]),body.en-diario .menu-orden{display:none}
+.btn:focus:not(:focus-visible),.tool:focus:not(:focus-visible),.lat:focus:not(:focus-visible){outline:none}
+@media (max-width:560px){
+  #btn-menu{display:inline-block;padding:9px 13px;letter-spacing:.08em}
+  #mezclar,#btn-cal,#btn-tiempo,#vistaseg,#salir{display:none!important}
+  .barra .buscar{order:5;flex:1 1 100%;width:auto}
+  .tab{padding:7px 11px}
+  .lateral{padding:4px}.lat{width:32px;height:32px}
+  #detalle .barra .grupo:has(.titulo-hoja){display:none}
+}
+body.es-celu>.lateral [data-m="lapiz"]{display:none}
+/* Muchos post-its: dibujar menos cuando estás lejos */
+.vista.lejos .nota{box-shadow:0 1px 2px rgba(0,0,0,.28);background-image:none;transition:none}
+.vista.lejos .nota::before{display:none}
+.fuera{display:none!important}
 /* Diario */
 body.en-diario #vp-main,body.en-diario .composer,body.en-diario>.lateral,body.en-diario>.lapiz-menu,body.en-diario>.barra-sel,body.en-diario>.volver-centro,body.en-diario #zoom-main,body.en-diario #mezclar,body.en-diario #btn-cal,body.en-diario #btn-tiempo,body.en-diario #vistaseg,body.en-diario #buscar{display:none!important}
-.diario{position:fixed;inset:0;z-index:5;overflow-y:auto;overflow-x:hidden;background:var(--mat);padding:90px 16px 48px;-webkit-overflow-scrolling:touch;
-  background-image:linear-gradient(var(--mat-minor) 1px,transparent 1px),linear-gradient(90deg,var(--mat-minor) 1px,transparent 1px);background-size:20px 20px}
-.dia-hoja{max-width:740px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
-.dia-hoja>*{min-width:0}
-.dia-rollo{background:#17130f;border-radius:6px;padding:8px 10px 0;box-shadow:0 6px 18px rgba(0,0,0,.35)}
-.dia-rollo-cab{display:flex;align-items:center;gap:4px;color:var(--paper);font:600 .72rem var(--mono);text-transform:uppercase;letter-spacing:.08em}
-.dia-rollo-cab span{flex:1;text-align:center}
-.dia-rollo-cab button{border:0;background:none;color:var(--paper);font:600 1.1rem var(--ui);cursor:pointer;width:30px;height:30px;border-radius:50%}
-.dia-rollo-cab button:hover{background:rgba(255,253,246,.12)}.dia-rollo-cab button:disabled{opacity:.25;cursor:default}
-.dia-tira{display:flex;gap:4px;overflow-x:auto;padding:14px 2px;scrollbar-width:none;
-  background:repeating-linear-gradient(90deg,rgba(255,253,246,.75) 0 6px,transparent 6px 12px) top/100% 5px no-repeat,repeating-linear-gradient(90deg,rgba(255,253,246,.75) 0 6px,transparent 6px 12px) bottom 3px left 0/100% 5px no-repeat}
-.dia-tira::-webkit-scrollbar{display:none}
-.dia-cuadro{flex:none;width:40px;height:32px;border:0;border-radius:3px;background:#2e2822;color:rgba(255,253,246,.5);font:600 11px var(--mono);cursor:pointer;display:flex;align-items:flex-end;padding:3px 5px}
-.dia-cuadro:hover{background:#3d352d}
-.dia-cuadro.lleno{background:linear-gradient(160deg,#f6dd8a,#e0a24a);color:#3a2a14}
-.dia-cuadro.hoy{box-shadow:inset 0 0 0 1.5px rgba(255,253,246,.85)}
-.dia-cuadro[aria-current="date"]{outline:2px solid #fffdf6;outline-offset:2px}
-.dia-cuadro:disabled{opacity:.28;cursor:default}
-.dia-papel{background:var(--paper);border-radius:3px;box-shadow:0 2px 2px rgba(0,0,0,.12),0 26px 40px -18px rgba(0,0,0,.6);padding:30px 34px 24px;display:grid;gap:24px}
-.dia-cab{display:flex;align-items:center;gap:10px}
-.dia-titulo{flex:1;min-width:0}
-.dia-fecha{font:700 1.75rem/1.1 var(--hand);color:var(--ink)}
-.dia-sub{font:500 .7rem var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:5px}
-.dia-nav{flex:none;border:0;background:rgba(43,37,32,.07);width:36px;height:36px;border-radius:50%;cursor:pointer;font:600 1.15rem var(--ui);color:var(--ink)}
-.dia-nav:hover{background:rgba(43,37,32,.14)}.dia-nav:disabled{opacity:.3;cursor:default}
-.dia-hoy{flex:none;border:0;background:var(--ink);color:var(--paper);border-radius:999px;padding:8px 13px;font:600 .8rem var(--ui);cursor:pointer}
-.dia-consigna{border-left:3px solid #e23b3b;padding:2px 0 2px 14px;display:grid;gap:5px}
-.dia-consigna p{margin:0;font:400 italic 1.08rem/1.4 "Courier Prime",var(--mono);color:var(--ink)}
+.diario{position:fixed;inset:0;z-index:5;overflow-y:auto;overflow-x:hidden;padding:90px 16px 48px;-webkit-overflow-scrolling:touch;background-color:#f1e9d8;background-image:radial-gradient(rgba(43,37,32,.16) 1px,transparent 1.4px);background-size:22px 22px}
+.dia-hoja{max-width:600px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.dia-cal,.dia-hoy-card,.dia-entrada{background:#fffdf6;border-radius:16px;box-shadow:0 1px 2px rgba(60,40,20,.1),0 14px 30px -18px rgba(60,40,20,.45)}
+.dia-cal{padding:14px 16px 16px}
+.dia-cal-cab{display:flex;align-items:center;gap:6px;margin-bottom:12px}
+.dia-cal-cab span{flex:1;text-align:center;font:700 1.2rem var(--hand);color:var(--ink)}
+.dia-cal-cab button{border:0;background:rgba(43,37,32,.07);color:var(--ink);width:34px;height:34px;border-radius:50%;font:600 1.1rem var(--ui);cursor:pointer}
+.dia-cal-cab button:disabled{opacity:.3;cursor:default}
+.dia-grilla{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.dia-dow{text-align:center;font:600 .62rem var(--mono);color:var(--muted);padding-bottom:2px}
+.dia-celda{aspect-ratio:1;border:0;border-radius:10px;background:rgba(43,37,32,.05);font:600 .88rem var(--ui);color:var(--muted);cursor:pointer;padding:0;transition:transform .12s}
+.dia-celda:hover:not(:disabled){transform:scale(1.06)}
+.dia-celda.n1{background:#f7e3a8;color:#5a4318}.dia-celda.n2{background:#efc061;color:#3e2c0d}.dia-celda.n3{background:#dc8a2e;color:#fff}
+.dia-celda.hoy{box-shadow:inset 0 0 0 2px var(--ink);color:var(--ink)}
+.dia-celda.n3.hoy{box-shadow:inset 0 0 0 2px var(--ink),inset 0 0 0 4px #fffdf6}
+.dia-celda:disabled{opacity:.35;cursor:default}
+.dia-pie{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:14px;font:500 .68rem var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 .dia-lbl{font:600 .64rem var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
-.dia-otra{justify-self:start;border:0;background:none;padding:0;font:600 .75rem var(--ui);color:var(--soft);text-decoration:underline;cursor:pointer}
-.dia-tres{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.dia-campo,.dia-pagina{display:grid;gap:4px;align-content:start}
-.dia-campo textarea,.dia-pagina textarea{width:100%;resize:none;overflow:hidden;border:0;color:var(--ink);font:400 15px/28px "Courier Prime",var(--mono);padding:0 2px;
-  background:repeating-linear-gradient(transparent 0 27px,rgba(43,37,32,.15) 27px 28px);background-attachment:local;min-height:84px;user-select:text;-webkit-user-select:text}
-.dia-campo textarea:focus,.dia-pagina textarea:focus{outline:none}
-.dia-campo textarea::placeholder,.dia-pagina textarea::placeholder{color:rgba(43,37,32,.35)}
-.dia-pagina textarea{min-height:336px;padding-left:24px;
-  background:linear-gradient(90deg,transparent 12px,rgba(226,59,59,.5) 12px 13px,transparent 13px),repeating-linear-gradient(transparent 0 27px,rgba(43,37,32,.15) 27px 28px)}
-.dia-pie{display:flex;align-items:center;gap:16px;flex-wrap:wrap;font:500 .7rem var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-.dia-pie .btn{text-transform:none;letter-spacing:0}
-.dia-recuerdo{border:1px dashed rgba(255,253,246,.5);border-radius:10px;padding:14px 16px;color:var(--paper);display:grid;gap:6px;background:rgba(0,0,0,.12)}
-.dia-recuerdo .dia-lbl{color:rgba(255,253,246,.7)}
-.dia-recuerdo p{margin:0;font:400 1rem/1.45 "Courier Prime",var(--mono)}
-.dia-recuerdo .dia-otra{color:var(--paper)}
-@media (max-width:640px){.dia-tres{grid-template-columns:1fr;gap:10px}.dia-papel{padding:22px 18px 18px;gap:20px}.dia-fecha{font-size:1.35rem}.diario{padding-left:10px;padding-right:10px}}
+.dia-hoy-card{display:grid;gap:6px;text-align:left;border:0;cursor:pointer;padding:18px 18px 16px;color:var(--ink)}
+.dia-hoy-fecha{font:700 1.45rem/1.15 var(--hand)}
+.dia-hoy-txt{font:500 1rem/1.45 var(--hand);color:var(--muted);white-space:pre-line;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.dia-hoy-btn{justify-self:start;margin-top:6px;background:var(--ink);color:var(--paper);border-radius:999px;padding:9px 16px;font:600 .85rem var(--ui)}
+.dia-lista{display:grid;gap:10px}
+.dia-lista>.dia-lbl{margin:8px 4px 0}
+.dia-entrada{display:flex;gap:12px;align-items:center;text-align:left;border:0;border-radius:12px;padding:12px 14px;cursor:pointer;color:var(--ink)}
+.de-cuerpo{flex:1;min-width:0;display:grid;gap:3px}
+.de-fecha{font:600 .66rem var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.de-txt{margin:0;font:500 .98rem/1.35 var(--hand);white-space:pre-line;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.de-extra{font:500 .72rem var(--ui);color:var(--soft)}
+.de-img{flex:none;width:62px;height:62px;object-fit:cover;border-radius:8px;background:rgba(43,37,32,.06)}
+/* Hoja del día: papel rayado en vez de la plancha verde */
+.vista.papel{background-color:#f8f3e6;background-image:linear-gradient(transparent calc(100% - 1px),rgba(70,110,170,.24) calc(100% - 1px))}
+.principal.dia{width:640px;background:transparent;box-shadow:none;padding:0;gap:0;transform:none}
+.principal.dia::before{display:none}
+.principal.dia .meta{height:64px;display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:6px;font:700 22px/1 var(--hand);color:var(--ink);text-transform:none;letter-spacing:0}
+.principal.dia .meta span:last-child{font:600 11px var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.principal.dia textarea{font:500 19px/32px var(--hand);min-height:320px}
+.vista.papel .btexto textarea{color:var(--ink);text-shadow:none}
+.vista.papel .btexto textarea::placeholder{color:rgba(43,37,32,.4)}
+.vista.papel .btexto .grip{background:repeating-linear-gradient(90deg,rgba(43,37,32,.35) 0 2px,transparent 2px 6px) center/36px 6px no-repeat}
+.vista.papel .fl-linea{stroke:var(--ink)}.vista.papel .fl-cabeza{fill:var(--ink);stroke:var(--ink)}
+.vista.papel .origen-f{outline-color:var(--ink)}
+@media (max-width:640px){.diario{padding-left:12px;padding-right:12px}.dia-grilla{gap:4px}.dia-celda{border-radius:8px;font-size:.8rem}}
 /* Línea de tiempo */
 .tiempo{position:fixed;inset:0;z-index:25;background:var(--mat);background-image:linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.18))}
 .t-cab{position:absolute;top:calc(env(safe-area-inset-top,0px) + 12px);left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));display:flex;align-items:center;gap:8px;pointer-events:none}
@@ -366,7 +388,7 @@ body.en-diario #vp-main,body.en-diario .composer,body.en-diario>.lateral,body.en
 .t-tit{font:600 .9rem var(--ui);background:var(--chip-bg);color:var(--ink);border-radius:999px;padding:9px 14px;box-shadow:0 2px 8px rgba(0,0,0,.28)}
 .t-pista{position:absolute;inset:0;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;cursor:grab}
 .t-pista.paneando{cursor:grabbing}
-.t-riel{position:relative;height:100%;min-width:100%}
+.t-riel{position:relative;height:100%;min-width:100%;background-image:linear-gradient(var(--mat-major) 1.5px,transparent 1.5px),linear-gradient(90deg,var(--mat-major) 1.5px,transparent 1.5px),linear-gradient(var(--mat-minor) 1px,transparent 1px),linear-gradient(90deg,var(--mat-minor) 1px,transparent 1px);background-size:100px 100px,100px 100px,20px 20px,20px 20px;background-position:0 50%}
 .t-linea{position:absolute;left:0;right:0;top:50%;height:3px;margin-top:-1.5px;background:rgba(255,253,246,.85);box-shadow:0 1px 3px rgba(0,0,0,.3)}
 .t-item{position:absolute;top:50%;width:0;height:0}
 .t-item.apagada{opacity:.25}
@@ -607,10 +629,21 @@ window.claude={use:async n=>{if(n==="db"){if(!listo)listo=conectar();return list
   <span class="sep"></span>
   <input type="search" class="buscar" id="buscar" placeholder="Buscar en todo…" aria-label="Buscar en todo, también adentro de los post-its">
   <button class="btn amarillo" id="mezclar" type="button">Mezclar</button>
+  <button class="btn" id="btn-menu" type="button" aria-label="Más opciones" aria-haspopup="true">•••</button>
   <button class="btn" id="salir" type="button" title="Cerrar sesión en este dispositivo">Salir</button>
   <button class="btn" id="btn-cal" type="button">Calendario</button>
   <button class="btn" id="btn-tiempo" type="button">Línea de tiempo</button>
   <div class="grupo vistaseg" id="vistaseg" role="group" aria-label="Acomodar los post-its"><button type="button" class="seg" data-o="num" aria-pressed="false">N.º</button><button type="button" class="seg" data-o="cat" aria-pressed="false">Categoría</button></div>
+</div>
+<div class="panel" id="panel-menu" hidden>
+  <div class="meta"><span>Más</span><button type="button" class="cerrar" id="cerrar-menu" aria-label="Cerrar">×</button></div>
+  <div class="menu-lista">
+    <button type="button" class="menu-it" data-ir="mezclar">Mezclar</button>
+    <button type="button" class="menu-it" data-ir="btn-cal">Calendario</button>
+    <button type="button" class="menu-it" data-ir="btn-tiempo">Línea de tiempo</button>
+    <div class="menu-orden"><span>Ordenar</span><div class="grupo"><button type="button" class="seg" data-o2="num">N.º</button><button type="button" class="seg" data-o2="cat">Categoría</button></div></div>
+    <button type="button" class="menu-it suave" data-ir="salir">Salir de esta cuenta</button>
+  </div>
 </div>
 <div class="panel" id="panel-cats" hidden>
   <div class="meta"><span>Categorías</span><button type="button" class="cerrar" id="cerrar-cats" aria-label="Cerrar">×</button></div>
@@ -655,27 +688,13 @@ window.claude={use:async n=>{if(n==="db"){if(!listo)listo=conectar();return list
 
 <section class="diario" id="diario" hidden aria-label="Diario">
   <div class="dia-hoja">
-    <div class="dia-rollo">
-      <div class="dia-rollo-cab"><button type="button" id="dia-mes-ant" aria-label="Mes anterior">‹</button><span id="dia-mes"></span><button type="button" id="dia-mes-sig" aria-label="Mes siguiente">›</button></div>
-      <div class="dia-tira" id="dia-tira"></div>
+    <div class="dia-cal">
+      <div class="dia-cal-cab"><button type="button" id="dia-mes-ant" aria-label="Mes anterior">‹</button><span id="dia-mes"></span><button type="button" id="dia-mes-sig" aria-label="Mes siguiente">›</button></div>
+      <div class="dia-grilla" id="dia-grilla"></div>
+      <div class="dia-pie"><span id="dia-racha"></span><span id="dia-total"></span></div>
     </div>
-    <article class="dia-papel">
-      <header class="dia-cab">
-        <button type="button" class="dia-nav" id="dia-ant" aria-label="Día anterior">‹</button>
-        <div class="dia-titulo"><div class="dia-fecha" id="dia-fecha"></div><div class="dia-sub" id="dia-sub"></div></div>
-        <button type="button" class="dia-nav" id="dia-sig" aria-label="Día siguiente">›</button>
-        <button type="button" class="dia-hoy" id="dia-hoy">Hoy</button>
-      </header>
-      <div class="dia-consigna"><span class="dia-lbl">Consigna del día</span><p id="dia-consigna-txt"></p><button type="button" class="dia-otra" id="dia-otra">Otra consigna</button></div>
-      <div class="dia-tres">
-        <label class="dia-campo"><span class="dia-lbl">Imagen · lo que vi</span><textarea id="dia-imagen" rows="3" placeholder="Un plano que te quedó de hoy."></textarea></label>
-        <label class="dia-campo"><span class="dia-lbl">Sonido · lo que escuché</span><textarea id="dia-sonido" rows="3" placeholder="Un ruido, una frase robada."></textarea></label>
-        <label class="dia-campo"><span class="dia-lbl">Escena · lo que imaginé</span><textarea id="dia-escena" rows="3" placeholder="Una escena, un personaje, un qué pasaría si."></textarea></label>
-      </div>
-      <label class="dia-pagina"><span class="dia-lbl">Página del día</span><textarea id="dia-texto" rows="12" placeholder="Escribí lo que quieras. Nadie corrige."></textarea></label>
-      <footer class="dia-pie"><span id="dia-palabras"></span><span id="dia-racha"></span><span class="sep"></span><button type="button" class="btn amarillo" id="dia-a-idea" title="Marcá un pedazo de texto y tocá acá">Mandar a Ideas</button></footer>
-    </article>
-    <div class="dia-recuerdo" id="dia-recuerdo" hidden></div>
+    <button type="button" class="dia-hoy-card" id="dia-hoy-card"><span class="dia-lbl">Hoy</span><span class="dia-hoy-fecha" id="dia-hoy-fecha"></span><span class="dia-hoy-txt" id="dia-hoy-txt"></span><span class="dia-hoy-btn" id="dia-hoy-btn">Escribir hoy</span></button>
+    <div class="dia-lista" id="dia-lista"></div>
   </div>
 </section>
 
@@ -706,6 +725,7 @@ window.claude={use:async n=>{if(n==="db"){if(!listo)listo=conectar();return list
     <button class="tool" id="add-cal" type="button">Calendario</button>
     <button class="tool" id="add-esc" type="button">Escaleta</button>
     <button class="tool" id="h-hilo" type="button" aria-pressed="false">Hilo rojo</button>
+    <button class="tool amarillo" id="add-a-idea" type="button" hidden title="Marcá un pedazo de texto y tocá acá">A Ideas</button>
   </div>
   <div class="panel" id="panel-mas" hidden>
     <div class="meta"><span>Esta idea</span><button type="button" class="cerrar" id="cerrar-mas" aria-label="Cerrar">×</button></div>
@@ -795,7 +815,7 @@ const hoyClave=()=>{const t=new Date();return claveDia(t.getFullYear(),t.getMont
 const ddmm=k=>{const [,m,d]=k.split("-");return `${d}.${m}`};
 function proximo(i){const h=hoyClave();let best=null;for(const b of i.bloques||[])if(b.t==="cal")for(const e of b.ev||[])if(e.d>=h&&(!best||e.d<best.d))best=e;return best}
 let hilos=[],colHilos=null,modoHilo=false,origenHilo=null,selHilo=null,previos={},dbRef=null,samp=null;
-const data={ideas:[],frases:[]},cols={ideas:null,frases:null};let decos=[],colDeco=null,assets=null;
+const data={ideas:[],frases:[],diario:[]},cols={ideas:null,frases:null,diario:null};let decos=[],colDeco=null,assets=null;
 let vista="ideas",tipoNueva="otro",q="";
 const $=id=>document.getElementById(id);
 const el=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e};
@@ -815,11 +835,13 @@ class Lienzo{
     if(v&&isFinite(v.s)){this.s=v.s;this.tx=v.tx;this.ty=v.ty;this.apply();return true}return false}
   guardar(){if(!this.clave)return;clearTimeout(this._t);this._t=setTimeout(()=>{try{localStorage.setItem("vista:"+this.clave,JSON.stringify({s:this.s,tx:this.tx,ty:this.ty}))}catch(e){}},300)}
   apply(){const s=this.s;this.capa.style.transform=`translate(${this.tx}px,${this.ty}px) scale(${s})`;this.capa.style.setProperty("--inv",1/s);
+    if(this.papel){let v=32*s;while(v<10)v*=4;this.vp.style.backgroundSize=`100% ${v}px`;this.vp.style.backgroundPosition=`0 ${this.ty}px`;
+      if(this.zoomUI)this.zoomUI.querySelector(".pct").textContent=Math.round(s*100)+"%";this.guardar();this.pedirRevision();return}
     let b=20;while(b*s<10)b*=5;const g=n=>{const v=n*b/20*s;return `${v}px ${v}px`};this.vp.style.backgroundSize=[g(400),g(400),g(100),g(100),g(20),g(20),"180px 180px"].join(",");
     const p=`${this.tx}px ${this.ty}px`;this.vp.style.backgroundPosition=[p,p,p,p,p,p,"0 0"].join(",");
     if(this.zoomUI)this.zoomUI.querySelector(".pct").textContent=Math.round(s*100)+"%";this.guardar();this.pedirRevision()}
   pintarMarco(){const m=this.marq;if(!m)return;Object.assign(m.el.style,{left:Math.min(m.x0,m.x1)+"px",top:Math.min(m.y0,m.y1)+"px",width:Math.abs(m.x1-m.x0)+"px",height:Math.abs(m.y1-m.y0)+"px"})}
-  pedirRevision(){if(this._rv)return;this._rv=requestAnimationFrame(()=>{this._rv=null;this.revisarVolver()})}
+  pedirRevision(){if(this._rv)return;this._rv=requestAnimationFrame(()=>{this._rv=null;this.revisarVolver();if(this.onVista)this.onVista()})}
   revisarVolver(){
     if(!this.limites)return;
     if(!this.volverBtn){const x=document.createElement("button");x.type="button";x.className="btn oscuro volver-centro";x.textContent="↩ Volver a los post-its";x.hidden=true;x.onclick=()=>this.encuadrar(this.limites&&this.limites());this.vp.parentElement.append(x);this.volverBtn=x}
@@ -832,8 +854,8 @@ class Lienzo{
   centro(){const r=this.rect();return this.aMundo(r.left+r.width/2,r.top+r.height/2)}
   zoomEn(f,cx,cy){const r=this.rect();const ns=Math.min(50,Math.max(.12,this.s*f));const k=ns/this.s;const px=cx-r.left,py=cy-r.top;this.tx=px-(px-this.tx)*k;this.ty=py-(py-this.ty)*k;this.s=ns;this.apply()}
   zoomCentro(f){const r=this.rect();this.zoomEn(f,r.left+r.width/2,r.top+r.height/2)}
-  encuadrar(b){if(!b)return;const r=this.rect();const w=Math.max(b.w,200),h=Math.max(b.h,200);const top=80,pad=40;
-    const s=Math.min(1.1,Math.max(.12,Math.min((r.width-pad*2)/w,(r.height-top-pad*2)/h)));this.s=s;this.tx=r.width/2-(b.x+b.w/2)*s;this.ty=top/2+r.height/2-(b.y+b.h/2)*s;this.apply()}
+  encuadrar(b){if(!b)return;const r=this.rect();const w=Math.max(b.w,200),h=Math.max(b.h,200);const top=80,pad=40,izq=r.width<700?52:0;
+    const s=Math.min(1.1,Math.max(.12,Math.min((r.width-pad*2-izq)/w,(r.height-top-pad*2)/h)));this.s=s;this.tx=izq+(r.width-izq)/2-(b.x+b.w/2)*s;this.ty=top/2+r.height/2-(b.y+b.h/2)*s;this.apply()}
   centrarEn(x,y,s){const r=this.rect();if(s)this.s=s;this.tx=r.width/2-x*this.s;this.ty=r.height/2-y*this.s;this.apply()}
   bind(){
     const vp=this.vp;
@@ -952,6 +974,8 @@ function nodoNota(k,i){
 function pintarNota(c,k,i,p){
   const esIdea=k==="ideas";
   if(!c.classList.contains("arrastrando")){c.style.left=p.x+"px";c.style.top=p.y+"px"}
+  const px0=proximo(i),firma=[i.numero,i.tipo,esIdea?label(i.tipo):"",colorDe(k,i),i.texto,i.autor,i.creado,i.estado,px0?px0.d+px0.t:"",resumenExtra(i),coincide(i),modoHilo&&origenHilo===i.id].join("\u0001");
+  if(c._firma===firma)return;c._firma=firma;
   c.style.zIndex=2;c.style.setProperty("--c",colorDe(k,i));c.style.setProperty("--r",giro(i.id)+"deg");
   c.setAttribute("aria-label",`Abrir ${esIdea?"idea":"frase"} ${i.numero||""}`);
   c.children[0].replaceChildren(el("span",null,`#${i.numero||"?"}${esIdea?" · "+label(i.tipo):""}`),el("span",null,i.creado?new Date(i.creado).toLocaleDateString("es-AR",{day:"2-digit",month:"2-digit"}).replace(/\//g,"."):""));
@@ -988,7 +1012,7 @@ function pintarMain(){
     n.classList.toggle("sel",selDeco===d.id);n._capa.textContent=d.arriba?"Mandar atrás":"Traer adelante";n._quitar.textContent=borrarDeco===d.id?"¿Seguro?":"Quitar";n._capa.hidden=false}
   for(const [id,n] of nodosDeco)if(!vivasD.has(id)){n.remove();nodosDeco.delete(id)}
   $("mezclar").disabled=data.ideas.length+data.frases.length<2;
-  pedirFlechas();lzMain.pedirRevision();
+  pedirFlechas();limCache=null;lzMain.pedirRevision();
 }
 async function borrarDePlancha(nodos){
   for(const n of nodos){
@@ -1003,10 +1027,17 @@ document.addEventListener("keydown",e=>{if(escribiendo())return;const lz=abierto
   if(e.key==="Escape"){selLimpiar(lz);e.preventDefault();e.stopImmediatePropagation()}
   else if(e.key==="Delete"||e.key==="Backspace"){lz._bsBorrar&&lz._bsBorrar.click();e.preventDefault();e.stopImmediatePropagation()}},true);
 lzMain.onBgTap=()=>{if(selFlecha){selFlecha=null;pintarFlechas()}if(selDeco||selHilo){selDeco=null;borrarDeco=null;selHilo=null;pintarMain()}};
-lzMain.limites=()=>{const pos=posiciones(data[vista]);const pts=[...pos.values()].map(p=>({x:p.x,y:p.y,w:200,h:200}));
+let limCache=null;
+lzMain.onVista=()=>{const r=lzMain.rect();if(!r.width)return;const m=300/lzMain.s,a=lzMain.aMundo(r.left,r.top),b=lzMain.aMundo(r.right,r.bottom);
+  lzMain.vp.classList.toggle("lejos",lzMain.s<.45);
+  const ver=(x,y,w,h)=>x+w>a.x-m&&x<b.x+m&&y+h>a.y-m&&y<b.y+m;
+  for(const n of nodosNota.values()){const f=!ver(parseFloat(n.style.left)||0,parseFloat(n.style.top)||0,200,200)&&!n.classList.contains("msel");if(n._fuera!==f){n._fuera=f;n.classList.toggle("fuera",f)}}
+  for(const n of nodosDeco.values()){const w=parseFloat(n.style.width)||260,f=!ver(parseFloat(n.style.left)||0,parseFloat(n.style.top)||0,w,w*1.5)&&!n.classList.contains("msel");if(n._fuera!==f){n._fuera=f;n.classList.toggle("fuera",f)}}};
+lzMain.limites=()=>{if(limCache&&limCache.v===vista&&limCache.n===data[vista].length+decos.length)return limCache.r;const r=limitesMain();limCache={v:vista,n:data[vista].length+decos.length,r};return r};
+function limitesMain(){const pos=posiciones(data[vista]);const pts=[...pos.values()].map(p=>({x:p.x,y:p.y,w:200,h:200}));
   decos.filter(d=>d.tablero===vista).forEach(d=>pts.push({x:d.x,y:d.y,w:d.w||260,h:(d.w||260)}));
   if(!pts.length)return {x:-300,y:-200,w:600,h:400};const x=Math.min(...pts.map(p=>p.x)),y=Math.min(...pts.map(p=>p.y));
-  return {x,y,w:Math.max(...pts.map(p=>p.x+p.w))-x,h:Math.max(...pts.map(p=>p.y+p.h))-y}};
+  return {x,y,w:Math.max(...pts.map(p=>p.x+p.w))-x,h:Math.max(...pts.map(p=>p.y+p.h))-y}}
 let encuadrado={};
 function setVista(v){
   salirDiario();vista=v;selDeco=null;selFlecha=null;lzMain.origenFlecha=null;const esIdea=v==="ideas";
@@ -1147,24 +1178,32 @@ lzHoja.onBorrarSel=ns=>{if(!abierto)return;const ids=new Set(ns.map(n=>n.dataset
 let abierto=null,selB=null,borrarB=null,borrarSure=false;
 const timers={},pend={};let enVuelo=0;
 function estado(t){$("estado").textContent=t}
-function guardarHoja(campo,valor){if(!abierto)return;const {k,id}=abierto;enVuelo++;estado("Guardando…");
-  escribir(cols[k],id,{[campo]:valor}).finally(()=>{enVuelo--;if(!enVuelo&&!Object.keys(pend).length)estado("Guardado")})}
+function guardarHoja(campo,valor){if(!abierto)return;const {k,id}=abierto;enVuelo++;estado("Guardando…");let pr;
+  if(k==="diario"&&!entradaDia(id)){const base=JSON.parse(JSON.stringify(abierto.doc));delete base.id;delete base._pend;base[campo]=valor;base.fecha=id;base.creado=base.creado||Date.now();
+    pr=cola[id]=(cola[id]||Promise.resolve()).then(()=>entradaDia(id)?cols.diario.doc(id).update({[campo]:valor}):cols.diario.doc(id).set(base)).then(()=>true,()=>{toast("No se guardó. Revisá la conexión.");return false})}
+  else pr=escribir(cols[k],id,{[campo]:valor});
+  pr.finally(()=>{enVuelo--;if(!enVuelo&&!Object.keys(pend).length)estado("Guardado")})}
 function guardarLuego(campo,fn){if(!abierto)return;const key=abierto.id+"|"+campo;estado("Guardando…");clearTimeout(timers[key]);
   pend[key]=()=>guardarHoja(campo,fn());timers[key]=setTimeout(()=>{const f=pend[key];delete pend[key];f&&f()},700)}
 function vaciarPendientes(){for(const key of Object.keys(pend)){clearTimeout(timers[key]);const f=pend[key];delete pend[key];f()}}
 const autosize=t=>{t.style.height="auto";t.style.height=t.scrollHeight+"px"};
 function prepararDoc(d){delete d._pend;if(!Array.isArray(d.bloques))d.bloques=[];if(!Array.isArray(d.hilos))d.hilos=[];if(!Array.isArray(d.trazos))d.trazos=[];let yy=0;d.bloques.forEach(b=>{if(!tieneXY(b)){b.x=460;b.y=yy;yy+=b.t==="img"?260:160}});return d}
-function abrir(k,id){
-  const i=data[k].find(x=>x.id===id);if(!i)return;
+function abrir(k,id,virtual){
+  const i=data[k].find(x=>x.id===id)||virtual;if(!i)return;
   abierto={k,id,doc:prepararDoc(JSON.parse(JSON.stringify(i))),remoto:null};
-  selB=null;borrarB=null;borrarSure=false;selHilo=null;origenHilo=null;$("h-del").textContent="Despegar post-it";$("h-del").style.color="";$("linkform").hidden=true;estado("");
+  selB=null;borrarB=null;borrarSure=false;selHilo=null;origenHilo=null;$("h-del").textContent=k==="diario"?"Borrar este día":"Despegar post-it";
+  {const papel=k==="diario";lzHoja.papel=papel;$("vp-hoja").classList.toggle("papel",papel);$("add-esc").hidden=papel;$("add-cal").hidden=papel;$("add-a-idea").hidden=!papel;$("h-compartir").hidden=papel;
+   if(papel){const d=abierto.doc;if(d.imagen||d.sonido||d.escena){d.texto=textoDia(d);delete d.imagen;delete d.sonido;delete d.escena;abierto.migrar=true}}}$("h-del").style.color="";$("linkform").hidden=true;estado("");
   for(const pnl of ["panel-claude","panel-mezcla","panel-cats","panel-cal","panel-compartir","panel-export","panel-mas"])$(pnl).hidden=true;if(modoHilo)setModoHilo(false);
   $("detalle").hidden=false;pintarCabecera();pintarHoja();
   $("add-img").hidden=!assets;$("btn-claude").hidden=!samp;$("h-dictar").hidden=!samp;
-  if(!lzHoja.usar("hoja:"+id))requestAnimationFrame(()=>lzHoja.encuadrar(lzHoja.limites()));
+  if(abierto.migrar){abierto.migrar=false;guardarHoja("texto",abierto.doc.texto);escribir(cols.diario,id,{imagen:"",sonido:"",escena:""},{silencioso:true})}
+  lzHoja.apply();if(!lzHoja.usar("hoja:"+id))requestAnimationFrame(()=>lzHoja.encuadrar(lzHoja.limites()));
   requestAnimationFrame(()=>{document.querySelectorAll("#capa-hoja textarea").forEach(autosize);pintarHilos();$("volver").focus()});
 }
-function cerrar(){selLimpiar(lzHoja);$("panel-export").hidden=true;$("panel-mas").hidden=true;vaciarPendientes();if(modoHilo)setModoHilo(false);selHilo=null;abierto=null;$("detalle").hidden=true;$("panel-compartir").hidden=true;$("capa-hoja").replaceChildren();gHoja=null;cortarHoja=null;gTrazosHoja=null;if(lzHoja.modo)lzHoja.setModo(null)}
+function cerrar(){const eraDia=abierto&&abierto.k==="diario"?{id:abierto.id,doc:abierto.doc}:null;
+  setTimeout(()=>{if(eraDia&&!pesoDia(eraDia.doc)&&!(eraDia.doc.trazos||[]).length&&entradaDia(eraDia.id))cols.diario.doc(eraDia.id).delete().catch(()=>{});pintarDiario()},50);
+  selLimpiar(lzHoja);$("panel-export").hidden=true;$("panel-mas").hidden=true;vaciarPendientes();if(modoHilo)setModoHilo(false);selHilo=null;abierto=null;$("detalle").hidden=true;$("panel-compartir").hidden=true;$("capa-hoja").replaceChildren();gHoja=null;cortarHoja=null;gTrazosHoja=null;if(lzHoja.modo)lzHoja.setModo(null)}
 function sincronizarAbierto(k){
   if(!abierto||abierto.k!==k)return;const srv=data[k].find(x=>x.id===abierto.id);if(!srv||srv._pend||enVuelo)return;
   if(Object.keys(pend).some(key=>key.startsWith(abierto.id+"|")))return;
@@ -1177,14 +1216,16 @@ function sincronizarAbierto(k){
 function aplicarRemoto(nuevo){if(!abierto)return;abierto.doc=nuevo;abierto.remoto=null;pintarCabecera();pintarHoja();requestAnimationFrame(()=>{document.querySelectorAll("#capa-hoja textarea").forEach(autosize);pintarHilos()})}
 document.addEventListener("focusout",()=>setTimeout(()=>{if(abierto&&abierto.remoto&&!escribiendo())aplicarRemoto(abierto.remoto)},80));
 function pintarCabecera(){
-  const {k,doc}=abierto;$("h-titulo").textContent=`${k==="ideas"?"Idea":"Frase"} #${doc.numero||"?"}`;$("mas-cat").hidden=k!=="ideas";$("mas-est").hidden=k!=="ideas";if(k==="ideas")estadosUI();
+  const {k,doc}=abierto;$("h-titulo").textContent=k==="diario"?"Diario · "+fechaLarga(abierto.id,{day:"numeric",month:"short"}):`${k==="ideas"?"Idea":"Frase"} #${doc.numero||"?"}`;$("mas-cat").hidden=k!=="ideas";$("mas-est").hidden=k!=="ideas";if(k==="ideas")estadosUI();
   if(k==="ideas")coloresUI($("h-colores"),doc.tipo||"otro",v=>{doc.tipo=v;pintarCabecera();const p=$("capa-hoja").querySelector(".principal");if(p)p.style.setProperty("--c",colorDe(k,doc));guardarHoja("tipo",v)});
 }
 function pintarHoja(){if(lzHoja.sel.size||lzHoja._barra)selLimpiar(lzHoja);
   const {k,doc}=abierto,capa=$("capa-hoja");capa.replaceChildren();
-  const p=el("div","principal"+(k==="frases"?" frase":""));p.style.setProperty("--c",colorDe(k,doc));p.style.setProperty("--r","-1deg");p.style.zIndex=2;
-  const m=el("div","meta");m.append(el("span",null,`${k==="ideas"?"Idea":"Frase"} #${doc.numero||"?"}${k==="ideas"?" · "+label(doc.tipo):""}`),el("span",null,doc.creado?new Date(doc.creado).toLocaleDateString("es-AR"):""));
-  const t=el("textarea");t.rows=1;t.value=doc.texto||"";t.placeholder=k==="ideas"?"La idea":"La frase";t.setAttribute("aria-label","Texto principal");
+  const esDia=k==="diario";
+  const p=el("div","principal"+(k==="frases"?" frase":"")+(esDia?" dia":""));p.style.setProperty("--c",colorDe(k,doc));p.style.setProperty("--r",esDia?"0deg":"-1deg");p.style.zIndex=2;if(esDia)p.style.width=(innerWidth<600?Math.max(290,Math.min(560,innerWidth-80)):640)+"px";
+  const m=el("div","meta");if(esDia)m.append(el("span",null,fechaLarga(abierto.id)),el("span",null,abierto.id.slice(0,4)));
+  else m.append(el("span",null,`${k==="ideas"?"Idea":"Frase"} #${doc.numero||"?"}${k==="ideas"?" · "+label(doc.tipo):""}`),el("span",null,doc.creado?new Date(doc.creado).toLocaleDateString("es-AR"):""));
+  const t=el("textarea");t.rows=1;t.value=doc.texto||"";t.placeholder=esDia?"¿Qué pasó hoy? Escribí lo que quieras. Podés pegar fotos, post-its, lo que sea.":k==="ideas"?"La idea":"La frase";t.setAttribute("aria-label","Texto principal");
   t.oninput=()=>{autosize(t);doc.texto=t.value;guardarLuego("texto",()=>abierto.doc.texto);pintarHilos()};p.append(m,t);
   if(k==="frases"){const a=el("input");a.type="text";a.value=doc.autor||"";a.placeholder="¿quién la dijo?";a.setAttribute("aria-label","Autor");a.oninput=()=>{doc.autor=a.value;guardarLuego("autor",()=>abierto.doc.autor.trim())};p.append(a)}
   p.addEventListener("pointerdown",e=>{if(!e.target.closest("textarea,input"))e.stopPropagation()});
@@ -1215,7 +1256,8 @@ function nodoBloque(b){
     n.remove();pintarHilos();guardarBloques();if(d.hilos.length!==antes)guardarHoja("hilos",d.hilos);
     if(b.t==="img"&&assets){try{await assets.delete(b.a)}catch(_){}}};
   if(b.t==="txt"||b.t==="tx"){const asa=el("div","asa lado");asa.title="Arrastrá para cambiar el ancho";n.append(asa);const ta=n.querySelector("textarea");
-    redimensionable(asa,lzHoja,{inicio:()=>parseFloat(n.style.width),mover:w=>{n.style.width=Math.max(120,w)+"px";if(ta)autosize(ta);pintarHilos()},soltar:()=>{b.w=Math.round(parseFloat(n.style.width));guardarBloques()}})}
+    if(b.t==="txt")n.style.minHeight=n.style.width;
+    redimensionable(asa,lzHoja,{inicio:()=>parseFloat(n.style.width),mover:w=>{n.style.width=Math.max(120,w)+"px";if(b.t==="txt")n.style.minHeight=n.style.width;if(ta)autosize(ta);pintarHilos()},soltar:()=>{b.w=Math.round(parseFloat(n.style.width));guardarBloques()}})}
   if(b.t==="img"){const asa=el("div","asa");n.append(asa);redimensionable(asa,lzHoja,{inicio:()=>parseFloat(n.style.width),mover:w=>{n.style.width=w+"px";pintarHilos()},soltar:()=>{b.w=Math.round(parseFloat(n.style.width));guardarBloques()}})}
   arrastrable(n,lzHoja,{solo:b.t==="txt"||b.t==="tx"||b.t==="post"||b.t==="cal"||b.t==="esc"?".grip":null,inicio:()=>({x:parseFloat(n.style.left),y:parseFloat(n.style.top)}),mover:(x,y)=>{n.style.left=x+"px";n.style.top=y+"px";pintarHilos()},
     soltar:()=>{b.x=Math.round(parseFloat(n.style.left));b.y=Math.round(parseFloat(n.style.top));guardarBloques()},
@@ -1226,7 +1268,7 @@ function agregarBloque(b){abierto.doc.bloques.push(b);selB=b.id;document.querySe
 lzMain.onBgDoble=e=>{const p=lzMain.aMundo(e.clientX,e.clientY);crearAhi(Math.round(p.x-100),Math.round(p.y-40))};
 lzHoja.onBgDoble=e=>{if(!abierto)return;const p=lzHoja.aMundo(e.clientX,e.clientY);const n=agregarBloque({id:bid(),t:"post",v:"",c:PALETA[Math.floor(Math.random()*8)],x:Math.round(p.x-100),y:Math.round(p.y-30)});requestAnimationFrame(()=>n.querySelector("textarea")?.focus())};
 lzHoja.onBgTap=()=>{selB=null;borrarB=null;selHilo=null;document.querySelectorAll("#capa-hoja .pieza").forEach(x=>x.classList.remove("sel"));pintarHilos()};
-lzHoja.limites=()=>{if(!abierto)return null;const pts=[{x:0,y:0,w:400,h:300},...abierto.doc.bloques.map(b=>({x:b.x,y:b.y,w:b.t==="esc"?anchoEsc(b):(b.w||300),h:b.t==="img"?(b.w||300):b.t==="post"?200:b.t==="cal"?340:b.t==="esc"?altoEsc(b):160}))];
+lzHoja.limites=()=>{if(!abierto)return null;const pp=$("capa-hoja").querySelector(".principal");const pts=[{x:0,y:0,w:pp?pp.offsetWidth:400,h:pp?Math.max(300,pp.offsetHeight):300},...abierto.doc.bloques.map(b=>({x:b.x,y:b.y,w:b.t==="esc"?anchoEsc(b):(b.w||300),h:b.t==="img"?(b.w||300):b.t==="post"?200:b.t==="cal"?340:b.t==="esc"?altoEsc(b):160}))];
   const x=Math.min(...pts.map(p=>p.x)),y=Math.min(...pts.map(p=>p.y));return {x,y,w:Math.max(...pts.map(p=>p.x+p.w))-x,h:Math.max(...pts.map(p=>p.y+p.h))-y}};
 lzHoja.onArchivo=(f,p)=>bloqueImagen(f,p);
 async function bloqueImagen(file,p){
@@ -1236,7 +1278,7 @@ async function bloqueImagen(file,p){
   else{for(const k of ["ideas","frases"]){const i=data[k].find(x=>x.id===destino);if(i)escribir(cols[k],destino,{bloques:[...(i.bloques||[]),b]})}}
 }
 $("add-tx").onclick=()=>{const c=lzHoja.centro();const n=agregarBloque({id:bid(),t:"tx",v:"",x:Math.round(c.x-160),y:Math.round(c.y-30),w:320});requestAnimationFrame(()=>n.querySelector("textarea")?.focus())};
-$("add-txt").onclick=()=>{const c=lzHoja.centro();const n=agregarBloque({id:bid(),t:"txt",v:"",x:Math.round(c.x-130),y:Math.round(c.y-60),w:260});requestAnimationFrame(()=>n.querySelector("textarea")?.focus())};
+$("add-txt").onclick=()=>{const c=lzHoja.centro();const n=agregarBloque({id:bid(),t:"txt",v:"",x:Math.round(c.x-120),y:Math.round(c.y-120),w:240});requestAnimationFrame(()=>n.querySelector("textarea")?.focus())};
 $("add-post").onclick=()=>{const c=lzHoja.centro();const n=agregarBloque({id:bid(),t:"post",v:"",c:PALETA[Math.floor(Math.random()*8)],x:Math.round(c.x-100+(Math.random()*30-15)),y:Math.round(c.y-100+(Math.random()*30-15))});requestAnimationFrame(()=>n.querySelector("textarea")?.focus())};
 $("add-link").onclick=()=>{$("linkform").hidden=false;$("l-url").focus()};
 $("l-cancel").onclick=()=>{$("linkform").hidden=true;$("l-url").value="";$("l-tit").value=""};
@@ -1250,7 +1292,7 @@ $("add-img").onclick=()=>{destinoArchivo="hoja";$("file").click()};
 $("volver").onclick=cerrar;
 document.addEventListener("keydown",e=>{
   if(e.key==="Escape"){
-    for(const p of ["panel-keep","panel-dictar","panel-mas","panel-export","panel-compartir","panel-claude","linkform","panel-mezcla","panel-cats","panel-cal"])if(!$(p).hidden){$(p).hidden=true;return}
+    for(const p of ["panel-menu","panel-keep","panel-dictar","panel-mas","panel-export","panel-compartir","panel-claude","linkform","panel-mezcla","panel-cats","panel-cal"])if(!$(p).hidden){$(p).hidden=true;return}
     if(modoHilo){setModoHilo(false);return}{const lzA=abierto?lzHoja:lzMain;if(lzA.modo){lzA.setModo(null);return}}if(abierto){cerrar();return}if(selDeco||selHilo){selDeco=null;selHilo=null;pintarMain()}}
   if((e.key==="Delete"||e.key==="Backspace")&&!escribiendo()){
     if(abierto&&selB){const n=[...document.querySelectorAll("#capa-hoja .pieza.sel")][0];n?.querySelector(".herr .peligro")?.click();e.preventDefault()}
@@ -1464,7 +1506,7 @@ function crearLateral(lz){
   const bLapiz=modos[2];
   lz.onModo=mo=>{modos.forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===mo));pal.hidden=mo!=="lapiz";lz._lapizOv.hidden=mo!=="lapiz";if(mo==="lapiz"){const r=bLapiz.getBoundingClientRect();pal.style.top=(r.top+r.height/2)+"px"}
     if(mo&&lz===lzHoja&&modoHilo)setModoHilo(false);
-    if(mo==="flecha")toast("Tocá un post-it y después otro para unirlos con una flecha.");if(mo==="lapiz"){pincel.goma=false;pintarPaletas()}};
+    if(mo==="flecha")toast("Tocá un post-it y después otro para unirlos con una flecha.");if(mo==="lapiz"){pincel.goma=false;if(lz.papel&&pincel.c==="#fffdf6")pincel.c="#2b2520";pintarPaletas()}};
 }
 crearLateral(lzMain);crearLateral(lzHoja);pintarPaletas();
 
@@ -1571,118 +1613,72 @@ document.addEventListener("paste",e=>{
 window.addEventListener("blur",()=>{if(porta)porta.vieja=true});
 for(const ev of ["copy","cut"])document.addEventListener(ev,()=>{if(escribiendo()||String(window.getSelection?getSelection():"").trim())porta=null});
 
-/* ---------- Diario ---------- */
-const CONSIGNAS=[
-  "Describí un plano que viste hoy, como si fuera la primera línea de un guion.",
-  "Robá un diálogo que escuchaste en la calle. Tal cual, sin arreglarlo.",
-  "¿Qué sonido de hoy pondrías en una película?",
-  "Algo que te dio vergüenza hoy, contado en tercera persona.",
-  "Si hoy fuera una escena, ¿dónde la cortarías?",
-  "Contá el día en exactamente cinco planos.",
-  "Una mentirita que escuchaste o que dijiste.",
-  "¿Qué luz había a la tarde? Describila sin decir «linda».",
-  "Escribí la sinopsis de tu día como si fuera una película de festival.",
-  "Alguien que viste un segundo nada más. Inventale el resto del día.",
-  "¿Qué pregunta te quedó dando vueltas?",
-  "Un ruido que nadie más notó.",
-  "Si mañana tuvieras que filmar con lo que hay en tu casa, ¿qué filmarías?",
-  "Una regla que te gustaría romper en tu próximo corto.",
-  "El mejor título para el día de hoy.",
-  "Escribí sin diálogo una escena de algo que pasó hoy.",
-  "Algo que no filmarías nunca. ¿Por qué?",
-  "Una película que se te vino a la cabeza hoy sin querer.",
-  "Tres palabras que escuchaste hoy y que vos no usás nunca.",
-  "¿Qué momento del día pondrías en cámara lenta?",
-  "Una discusión (tuya o ajena) contada desde el lado que no tiene razón.",
-  "El color que más se repitió hoy.",
-  "Si el día tuviera banda sonora, ¿qué tema sonaría en los créditos?",
-  "Algo que alguien hizo con las manos.",
-  "Una idea que descartaste hoy. Defendela un poco.",
-  "Tu desayuno como plano detalle.",
-  "¿Qué te dio envidia hoy? Usala para algo.",
-  "Un lugar de tu barrio donde esconderías una cámara.",
-  "Escribí el final de algo que todavía no empezaste.",
-  "Una conversación que no tuviste pero que deberías tener.",
-  "Algo de hoy que en veinte años va a parecer de época.",
-  "Un objeto de tu cuarto que podría ser el centro de un corto.",
-  "Qué haría hoy alguno de tus personajes en tu lugar.",
-  "Un olor de hoy. Ahora pensá cómo se filma un olor.",
-  "Lo más aburrido que pasó hoy, contado como si fuera un thriller.",
-  "Una ventana que mirás seguido. ¿Qué pasa del otro lado?",
-  "Algo que te hizo reír y no sabés bien por qué.",
-  "Si hoy fuera el primer día de un rodaje, ¿qué falta?",
-  "Describí a alguien solo por cómo camina.",
-  "Una frase que te gustaría que diga un personaje. Todavía no sabés cuál."
-];
-const CAMPOS_DIA=["imagen","sonido","escena","texto"];
-let diario=new Map(),colDiario=null,enDiario=false,diaSel=null,mesDia=null,pendDia=null,tDia=null,ultCampo=null,consignaOff=0;
-const hashDia=k=>{let h=0;for(const ch of k)h=(h*31+ch.charCodeAt(0))|0;return Math.abs(h)};
-const tieneAlgo=e=>!!e&&CAMPOS_DIA.some(c=>(e[c]||"").trim());
-const sumarDias=(k,n)=>{const [y,m,d]=k.split("-").map(Number),f=new Date(y,m-1,d+n);return claveDia(f.getFullYear(),f.getMonth(),f.getDate())};
+/* ---------- Diario: un calendario que se va llenando y una hoja por día ---------- */
+let colDiario=null,enDiario=false,mesDia=null;
 const fechaDe=k=>{const [y,m,d]=k.split("-").map(Number);return new Date(y,m-1,d)};
-function consignaDe(k){const e=diario.get(k);if(e&&e.consigna&&!consignaOff)return e.consigna;return CONSIGNAS[(hashDia(k)+consignaOff)%CONSIGNAS.length]}
-function racha(){let k=hoyClave();if(!tieneAlgo(diario.get(k)))k=sumarDias(k,-1);let n=0;while(tieneAlgo(diario.get(k))){n++;k=sumarDias(k,-1)}return n}
-function ajustarDiario(){const b=document.querySelector(".barra");if(b)$("diario").style.paddingTop=(b.getBoundingClientRect().bottom+16)+"px"}
+const sumarDias=(k,n)=>{const f=fechaDe(k);f.setDate(f.getDate()+n);return claveDia(f.getFullYear(),f.getMonth(),f.getDate())};
+const capi=t=>t.charAt(0).toUpperCase()+t.slice(1);
+const fechaLarga=(k,o)=>capi(fechaDe(k).toLocaleDateString("es-AR",o||{weekday:"long",day:"numeric",month:"long"}));
+const textoDia=e=>!e?"":[e.texto,e.imagen,e.sonido,e.escena].filter(x=>x&&x.trim()).join("\n\n");
+const palabras=t=>(t||"").split(/\s+/).filter(Boolean).length;
+const pesoDia=e=>!e?0:palabras(textoDia(e))+(e.bloques||[]).reduce((n,b)=>n+palabras(b.v)+(b.t==="img"?15:b.t==="link"?5:0),0)+((e.trazos||[]).length?5:0);
+const entradaDia=k=>data.diario.find(x=>x.id===k);
+const nivelDia=e=>{const p=pesoDia(e);return !p?0:p<40?1:p<150?2:3};
+function racha(){let k=hoyClave();if(!nivelDia(entradaDia(k)))k=sumarDias(k,-1);let n=0;while(nivelDia(entradaDia(k))){n++;k=sumarDias(k,-1)}return n}
+function ajustarDiario(){const b=document.querySelector("body > .barra");if(b)$("diario").style.paddingTop=(b.getBoundingClientRect().bottom+16)+"px"}
 window.addEventListener("resize",()=>{if(enDiario)ajustarDiario()});
 function entrarDiario(){
-  if(lzMain.modo)lzMain.setModo(null);selLimpiar(lzMain);for(const pnl of ["panel-cal","panel-mezcla","panel-cats","panel-keep"])$(pnl).hidden=true;
+  if(lzMain.modo)lzMain.setModo(null);selLimpiar(lzMain);for(const pnl of ["panel-cal","panel-mezcla","panel-cats","panel-keep","panel-menu"])$(pnl).hidden=true;
   enDiario=true;document.body.classList.add("en-diario");$("tab-ideas").setAttribute("aria-selected","false");$("tab-frases").setAttribute("aria-selected","false");$("tab-diario").setAttribute("aria-selected","true");
-  $("diario").hidden=false;try{localStorage.setItem("pestana","diario")}catch(_){}requestAnimationFrame(ajustarDiario);irADia(hoyClave())}
-function salirDiario(){if(!enDiario)return;guardarDiaYa();enDiario=false;document.body.classList.remove("en-diario");$("diario").hidden=true;$("tab-diario").setAttribute("aria-selected","false");try{localStorage.setItem("pestana","")}catch(_){}}
-function irADia(k){guardarDiaYa();if(k>hoyClave())k=hoyClave();diaSel=k;const f=fechaDe(k);mesDia={y:f.getFullYear(),m:f.getMonth()};consignaOff=0;pintarDiario();
-  requestAnimationFrame(()=>{const c=$("dia-tira").querySelector('[aria-current="date"]');if(c)c.scrollIntoView({block:"nearest",inline:"center"})})}
-function pintarDiario(){
-  if(!enDiario||!diaSel)return;const k=diaSel,e=diario.get(k)||{},hoy=hoyClave(),f=fechaDe(k);
-  let t=f.toLocaleDateString("es-AR",{weekday:"long",day:"numeric",month:"long"});$("dia-fecha").textContent=t.charAt(0).toUpperCase()+t.slice(1);
-  const dif=Math.round((fechaDe(hoy)-f)/864e5);$("dia-sub").textContent=[dif===0?"Hoy":dif===1?"Ayer":`Hace ${dif} días`,String(f.getFullYear())].join(" · ");
-  $("dia-sig").disabled=k>=hoy;$("dia-hoy").hidden=k===hoy;
-  $("dia-consigna-txt").textContent=consignaDe(k);
-  const enPausa=pendDia&&pendDia.k===k;
-  for(const c of CAMPOS_DIA){const ta=$("dia-"+c);if(document.activeElement!==ta&&!enPausa)ta.value=e[c]||"";autosize(ta)}
-  pintarTira();pintarPieDia();pintarRecuerdo();
-}
-function pintarTira(){
-  const {y,m}=mesDia,dias=new Date(y,m+1,0).getDate(),hoy=hoyClave(),tira=$("dia-tira");
-  $("dia-mes").textContent="Rollo · "+new Date(y,m,1).toLocaleDateString("es-AR",{month:"long",year:"numeric"});
-  $("dia-mes-sig").disabled=claveDia(y,m,1)>hoy;tira.replaceChildren();
-  for(let d=1;d<=dias;d++){const k=claveDia(y,m,d),e=diario.get(k),b=el("button","dia-cuadro"+(tieneAlgo(e)?" lleno":"")+(k===hoy?" hoy":""));b.type="button";
-    b.append(el("span",null,String(d)));if(k===diaSel)b.setAttribute("aria-current","date");b.disabled=k>hoy;
-    const ini=e?(e.texto||e.escena||e.imagen||e.sonido||"").trim().slice(0,90):"";b.title=ini?`${d}: ${ini}`:`${d}`;b.setAttribute("aria-label",`Día ${d}${tieneAlgo(e)?", escrito":""}`);
-    b.onclick=()=>irADia(k);tira.append(b)}
-}
-function pintarPieDia(){
-  const n=CAMPOS_DIA.map(c=>$("dia-"+c).value).join(" ").split(/\s+/).filter(Boolean).length,r=racha();
-  $("dia-palabras").textContent=n===1?"1 palabra":`${n} palabras`;$("dia-racha").textContent=r?(r===1?"1 día seguido":`${r} días seguidos`):"Arrancá hoy";
-  const tot=[...diario.values()].filter(tieneAlgo).length;$("n-diario").textContent=tot||"";
-}
-function pintarRecuerdo(){
-  const k=diaSel,f=fechaDe(k),cand=[["Hace un año",claveDia(f.getFullYear()-1,f.getMonth(),f.getDate())],["Hace un mes",(()=>{const g=new Date(f.getFullYear(),f.getMonth()-1,f.getDate());return claveDia(g.getFullYear(),g.getMonth(),g.getDate())})()],["Hace una semana",sumarDias(k,-7)]];
-  const r=$("dia-recuerdo");const hit=cand.find(([,c])=>tieneAlgo(diario.get(c)));if(!hit){r.hidden=true;return}
-  const e=diario.get(hit[1]),txt=(e.texto||e.escena||e.imagen||e.sonido||"").trim();
-  const b=el("button","dia-otra","Ir a ese día");b.type="button";b.onclick=()=>irADia(hit[1]);
-  r.replaceChildren(el("span","dia-lbl",hit[0]+" escribiste"),el("p",null,"«"+(txt.length>220?txt.slice(0,220)+"…":txt)+"»"),b);r.hidden=false}
-function editarDia(){const k=diaSel;if(!k)return;const e={...(diario.get(k)||{})};for(const c of CAMPOS_DIA)e[c]=$("dia-"+c).value;
-  pendDia={k,e};clearTimeout(tDia);tDia=setTimeout(guardarDiaYa,800);pintarPieDia()}
-function guardarDiaYa(){clearTimeout(tDia);const p=pendDia;pendDia=null;if(!p||!colDiario)return;const {k,e}=p;
-  if(!tieneAlgo(e)){if(diario.has(k))colDiario.doc(k).delete().catch(()=>{});return}
-  const doc={fecha:k,imagen:e.imagen||"",sonido:e.sonido||"",escena:e.escena||"",texto:e.texto||"",consigna:e.consigna||consignaDe(k),creado:e.creado||Date.now(),editado:Date.now()};
-  colDiario.doc(k).set(doc).catch(()=>toast("No se guardó el diario. Revisá la conexión."))}
-for(const c of CAMPOS_DIA){const ta=$("dia-"+c);ta.addEventListener("input",()=>{autosize(ta);editarDia()});ta.addEventListener("focus",()=>{ultCampo=ta});ta.addEventListener("blur",guardarDiaYa)}
+  $("diario").hidden=false;try{localStorage.setItem("pestana","diario")}catch(_){}const f=new Date();mesDia={y:f.getFullYear(),m:f.getMonth()};pintarDiario();requestAnimationFrame(ajustarDiario)}
+function salirDiario(){if(!enDiario)return;enDiario=false;document.body.classList.remove("en-diario");$("diario").hidden=true;$("tab-diario").setAttribute("aria-selected","false");try{localStorage.setItem("pestana","")}catch(_){}}
+function pintarDiario(){$("n-diario").textContent=data.diario.filter(nivelDia).length||"";if(!enDiario)return;pintarCalDia();pintarHoyDia();pintarListaDia()}
+function pintarCalDia(){
+  const {y,m}=mesDia,hoy=hoyClave(),g=$("dia-grilla");$("dia-mes").textContent=capi(new Date(y,m,1).toLocaleDateString("es-AR",{month:"long",year:"numeric"}));
+  $("dia-mes-sig").disabled=claveDia(y,m,1)>=claveDia(new Date().getFullYear(),new Date().getMonth(),1);
+  g.replaceChildren(...["L","M","M","J","V","S","D"].map(d=>el("span","dia-dow",d)));
+  const off=(new Date(y,m,1).getDay()+6)%7,dias=new Date(y,m+1,0).getDate();for(let i=0;i<off;i++)g.append(el("span"));
+  let escritos=0;
+  for(let d=1;d<=dias;d++){const k=claveDia(y,m,d),e=entradaDia(k),nv=nivelDia(e);if(nv)escritos++;
+    const b=el("button","dia-celda n"+nv+(k===hoy?" hoy":""),String(d));b.type="button";b.disabled=k>hoy;
+    b.setAttribute("aria-label",fechaLarga(k)+(nv?", escrito":""));const t=textoDia(e);if(nv)b.title=t?t.slice(0,90):"Con cosas pegadas";b.onclick=()=>abrirDia(k);g.append(b)}
+  const r=racha();$("dia-racha").textContent=r?(r===1?"1 día seguido":`${r} días seguidos`):"Arrancá hoy";
+  $("dia-total").textContent=escritos===1?"1 día escrito este mes":`${escritos} días escritos este mes`}
+function pintarHoyDia(){const k=hoyClave(),e=entradaDia(k),t=textoDia(e);$("dia-hoy-fecha").textContent=fechaLarga(k);
+  $("dia-hoy-txt").textContent=t?(t.length>220?t.slice(0,220)+"…":t):nivelDia(e)?"Hoy pegaste cosas pero no escribiste texto.":"Todavía no escribiste nada hoy.";
+  $("dia-hoy-btn").textContent=nivelDia(e)?"Seguir escribiendo":"Escribir hoy"}
+function pintarListaDia(){
+  const l=$("dia-lista"),hoy=hoyClave(),ents=data.diario.filter(e=>e.id<hoy&&nivelDia(e)).sort((a,b)=>a.id<b.id?1:-1);l.replaceChildren();if(!ents.length)return;
+  l.append(el("span","dia-lbl","Días anteriores"));
+  for(const e of ents.slice(0,60)){const c=el("button","dia-entrada");c.type="button";c.onclick=()=>abrirDia(e.id);
+    const txt=textoDia(e),bl=e.bloques||[],ni=bl.filter(b=>b.t==="img").length,np=bl.filter(b=>b.t==="post"||b.t==="txt"||b.t==="tx").length;
+    const cu=el("div","de-cuerpo");cu.append(el("span","de-fecha",fechaLarga(e.id,{weekday:"long",day:"numeric",month:"long",...(e.id.slice(0,4)!==hoy.slice(0,4)?{year:"numeric"}:{})})),el("p","de-txt",txt||(ni?"Solo imágenes":"Cosas pegadas")));
+    const ex=[ni?(ni===1?"1 imagen":`${ni} imágenes`):"",np?(np===1?"1 nota":`${np} notas`):""].filter(Boolean).join(" · ");if(ex)cu.append(el("span","de-extra",ex));
+    c.append(cu);const im=bl.find(b=>b.t==="img");if(im){const i=el("img","de-img");i.alt="";i.onerror=()=>i.remove();cargarImg(i,im.a);c.append(i)}l.append(c)}}
+function abrirDia(k){if(k>hoyClave())return;abrir("diario",k,entradaDia(k)?null:{id:k,fecha:k,texto:"",bloques:[],hilos:[],trazos:[],creado:Date.now()})}
 $("tab-diario").onclick=entrarDiario;
-$("dia-ant").onclick=()=>irADia(sumarDias(diaSel,-1));$("dia-sig").onclick=()=>irADia(sumarDias(diaSel,1));$("dia-hoy").onclick=()=>irADia(hoyClave());
-$("dia-mes-ant").onclick=()=>{mesDia=mesDia.m?{y:mesDia.y,m:mesDia.m-1}:{y:mesDia.y-1,m:11};pintarTira()};
-$("dia-mes-sig").onclick=()=>{mesDia=mesDia.m<11?{y:mesDia.y,m:mesDia.m+1}:{y:mesDia.y+1,m:0};pintarTira()};
-$("dia-otra").onclick=()=>{consignaOff++;const e=diario.get(diaSel);const t=CONSIGNAS[(hashDia(diaSel)+consignaOff)%CONSIGNAS.length];$("dia-consigna-txt").textContent=t;
-  if(tieneAlgo(e)||(pendDia&&pendDia.k===diaSel)){const base=pendDia&&pendDia.k===diaSel?pendDia.e:{...e};base.consigna=t;pendDia={k:diaSel,e:base};guardarDiaYa()}else{pendDia=null}};
-$("dia-a-idea").addEventListener("pointerdown",e=>e.preventDefault());
-$("dia-a-idea").onclick=async()=>{
-  const ta=document.activeElement&&CAMPOS_DIA.some(c=>$("dia-"+c)===document.activeElement)?document.activeElement:ultCampo;
-  const sel=ta?ta.value.slice(ta.selectionStart,ta.selectionEnd).trim():"";
-  if(!sel){toast("Marcá con el mouse (o el dedo) un pedazo de lo que escribiste y tocá de nuevo.");return}
+$("dia-hoy-card").onclick=()=>abrirDia(hoyClave());
+$("dia-mes-ant").onclick=()=>{mesDia=mesDia.m?{y:mesDia.y,m:mesDia.m-1}:{y:mesDia.y-1,m:11};pintarCalDia()};
+$("dia-mes-sig").onclick=()=>{mesDia=mesDia.m<11?{y:mesDia.y,m:mesDia.m+1}:{y:mesDia.y+1,m:0};pintarCalDia()};
+/* Mandar a Ideas lo que marcaste en la hoja del día */
+$("add-a-idea").addEventListener("pointerdown",e=>e.preventDefault());
+let ultTa=null;document.addEventListener("focusin",e=>{if(e.target.tagName==="TEXTAREA"&&$("capa-hoja").contains(e.target))ultTa=e.target});
+$("add-a-idea").onclick=async()=>{
+  const ta=ultTa&&ultTa.isConnected?ultTa:null,sel=ta?ta.value.slice(ta.selectionStart,ta.selectionEnd).trim():"";
+  if(!sel){toast("Marcá un pedazo de lo que escribiste y tocá de nuevo «A Ideas».");return}
   if(!cols.ideas){toast("No hay conexión con la base. Recargá la página.");return}
   const numero=data.ideas.reduce((m,i)=>Math.max(m,i.numero||0),0)+1;
-  try{await cols.ideas.add({texto:sel,tipo:"otro",creado:Date.now(),numero,origen:"diario",diario:diaSel});toast(`Pegado en Ideas como #${numero}.`)}catch(_){toast("No se pudo pegar. Probá de nuevo.")}};
+  try{await cols.ideas.add({texto:sel,tipo:"otro",creado:Date.now(),numero,origen:"diario",diario:abierto?abierto.id:""});toast(`Pegado en Ideas como #${numero}.`)}catch(_){toast("No se pudo pegar. Probá de nuevo.")}};
 
+/* ---------- Menú del celular ---------- */
+try{if(matchMedia("(pointer:coarse)").matches&&Math.min(screen.width,screen.height)<600)document.body.classList.add("es-celu")}catch(_){}
+function pintarMenu(){const p=$("panel-menu");p.querySelector('[data-ir="mezclar"]').disabled=$("mezclar").disabled;
+  const o=document.querySelector('#vistaseg .seg[aria-pressed="true"]')?.dataset.o;p.querySelectorAll("[data-o2]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.o2===o));p.querySelector(".menu-orden").hidden=$("vistaseg").hidden}
+$("btn-menu").onclick=()=>{const p=$("panel-menu");p.hidden=!p.hidden;if(!p.hidden)pintarMenu()};
+$("cerrar-menu").onclick=()=>{$("panel-menu").hidden=true};
+$("panel-menu").addEventListener("click",e=>{const b=e.target.closest("[data-ir],[data-o2]");if(!b)return;
+  if(b.dataset.o2){document.querySelector(`#vistaseg .seg[data-o="${b.dataset.o2}"]`)?.click();pintarMenu();return}
+  $("panel-menu").hidden=true;$(b.dataset.ir).click()});
 /* ---------- Línea de tiempo ---------- */
 function abrirTiempo(){
   const k=vista,lista=data[k].filter(i=>i.creado).sort((a,b)=>a.creado-b.creado),riel=$("t-riel"),PASO=130,X0=140;let mesPrev=null;
@@ -1828,7 +1824,7 @@ $("add-esc").onclick=()=>{const c=lzHoja.centro();agregarBloque({id:bid(),t:"esc
 let dl=null;
 function textoExport(k,d){
   const est=estadoDe(d.estado),L=[],bl=d.bloques||[];
-  L.push(`${k==="ideas"?"IDEA":"FRASE"} #${d.numero||"?"}${k==="ideas"?` · ${label(d.tipo)}${est?" · "+est.nombre:""}`:""}`);
+  L.push(k==="diario"?"DIARIO · "+fechaLarga(abierto?abierto.id:(d.fecha||hoyClave())):`${k==="ideas"?"IDEA":"FRASE"} #${d.numero||"?"}${k==="ideas"?` · ${label(d.tipo)}${est?" · "+est.nombre:""}`:""}`);
   if(d.creado)L.push(new Date(d.creado).toLocaleDateString("es-AR"));L.push("",d.texto||"");if(d.autor)L.push("— "+d.autor);
   const sec=(t,arr)=>{if(arr.length)L.push("","",t,...arr)};
   sec("NOTAS",bl.filter(b=>(b.t==="txt"||b.t==="tx")&&b.v&&b.v.trim()).flatMap(b=>[b.v.trim(),""]));
@@ -1844,7 +1840,7 @@ $("h-exportar").onclick=()=>{if(!abierto)return;$("panel-mas").hidden=true;const
 $("cerrar-export").onclick=()=>{$("panel-export").hidden=true};
 $("export-copiar").onclick=async()=>{const v=$("export-txt").value;try{await navigator.clipboard.writeText(v);toast("Texto copiado.")}catch(_){const t=$("export-txt");t.focus();t.select();toast("No pude copiarlo solo: ya quedó seleccionado, copialo vos.")}};
 $("export-bajar").onclick=async()=>{if(!dl||!abierto)return;const d=abierto.doc;
-  try{await dl.save({filename:`${abierto.k==="ideas"?"idea":"frase"}-${d.numero||"x"}.txt`,data:$("export-txt").value})}
+  try{await dl.save({filename:abierto.k==="diario"?`diario-${abierto.id}.txt`:`${abierto.k==="ideas"?"idea":"frase"}-${d.numero||"x"}.txt`,data:$("export-txt").value})}
   catch(e){const c=e&&e.code;if(c==="declined")return;if(c==="unavailable"||c==="not_granted"||c==="capability_disabled")$("export-bajar").hidden=true;toast("No se pudo descargar. Usá Copiar texto.")}};
 
 /* ---------- Pensar con Claude ---------- */
@@ -2143,8 +2139,8 @@ drawComposer();setVista(vista);try{if(localStorage.getItem("pestana")==="diario"
   docCats.onSnapshot(s=>{const l=s.exists&&s.data().lista;if(!Array.isArray(l)||!l.length)return;
     if(document.activeElement&&$("panel-cats").contains(document.activeElement))return;
     cats=l.map(c=>({...c}));if(!$("panel-cats").hidden)pintarCats();refrescarCats()},()=>{});
-  colDiario=db.collection("diario");
-  colDiario.onSnapshot(s=>{diario=new Map(s.docs.map(d=>[d.id,d.data()]));pintarPieDia();if(enDiario)pintarDiario()},()=>{});
+  colDiario=db.collection("diario");cols.diario=colDiario;
+  colDiario.onSnapshot(s=>{data.diario=s.docs.map(d=>({id:d.id,...d.data(),_pend:!!(d.metadata&&d.metadata.hasPendingWrites)}));sincronizarAbierto("diario");pintarDiario()},()=>{});
   colFlechas=db.collection("flechas");
   colFlechas.onSnapshot(s=>{flechas=s.docs.map(d=>({id:d.id,...d.data()}));if(selFlecha&&!flechas.some(f=>f.id===selFlecha))selFlecha=null;pintarFlechas()},()=>{});
   colTrazos=db.collection("trazos");
