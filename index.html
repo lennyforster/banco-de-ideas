@@ -165,9 +165,9 @@ textarea::placeholder,input::placeholder{color:rgba(43,37,32,.45)}
 
 /* Post-it para escribir */
 .composer{position:fixed;z-index:11;left:max(12px,env(safe-area-inset-left,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 12px)}
-.composer form{width:min(300px,calc(100vw - 24px));background:var(--c,var(--p-otro));padding:16px;display:grid;gap:10px;box-shadow:0 2px 2px rgba(0,0,0,.12),0 20px 30px -12px rgba(0,0,0,.6);background-image:linear-gradient(170deg,rgba(255,255,255,.35),transparent 40%)}
+.composer form{width:min(330px,calc(100vw - 24px));aspect-ratio:1/1;grid-template-rows:auto minmax(48px,1fr);grid-auto-rows:auto;background:var(--c,var(--p-otro));padding:16px;display:grid;gap:10px;box-shadow:0 2px 2px rgba(0,0,0,.12),0 20px 30px -12px rgba(0,0,0,.6);background-image:linear-gradient(170deg,rgba(255,255,255,.35),transparent 40%)}
 .composer form.frase{--c:var(--p-frase)}
-.composer textarea{width:100%;min-height:90px;resize:none;border:0;background:transparent;font:500 1.1rem/1.3 var(--hand);color:var(--ink);padding:0}
+.composer textarea{width:100%;height:100%;min-height:0;resize:none;border:0;background:transparent;font:500 1.1rem/1.3 var(--hand);color:var(--ink);padding:0}
 .composer textarea:focus{outline:none}
 .composer input{width:100%;border:0;background:rgba(255,255,255,.55);font:500 .95rem var(--hand);color:var(--ink);padding:7px 10px;border-radius:4px}
 .composer .pie{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
@@ -389,7 +389,7 @@ body.en-diario #vp-main,body.en-diario .composer,body.en-diario>.lateral,body.en
 .de-txt{margin:0;font:500 .98rem/1.35 var(--hand);white-space:pre-line;display:-webkit-box;-webkit-line-clamp:8;-webkit-box-orient:vertical;overflow:hidden}
 .de-extra{font:500 .7rem var(--ui);color:var(--soft)}
 /* Hoja del día: papel rayado en vez de la plancha verde */
-.vista.papel{background-color:#f8f3e6;background-image:linear-gradient(transparent calc(100% - 1px),rgba(70,110,170,.24) calc(100% - 1px))}
+.vista.papel{background-color:#f8f3e6;background-image:linear-gradient(transparent calc(100% - 1px),rgba(70,110,170,.24) calc(100% - 1px)),linear-gradient(rgba(226,59,59,.5),rgba(226,59,59,.5));background-repeat:repeat,repeat-y}
 .principal.dia{width:640px;background:transparent;box-shadow:none;padding:0;gap:0;transform:none}
 .principal.dia::before{display:none}
 .principal.dia .meta{height:64px;display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:6px;font:700 22px/1 var(--hand);color:var(--ink);text-transform:none;letter-spacing:0}
@@ -744,14 +744,12 @@ window.claude={use:async n=>{if(n==="db"){if(!listo)listo=conectar();return list
         <span class="dg-num" id="dg-num"></span>
         <span class="dg-mes" id="dg-mes"></span>
       </div>
-      <div class="dg-stats"><span class="dg-racha" id="dia-racha"></span><span class="dg-total" id="dia-total"></span></div>
     </div>
     <button type="button" class="dia-hoy-card" id="dia-hoy-card"><span class="dia-hoy-txt" id="dia-hoy-txt"></span><span class="dia-hoy-btn" id="dia-hoy-btn">Escribir hoy</span></button>
     <div class="dia-anio">
-      <div class="dia-anio-cab"><button type="button" id="dia-anio-ant" aria-label="Año anterior">‹</button><span id="dia-anio"></span><button type="button" id="dia-anio-sig" aria-label="Año siguiente">›</button><span class="sep"></span><span class="dia-leyenda">poco <i class="n1"></i><i class="n2"></i><i class="n3"></i> mucho</span></div>
+      <div class="dia-anio-cab"><button type="button" id="dia-anio-ant" aria-label="Año anterior">‹</button><span id="dia-anio"></span><button type="button" id="dia-anio-sig" aria-label="Año siguiente">›</button><span class="sep"></span></div>
       <div class="dia-meses" id="dia-meses"></div>
     </div>
-    <div class="dia-muro" id="dia-lista"></div>
   </div>
 </section>
 
@@ -898,7 +896,7 @@ class Lienzo{
     if(v&&isFinite(v.s)){this.s=v.s;this.tx=v.tx;this.ty=v.ty;this.apply();return true}return false}
   guardar(){if(!this.clave)return;clearTimeout(this._t);this._t=setTimeout(()=>{try{localStorage.setItem("vista:"+this.clave,JSON.stringify({s:this.s,tx:this.tx,ty:this.ty}))}catch(e){}},300)}
   apply(){const s=this.s;this.capa.style.transform=`translate(${this.tx}px,${this.ty}px) scale(${s})`;this.capa.style.setProperty("--inv",1/s);
-    if(this.papel){let v=32*s;while(v<10)v*=4;this.vp.style.backgroundSize=`100% ${v}px`;this.vp.style.backgroundPosition=`0 ${this.ty}px`;
+    if(this.papel){let v=32*s;while(v<10)v*=4;this.vp.style.backgroundSize=`100% ${v}px,1.5px 100%`;this.vp.style.backgroundPosition=`0 ${this.ty}px,${this.tx-30*s}px 0`;
       if(this.zoomUI)this.zoomUI.querySelector(".pct").textContent=Math.round(s*100)+"%";this.guardar();this.pedirRevision();return}
     let b=20;while(b*s<10)b*=5;const g=n=>{const v=n*b/20*s;return `${v}px ${v}px`};this.vp.style.backgroundSize=[g(400),g(400),g(100),g(100),g(20),g(20),"180px 180px"].join(",");
     const p=`${this.tx}px ${this.ty}px`;this.vp.style.backgroundPosition=[p,p,p,p,p,p,"0 0"].join(",");
@@ -1695,15 +1693,14 @@ window.addEventListener("resize",()=>{if(enDiario)ajustarDiario()});
 function entrarDiario(){
   if(lzMain.modo)lzMain.setModo(null);selLimpiar(lzMain);for(const pnl of ["panel-cal","panel-mezcla","panel-cats","panel-keep","panel-menu"])$(pnl).hidden=true;
   enDiario=true;document.body.classList.add("en-diario");$("tab-ideas").setAttribute("aria-selected","false");$("tab-frases").setAttribute("aria-selected","false");$("tab-diario").setAttribute("aria-selected","true");
-  $("diario").hidden=false;try{localStorage.setItem("pestana","diario")}catch(_){}anioDia=new Date().getFullYear();pintarDiario();requestAnimationFrame(ajustarDiario)}
+  $("diario").hidden=false;try{localStorage.setItem("pestana","diario")}catch(_){}anioDia=new Date().getFullYear();pintarDiario();requestAnimationFrame(ajustarDiario);if(diarioCargado)abrirDia(hoyClave());else abrirHoyAlCargar=true}
+let diarioCargado=false,abrirHoyAlCargar=false;
 function salirDiario(){if(!enDiario)return;enDiario=false;document.body.classList.remove("en-diario");$("diario").hidden=true;$("tab-diario").setAttribute("aria-selected","false");try{localStorage.setItem("pestana","")}catch(_){}}
-function pintarDiario(){$("n-diario").textContent=data.diario.filter(nivelDia).length||"";if(!enDiario)return;pintarHeroDia();pintarAnioDia();pintarListaDia()}
+function pintarDiario(){$("n-diario").textContent="";if(!enDiario)return;pintarHeroDia();pintarAnioDia()}
 let anioDia=new Date().getFullYear();
 function pintarHeroDia(){const k=hoyClave(),f=fechaDe(k),e=entradaDia(k),t=textoDia(e);
   $("dg-semana").textContent="Hoy";$("dg-num").textContent=fechaLarga(k);$("dg-mes").textContent=String(f.getFullYear());
-  const r=racha(),n=data.diario.filter(x=>x.id.startsWith(String(f.getFullYear()))&&nivelDia(x)).length;
-  $("dia-racha").replaceChildren(el("b",null,String(r)),el("small",null,r===1?"día seguido":"días seguidos"));
-  $("dia-total").replaceChildren(el("b",null,String(n)),el("small",null,n===1?"día escrito en "+f.getFullYear():"días escritos en "+f.getFullYear()));
+
   const tx=$("dia-hoy-txt");tx.classList.toggle("vacio",!t);tx.textContent=t||(nivelDia(e)?"Hoy pegaste cosas pero no escribiste texto.":"¿Qué pasó hoy? Escribí lo que quieras.");
   $("dia-hoy-btn").textContent=nivelDia(e)?"Seguir escribiendo":"Escribir hoy"}
 function pintarAnioDia(){const y=anioDia,hoy=hoyClave(),cont=$("dia-meses"),ahora=new Date();$("dia-anio").textContent=String(y);
@@ -1726,7 +1723,8 @@ function pintarListaDia(){
     if(txt||!im)c.append(el("p","de-txt",txt||"Cosas pegadas"));
     const ex=[ni>1||(ni&&txt)?(ni===1?"1 imagen":`${ni} imágenes`):"",np?(np===1?"1 nota":`${np} notas`):""].filter(Boolean).join(" · ");if(ex)c.append(el("span","de-extra",ex));
     l.append(c)}}
-function abrirDia(k){if(k>hoyClave())return;abrir("diario",k,entradaDia(k)?null:{id:k,fecha:k,texto:"",bloques:[],hilos:[],trazos:[],creado:Date.now()})}
+function abrirDia(k){if(k>hoyClave())return;abrir("diario",k,entradaDia(k)?null:{id:k,fecha:k,texto:"",bloques:[],hilos:[],trazos:[],creado:Date.now()});
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{const t=$("capa-hoja").querySelector(".principal textarea");if(t&&abierto&&abierto.k==="diario"){try{t.focus({preventScroll:true})}catch(_){t.focus()}t.setSelectionRange(t.value.length,t.value.length)}}))}
 $("tab-diario").onclick=entrarDiario;
 $("dia-hoy-card").onclick=()=>abrirDia(hoyClave());
 $("dia-anio-ant").onclick=()=>{anioDia--;pintarAnioDia()};$("dia-anio-sig").onclick=()=>{anioDia++;pintarAnioDia()};
@@ -2246,7 +2244,7 @@ drawComposer();setVista(vista);try{if(localStorage.getItem("pestana")==="diario"
     if(document.activeElement&&$("panel-cats").contains(document.activeElement))return;
     cats=l.map(c=>({...c}));if(!$("panel-cats").hidden)pintarCats();refrescarCats()},()=>{});
   colDiario=db.collection("diario");cols.diario=colDiario;
-  colDiario.onSnapshot(s=>{data.diario=s.docs.map(d=>({id:d.id,...d.data(),_pend:!!(d.metadata&&d.metadata.hasPendingWrites)}));sincronizarAbierto("diario");pintarDiario()},()=>{});
+  colDiario.onSnapshot(s=>{data.diario=s.docs.map(d=>({id:d.id,...d.data(),_pend:!!(d.metadata&&d.metadata.hasPendingWrites)}));diarioCargado=true;sincronizarAbierto("diario");pintarDiario();if(abrirHoyAlCargar){abrirHoyAlCargar=false;if(enDiario&&!abierto)abrirDia(hoyClave())}},()=>{});
   colFlechas=db.collection("flechas");
   colFlechas.onSnapshot(s=>{flechas=s.docs.map(d=>({id:d.id,...d.data()}));if(selFlecha&&!flechas.some(f=>f.id===selFlecha))selFlecha=null;pintarFlechas()},()=>{});
   colTrazos=db.collection("trazos");
