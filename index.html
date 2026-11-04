@@ -312,9 +312,6 @@ body.modo-hilo #vp-hoja textarea,body.modo-hilo #vp-hoja input{pointer-events:no
 .lm-c[aria-pressed="true"] i{box-shadow:0 0 0 2px var(--paper),0 0 0 4px var(--ink)}
 .lm-g i{display:block;border-radius:50%;background:var(--c);box-shadow:0 0 0 1px rgba(43,37,32,.3)}
 .lm-goma[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
-/* Minimapa */
-.minimapa{position:fixed;z-index:10;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 62px);width:176px;height:120px;border-radius:10px;background:rgba(12,36,24,.8);box-shadow:0 2px 10px rgba(0,0,0,.35);cursor:pointer;touch-action:none}
-#detalle .minimapa{bottom:calc(env(safe-area-inset-bottom,0px) + 112px)}
 /* Línea de tiempo */
 .tiempo{position:fixed;inset:0;z-index:25;background:var(--mat);background-image:linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.18))}
 .t-cab{position:absolute;top:calc(env(safe-area-inset-top,0px) + 12px);left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));display:flex;align-items:center;gap:8px;pointer-events:none}
@@ -744,24 +741,7 @@ class Lienzo{
     const p=`${this.tx}px ${this.ty}px`;this.vp.style.backgroundPosition=[p,p,p,p,p,p,"0 0"].join(",");
     if(this.zoomUI)this.zoomUI.querySelector(".pct").textContent=Math.round(s*100)+"%";this.guardar();this.pedirRevision()}
   pintarMarco(){const m=this.marq;if(!m)return;Object.assign(m.el.style,{left:Math.min(m.x0,m.x1)+"px",top:Math.min(m.y0,m.y1)+"px",width:Math.abs(m.x1-m.x0)+"px",height:Math.abs(m.y1-m.y0)+"px"})}
-  pedirRevision(){if(this._rv)return;this._rv=requestAnimationFrame(()=>{this._rv=null;this.revisarVolver();this.pintarMini()})}
-  pintarMini(){
-    const r=this.rect(),ver=!!(this.itemsMini&&this.s<.32&&r.width);
-    if(!this.mini){if(!ver)return;const c=document.createElement("canvas");c.className="minimapa";c.setAttribute("aria-label","Minimapa: tocá para ir a ese lugar");this.vp.parentElement.append(c);this.mini=c;
-      const ir=e=>{const m=this._miniT;if(!m)return;const b=c.getBoundingClientRect();this.centrarEn((e.clientX-b.left-m.ox)/m.k+m.x,(e.clientY-b.top-m.oy)/m.k+m.y)};
-      c.addEventListener("pointerdown",e=>{e.preventDefault();e.stopPropagation();try{c.setPointerCapture(e.pointerId)}catch(_){}ir(e);
-        const mv=ev=>ir(ev),up=()=>{c.removeEventListener("pointermove",mv);c.removeEventListener("pointerup",up);c.removeEventListener("pointercancel",up)};
-        c.addEventListener("pointermove",mv);c.addEventListener("pointerup",up);c.addEventListener("pointercancel",up)});
-      c.addEventListener("wheel",e=>e.preventDefault(),{passive:false})}
-    this.mini.hidden=!ver;if(!ver)return;
-    const W=176,H=120,dpr=Math.min(2,window.devicePixelRatio||1),c=this.mini;if(c.width!==W*dpr){c.width=W*dpr;c.height=H*dpr}
-    const ctx=c.getContext("2d");ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
-    const items=this.itemsMini(),a=this.aMundo(r.left,r.top),b=this.aMundo(r.right,r.bottom);
-    let x0=a.x,y0=a.y,x1=b.x,y1=b.y;for(const it of items){x0=Math.min(x0,it.x);y0=Math.min(y0,it.y);x1=Math.max(x1,it.x+it.w);y1=Math.max(y1,it.y+it.h)}
-    const pad=8,k=Math.min((W-pad*2)/((x1-x0)||1),(H-pad*2)/((y1-y0)||1)),ox=(W-(x1-x0)*k)/2,oy=(H-(y1-y0)*k)/2;this._miniT={k,ox,oy,x:x0,y:y0};
-    const X=v=>ox+(v-x0)*k,Y=v=>oy+(v-y0)*k;
-    for(const it of items){ctx.fillStyle=it.c||"#fffdf6";ctx.fillRect(X(it.x),Y(it.y),Math.max(2,it.w*k),Math.max(2,it.h*k))}
-    ctx.strokeStyle="#fffdf6";ctx.lineWidth=1.5;ctx.strokeRect(X(a.x),Y(a.y),(b.x-a.x)*k,(b.y-a.y)*k)}
+  pedirRevision(){if(this._rv)return;this._rv=requestAnimationFrame(()=>{this._rv=null;this.revisarVolver()})}
   revisarVolver(){
     if(!this.limites)return;
     if(!this.volverBtn){const x=document.createElement("button");x.type="button";x.className="btn oscuro volver-centro";x.textContent="↩ Volver a los post-its";x.hidden=true;x.onclick=()=>this.encuadrar(this.limites&&this.limites());this.vp.parentElement.append(x);this.volverBtn=x}
@@ -1443,12 +1423,6 @@ document.addEventListener("keydown",e=>{
   if(!(e.metaKey||e.ctrlKey)||e.altKey)return;const k=(e.key||"").toLowerCase();
   if(k==="z"||k==="y"){if(escribiendo()||!$("tiempo").hidden)return;const c=document.getElementById("conectar");if(c&&!c.hidden)return;e.preventDefault();deshacerUI(k==="y"||e.shiftKey);return}
   if(k==="d"){if(escribiendo()||!$("tiempo").hidden)return;e.preventDefault();duplicarActual()}});
-
-/* ---------- Minimapa ---------- */
-lzMain.itemsMini=()=>{const out=[];for(const n of nodosNota.values())if(n.isConnected)out.push({...cajaDe(n),c:n.style.getPropertyValue("--c")||"#fffdf6"});
-  for(const n of nodosDeco.values())if(n.isConnected)out.push({...cajaDe(n),c:"rgba(255,253,246,.45)"});return out};
-lzHoja.itemsMini=()=>[...document.querySelectorAll("#capa-hoja .principal,#capa-hoja .pieza")].map(n=>({...cajaDe(n),
-  c:n.classList.contains("principal")||n.classList.contains("bpost")?(n.style.getPropertyValue("--c")||"#ffe76a"):"rgba(255,253,246,.75)"}));
 
 /* ---------- Línea de tiempo ---------- */
 function abrirTiempo(){
