@@ -17,7 +17,7 @@
 </head>
 <body>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@500;600&family=IBM+Plex+Mono:wght@500&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap">
 <style>
 /* Plancha de corte infinita (verde o azul): se hace zoom con la rueda o pellizcando, se arrastra el fondo para moverse, y los post-its e imágenes se acomodan a mano. Cada post-it abre su propia plancha. Look único elegido a propósito. */
 :root{
@@ -312,6 +312,53 @@ body.modo-hilo #vp-hoja textarea,body.modo-hilo #vp-hoja input{pointer-events:no
 .lm-c[aria-pressed="true"] i{box-shadow:0 0 0 2px var(--paper),0 0 0 4px var(--ink)}
 .lm-g i{display:block;border-radius:50%;background:var(--c);box-shadow:0 0 0 1px rgba(43,37,32,.3)}
 .lm-goma[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+/* Diario */
+body.en-diario #vp-main,body.en-diario .composer,body.en-diario>.lateral,body.en-diario>.lapiz-menu,body.en-diario>.barra-sel,body.en-diario>.volver-centro,body.en-diario #zoom-main,body.en-diario #mezclar,body.en-diario #btn-cal,body.en-diario #btn-tiempo,body.en-diario #vistaseg,body.en-diario #buscar{display:none!important}
+.diario{position:fixed;inset:0;z-index:5;overflow-y:auto;overflow-x:hidden;background:var(--mat);padding:90px 16px 48px;-webkit-overflow-scrolling:touch;
+  background-image:linear-gradient(var(--mat-minor) 1px,transparent 1px),linear-gradient(90deg,var(--mat-minor) 1px,transparent 1px);background-size:20px 20px}
+.dia-hoja{max-width:740px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
+.dia-hoja>*{min-width:0}
+.dia-rollo{background:#17130f;border-radius:6px;padding:8px 10px 0;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.dia-rollo-cab{display:flex;align-items:center;gap:4px;color:var(--paper);font:600 .72rem var(--mono);text-transform:uppercase;letter-spacing:.08em}
+.dia-rollo-cab span{flex:1;text-align:center}
+.dia-rollo-cab button{border:0;background:none;color:var(--paper);font:600 1.1rem var(--ui);cursor:pointer;width:30px;height:30px;border-radius:50%}
+.dia-rollo-cab button:hover{background:rgba(255,253,246,.12)}.dia-rollo-cab button:disabled{opacity:.25;cursor:default}
+.dia-tira{display:flex;gap:4px;overflow-x:auto;padding:14px 2px;scrollbar-width:none;
+  background:repeating-linear-gradient(90deg,rgba(255,253,246,.75) 0 6px,transparent 6px 12px) top/100% 5px no-repeat,repeating-linear-gradient(90deg,rgba(255,253,246,.75) 0 6px,transparent 6px 12px) bottom 3px left 0/100% 5px no-repeat}
+.dia-tira::-webkit-scrollbar{display:none}
+.dia-cuadro{flex:none;width:40px;height:32px;border:0;border-radius:3px;background:#2e2822;color:rgba(255,253,246,.5);font:600 11px var(--mono);cursor:pointer;display:flex;align-items:flex-end;padding:3px 5px}
+.dia-cuadro:hover{background:#3d352d}
+.dia-cuadro.lleno{background:linear-gradient(160deg,#f6dd8a,#e0a24a);color:#3a2a14}
+.dia-cuadro.hoy{box-shadow:inset 0 0 0 1.5px rgba(255,253,246,.85)}
+.dia-cuadro[aria-current="date"]{outline:2px solid #fffdf6;outline-offset:2px}
+.dia-cuadro:disabled{opacity:.28;cursor:default}
+.dia-papel{background:var(--paper);border-radius:3px;box-shadow:0 2px 2px rgba(0,0,0,.12),0 26px 40px -18px rgba(0,0,0,.6);padding:30px 34px 24px;display:grid;gap:24px}
+.dia-cab{display:flex;align-items:center;gap:10px}
+.dia-titulo{flex:1;min-width:0}
+.dia-fecha{font:700 1.75rem/1.1 var(--hand);color:var(--ink)}
+.dia-sub{font:500 .7rem var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:5px}
+.dia-nav{flex:none;border:0;background:rgba(43,37,32,.07);width:36px;height:36px;border-radius:50%;cursor:pointer;font:600 1.15rem var(--ui);color:var(--ink)}
+.dia-nav:hover{background:rgba(43,37,32,.14)}.dia-nav:disabled{opacity:.3;cursor:default}
+.dia-hoy{flex:none;border:0;background:var(--ink);color:var(--paper);border-radius:999px;padding:8px 13px;font:600 .8rem var(--ui);cursor:pointer}
+.dia-consigna{border-left:3px solid #e23b3b;padding:2px 0 2px 14px;display:grid;gap:5px}
+.dia-consigna p{margin:0;font:400 italic 1.08rem/1.4 "Courier Prime",var(--mono);color:var(--ink)}
+.dia-lbl{font:600 .64rem var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.dia-otra{justify-self:start;border:0;background:none;padding:0;font:600 .75rem var(--ui);color:var(--soft);text-decoration:underline;cursor:pointer}
+.dia-tres{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.dia-campo,.dia-pagina{display:grid;gap:4px;align-content:start}
+.dia-campo textarea,.dia-pagina textarea{width:100%;resize:none;overflow:hidden;border:0;color:var(--ink);font:400 15px/28px "Courier Prime",var(--mono);padding:0 2px;
+  background:repeating-linear-gradient(transparent 0 27px,rgba(43,37,32,.15) 27px 28px);background-attachment:local;min-height:84px;user-select:text;-webkit-user-select:text}
+.dia-campo textarea:focus,.dia-pagina textarea:focus{outline:none}
+.dia-campo textarea::placeholder,.dia-pagina textarea::placeholder{color:rgba(43,37,32,.35)}
+.dia-pagina textarea{min-height:336px;padding-left:24px;
+  background:linear-gradient(90deg,transparent 12px,rgba(226,59,59,.5) 12px 13px,transparent 13px),repeating-linear-gradient(transparent 0 27px,rgba(43,37,32,.15) 27px 28px)}
+.dia-pie{display:flex;align-items:center;gap:16px;flex-wrap:wrap;font:500 .7rem var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.dia-pie .btn{text-transform:none;letter-spacing:0}
+.dia-recuerdo{border:1px dashed rgba(255,253,246,.5);border-radius:10px;padding:14px 16px;color:var(--paper);display:grid;gap:6px;background:rgba(0,0,0,.12)}
+.dia-recuerdo .dia-lbl{color:rgba(255,253,246,.7)}
+.dia-recuerdo p{margin:0;font:400 1rem/1.45 "Courier Prime",var(--mono)}
+.dia-recuerdo .dia-otra{color:var(--paper)}
+@media (max-width:640px){.dia-tres{grid-template-columns:1fr;gap:10px}.dia-papel{padding:22px 18px 18px;gap:20px}.dia-fecha{font-size:1.35rem}.diario{padding-left:10px;padding-right:10px}}
 /* Línea de tiempo */
 .tiempo{position:fixed;inset:0;z-index:25;background:var(--mat);background-image:linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.18))}
 .t-cab{position:absolute;top:calc(env(safe-area-inset-top,0px) + 12px);left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));display:flex;align-items:center;gap:8px;pointer-events:none}
@@ -552,6 +599,7 @@ window.claude={use:async n=>{if(n==="db"){if(!listo)listo=conectar();return list
   <div class="grupo" role="tablist" aria-label="Sección">
     <button class="tab" id="tab-ideas" role="tab" type="button" aria-selected="true">Ideas <span class="n" id="n-ideas"></span></button>
     <button class="tab" id="tab-frases" role="tab" type="button" aria-selected="false">Frases <span class="n" id="n-frases"></span></button>
+    <button class="tab" id="tab-diario" role="tab" type="button" aria-selected="false">Diario <span class="n" id="n-diario"></span></button>
   </div>
   <span class="sep"></span>
   <input type="search" class="buscar" id="buscar" placeholder="Buscar en todo…" aria-label="Buscar en todo, también adentro de los post-its">
@@ -600,6 +648,32 @@ window.claude={use:async n=>{if(n==="db"){if(!listo)listo=conectar();return list
     <div class="links-comp"><button type="button" class="link-cats" id="btn-cats">Editar categorías</button><button type="button" class="link-cats" id="btn-keep">Importar de Google Keep</button></div>
   </form>
 </div>
+
+<section class="diario" id="diario" hidden aria-label="Diario">
+  <div class="dia-hoja">
+    <div class="dia-rollo">
+      <div class="dia-rollo-cab"><button type="button" id="dia-mes-ant" aria-label="Mes anterior">‹</button><span id="dia-mes"></span><button type="button" id="dia-mes-sig" aria-label="Mes siguiente">›</button></div>
+      <div class="dia-tira" id="dia-tira"></div>
+    </div>
+    <article class="dia-papel">
+      <header class="dia-cab">
+        <button type="button" class="dia-nav" id="dia-ant" aria-label="Día anterior">‹</button>
+        <div class="dia-titulo"><div class="dia-fecha" id="dia-fecha"></div><div class="dia-sub" id="dia-sub"></div></div>
+        <button type="button" class="dia-nav" id="dia-sig" aria-label="Día siguiente">›</button>
+        <button type="button" class="dia-hoy" id="dia-hoy">Hoy</button>
+      </header>
+      <div class="dia-consigna"><span class="dia-lbl">Consigna del día</span><p id="dia-consigna-txt"></p><button type="button" class="dia-otra" id="dia-otra">Otra consigna</button></div>
+      <div class="dia-tres">
+        <label class="dia-campo"><span class="dia-lbl">Imagen · lo que vi</span><textarea id="dia-imagen" rows="3" placeholder="Un plano que te quedó de hoy."></textarea></label>
+        <label class="dia-campo"><span class="dia-lbl">Sonido · lo que escuché</span><textarea id="dia-sonido" rows="3" placeholder="Un ruido, una frase robada."></textarea></label>
+        <label class="dia-campo"><span class="dia-lbl">Escena · lo que imaginé</span><textarea id="dia-escena" rows="3" placeholder="Una escena, un personaje, un qué pasaría si."></textarea></label>
+      </div>
+      <label class="dia-pagina"><span class="dia-lbl">Página del día</span><textarea id="dia-texto" rows="12" placeholder="Escribí lo que quieras. Nadie corrige."></textarea></label>
+      <footer class="dia-pie"><span id="dia-palabras"></span><span id="dia-racha"></span><span class="sep"></span><button type="button" class="btn amarillo" id="dia-a-idea" title="Marcá un pedazo de texto y tocá acá">Mandar a Ideas</button></footer>
+    </article>
+    <div class="dia-recuerdo" id="dia-recuerdo" hidden></div>
+  </div>
+</section>
 
 <div class="tiempo" id="tiempo" hidden role="dialog" aria-modal="true" aria-label="Línea de tiempo">
   <div class="t-pista" id="t-pista"><div class="t-riel" id="t-riel"></div></div>
@@ -931,7 +1005,7 @@ lzMain.limites=()=>{const pos=posiciones(data[vista]);const pts=[...pos.values()
   return {x,y,w:Math.max(...pts.map(p=>p.x+p.w))-x,h:Math.max(...pts.map(p=>p.y+p.h))-y}};
 let encuadrado={};
 function setVista(v){
-  vista=v;selDeco=null;selFlecha=null;lzMain.origenFlecha=null;const esIdea=v==="ideas";
+  salirDiario();vista=v;selDeco=null;selFlecha=null;lzMain.origenFlecha=null;const esIdea=v==="ideas";
   $("tab-ideas").setAttribute("aria-selected",esIdea);$("tab-frases").setAttribute("aria-selected",!esIdea);
   $("lbl").textContent=esIdea?"Nueva idea":"Nueva frase";$("abrir-composer").textContent=esIdea?"+ Nueva idea":"+ Nueva frase";
   $("texto").placeholder=esIdea?"¿Qué se te ocurrió?":"La frase, tal cual";
@@ -1056,7 +1130,7 @@ async function decoEnPlancha(file,p){
 lzMain.onArchivo=(f,p)=>decoEnPlancha(f,p);
 $("file").onchange=e=>{const f=e.target.files&&e.target.files[0];e.target.value="";if(!f)return;
   if(destinoArchivo==="hoja"&&abierto)bloqueImagen(f,lzHoja.centro());else decoEnPlancha(f,lzMain.centro())};
-document.addEventListener("paste",e=>{if(escribiendo()&&!abierto)return;const fs=[...(e.clipboardData?.files||[])].filter(x=>x.type.startsWith("image/"));if(!fs.length)return;e.preventDefault();
+document.addEventListener("paste",e=>{if(enDiario||(escribiendo()&&!abierto))return;const fs=[...(e.clipboardData?.files||[])].filter(x=>x.type.startsWith("image/"));if(!fs.length)return;e.preventDefault();
   const p=puntoPegar(abierto?lzHoja:lzMain);fs.forEach((f,n)=>{const q={x:p.x+n*30,y:p.y+n*30};if(abierto)bloqueImagen(f,q);else decoEnPlancha(f,q)})});
 
 /* ---------- Plancha de un post-it ---------- */
@@ -1420,7 +1494,7 @@ async function deshacerUI(re){if(!window.deshacer)return;vaciarPendientes();try{
 window.addEventListener("gh-historial",()=>{selFlecha=null;pintarFlechas();if(!abierto)return;const srv=data[abierto.k].find(x=>x.id===abierto.id);if(!srv)return;
   aplicarRemoto(prepararDoc(JSON.parse(JSON.stringify(srv))))});
 document.addEventListener("keydown",e=>{
-  if(!(e.metaKey||e.ctrlKey)||e.altKey)return;const k=(e.key||"").toLowerCase();
+  if(!(e.metaKey||e.ctrlKey)||e.altKey||enDiario)return;const k=(e.key||"").toLowerCase();
   if(k==="z"||k==="y"){if(escribiendo()||!$("tiempo").hidden)return;const c=document.getElementById("conectar");if(c&&!c.hidden)return;e.preventDefault();deshacerUI(k==="y"||e.shiftKey);return}
   if(k==="d"){if(escribiendo()||!$("tiempo").hidden)return;e.preventDefault();duplicarActual();return}
   if(k==="c"||k==="x"){if(escribiendo()||!$("tiempo").hidden||String(window.getSelection?getSelection():"").trim())return;
@@ -1484,7 +1558,7 @@ function pegarTexto(txt){
 function cortarSel(){const ns=copiarSel();if(!ns){toast("Seleccioná algo para cortar.");return}
   if(abierto)lzHoja.onBorrarSel(ns);else{selLimpiar(lzMain);selDeco=null;borrarDePlancha(ns)}}
 document.addEventListener("paste",e=>{
-  const t=tPegar;clearTimeout(tPegar);tPegar=null;if(e.defaultPrevented)return;
+  const t=tPegar;clearTimeout(tPegar);tPegar=null;if(e.defaultPrevented||enDiario)return;
   if(escribiendo()||!$("tiempo").hidden)return;const c=document.getElementById("conectar");if(c&&!c.hidden)return;
   const txt=((e.clipboardData&&e.clipboardData.getData("text/plain"))||"").trim();
   if(porta&&(!txt||txt===(porta.texto||"").trim()||(!porta.enSistema&&!porta.vieja))){e.preventDefault();pegarInterno();return}
@@ -1492,6 +1566,118 @@ document.addEventListener("paste",e=>{
   if(t&&porta){e.preventDefault();pegarInterno()}});
 window.addEventListener("blur",()=>{if(porta)porta.vieja=true});
 for(const ev of ["copy","cut"])document.addEventListener(ev,()=>{if(escribiendo()||String(window.getSelection?getSelection():"").trim())porta=null});
+
+/* ---------- Diario ---------- */
+const CONSIGNAS=[
+  "Describí un plano que viste hoy, como si fuera la primera línea de un guion.",
+  "Robá un diálogo que escuchaste en la calle. Tal cual, sin arreglarlo.",
+  "¿Qué sonido de hoy pondrías en una película?",
+  "Algo que te dio vergüenza hoy, contado en tercera persona.",
+  "Si hoy fuera una escena, ¿dónde la cortarías?",
+  "Contá el día en exactamente cinco planos.",
+  "Una mentirita que escuchaste o que dijiste.",
+  "¿Qué luz había a la tarde? Describila sin decir «linda».",
+  "Escribí la sinopsis de tu día como si fuera una película de festival.",
+  "Alguien que viste un segundo nada más. Inventale el resto del día.",
+  "¿Qué pregunta te quedó dando vueltas?",
+  "Un ruido que nadie más notó.",
+  "Si mañana tuvieras que filmar con lo que hay en tu casa, ¿qué filmarías?",
+  "Una regla que te gustaría romper en tu próximo corto.",
+  "El mejor título para el día de hoy.",
+  "Escribí sin diálogo una escena de algo que pasó hoy.",
+  "Algo que no filmarías nunca. ¿Por qué?",
+  "Una película que se te vino a la cabeza hoy sin querer.",
+  "Tres palabras que escuchaste hoy y que vos no usás nunca.",
+  "¿Qué momento del día pondrías en cámara lenta?",
+  "Una discusión (tuya o ajena) contada desde el lado que no tiene razón.",
+  "El color que más se repitió hoy.",
+  "Si el día tuviera banda sonora, ¿qué tema sonaría en los créditos?",
+  "Algo que alguien hizo con las manos.",
+  "Una idea que descartaste hoy. Defendela un poco.",
+  "Tu desayuno como plano detalle.",
+  "¿Qué te dio envidia hoy? Usala para algo.",
+  "Un lugar de tu barrio donde esconderías una cámara.",
+  "Escribí el final de algo que todavía no empezaste.",
+  "Una conversación que no tuviste pero que deberías tener.",
+  "Algo de hoy que en veinte años va a parecer de época.",
+  "Un objeto de tu cuarto que podría ser el centro de un corto.",
+  "Qué haría hoy alguno de tus personajes en tu lugar.",
+  "Un olor de hoy. Ahora pensá cómo se filma un olor.",
+  "Lo más aburrido que pasó hoy, contado como si fuera un thriller.",
+  "Una ventana que mirás seguido. ¿Qué pasa del otro lado?",
+  "Algo que te hizo reír y no sabés bien por qué.",
+  "Si hoy fuera el primer día de un rodaje, ¿qué falta?",
+  "Describí a alguien solo por cómo camina.",
+  "Una frase que te gustaría que diga un personaje. Todavía no sabés cuál."
+];
+const CAMPOS_DIA=["imagen","sonido","escena","texto"];
+let diario=new Map(),colDiario=null,enDiario=false,diaSel=null,mesDia=null,pendDia=null,tDia=null,ultCampo=null,consignaOff=0;
+const hashDia=k=>{let h=0;for(const ch of k)h=(h*31+ch.charCodeAt(0))|0;return Math.abs(h)};
+const tieneAlgo=e=>!!e&&CAMPOS_DIA.some(c=>(e[c]||"").trim());
+const sumarDias=(k,n)=>{const [y,m,d]=k.split("-").map(Number),f=new Date(y,m-1,d+n);return claveDia(f.getFullYear(),f.getMonth(),f.getDate())};
+const fechaDe=k=>{const [y,m,d]=k.split("-").map(Number);return new Date(y,m-1,d)};
+function consignaDe(k){const e=diario.get(k);if(e&&e.consigna&&!consignaOff)return e.consigna;return CONSIGNAS[(hashDia(k)+consignaOff)%CONSIGNAS.length]}
+function racha(){let k=hoyClave();if(!tieneAlgo(diario.get(k)))k=sumarDias(k,-1);let n=0;while(tieneAlgo(diario.get(k))){n++;k=sumarDias(k,-1)}return n}
+function ajustarDiario(){const b=document.querySelector(".barra");if(b)$("diario").style.paddingTop=(b.getBoundingClientRect().bottom+16)+"px"}
+window.addEventListener("resize",()=>{if(enDiario)ajustarDiario()});
+function entrarDiario(){
+  if(lzMain.modo)lzMain.setModo(null);selLimpiar(lzMain);for(const pnl of ["panel-cal","panel-mezcla","panel-cats","panel-keep"])$(pnl).hidden=true;
+  enDiario=true;document.body.classList.add("en-diario");$("tab-ideas").setAttribute("aria-selected","false");$("tab-frases").setAttribute("aria-selected","false");$("tab-diario").setAttribute("aria-selected","true");
+  $("diario").hidden=false;try{localStorage.setItem("pestana","diario")}catch(_){}requestAnimationFrame(ajustarDiario);irADia(hoyClave())}
+function salirDiario(){if(!enDiario)return;guardarDiaYa();enDiario=false;document.body.classList.remove("en-diario");$("diario").hidden=true;$("tab-diario").setAttribute("aria-selected","false");try{localStorage.setItem("pestana","")}catch(_){}}
+function irADia(k){guardarDiaYa();if(k>hoyClave())k=hoyClave();diaSel=k;const f=fechaDe(k);mesDia={y:f.getFullYear(),m:f.getMonth()};consignaOff=0;pintarDiario();
+  requestAnimationFrame(()=>{const c=$("dia-tira").querySelector('[aria-current="date"]');if(c)c.scrollIntoView({block:"nearest",inline:"center"})})}
+function pintarDiario(){
+  if(!enDiario||!diaSel)return;const k=diaSel,e=diario.get(k)||{},hoy=hoyClave(),f=fechaDe(k);
+  let t=f.toLocaleDateString("es-AR",{weekday:"long",day:"numeric",month:"long"});$("dia-fecha").textContent=t.charAt(0).toUpperCase()+t.slice(1);
+  const dif=Math.round((fechaDe(hoy)-f)/864e5);$("dia-sub").textContent=[dif===0?"Hoy":dif===1?"Ayer":`Hace ${dif} días`,String(f.getFullYear())].join(" · ");
+  $("dia-sig").disabled=k>=hoy;$("dia-hoy").hidden=k===hoy;
+  $("dia-consigna-txt").textContent=consignaDe(k);
+  const enPausa=pendDia&&pendDia.k===k;
+  for(const c of CAMPOS_DIA){const ta=$("dia-"+c);if(document.activeElement!==ta&&!enPausa)ta.value=e[c]||"";autosize(ta)}
+  pintarTira();pintarPieDia();pintarRecuerdo();
+}
+function pintarTira(){
+  const {y,m}=mesDia,dias=new Date(y,m+1,0).getDate(),hoy=hoyClave(),tira=$("dia-tira");
+  $("dia-mes").textContent="Rollo · "+new Date(y,m,1).toLocaleDateString("es-AR",{month:"long",year:"numeric"});
+  $("dia-mes-sig").disabled=claveDia(y,m,1)>hoy;tira.replaceChildren();
+  for(let d=1;d<=dias;d++){const k=claveDia(y,m,d),e=diario.get(k),b=el("button","dia-cuadro"+(tieneAlgo(e)?" lleno":"")+(k===hoy?" hoy":""));b.type="button";
+    b.append(el("span",null,String(d)));if(k===diaSel)b.setAttribute("aria-current","date");b.disabled=k>hoy;
+    const ini=e?(e.texto||e.escena||e.imagen||e.sonido||"").trim().slice(0,90):"";b.title=ini?`${d}: ${ini}`:`${d}`;b.setAttribute("aria-label",`Día ${d}${tieneAlgo(e)?", escrito":""}`);
+    b.onclick=()=>irADia(k);tira.append(b)}
+}
+function pintarPieDia(){
+  const n=CAMPOS_DIA.map(c=>$("dia-"+c).value).join(" ").split(/\s+/).filter(Boolean).length,r=racha();
+  $("dia-palabras").textContent=n===1?"1 palabra":`${n} palabras`;$("dia-racha").textContent=r?(r===1?"1 día seguido":`${r} días seguidos`):"Arrancá hoy";
+  const tot=[...diario.values()].filter(tieneAlgo).length;$("n-diario").textContent=tot||"";
+}
+function pintarRecuerdo(){
+  const k=diaSel,f=fechaDe(k),cand=[["Hace un año",claveDia(f.getFullYear()-1,f.getMonth(),f.getDate())],["Hace un mes",(()=>{const g=new Date(f.getFullYear(),f.getMonth()-1,f.getDate());return claveDia(g.getFullYear(),g.getMonth(),g.getDate())})()],["Hace una semana",sumarDias(k,-7)]];
+  const r=$("dia-recuerdo");const hit=cand.find(([,c])=>tieneAlgo(diario.get(c)));if(!hit){r.hidden=true;return}
+  const e=diario.get(hit[1]),txt=(e.texto||e.escena||e.imagen||e.sonido||"").trim();
+  const b=el("button","dia-otra","Ir a ese día");b.type="button";b.onclick=()=>irADia(hit[1]);
+  r.replaceChildren(el("span","dia-lbl",hit[0]+" escribiste"),el("p",null,"«"+(txt.length>220?txt.slice(0,220)+"…":txt)+"»"),b);r.hidden=false}
+function editarDia(){const k=diaSel;if(!k)return;const e={...(diario.get(k)||{})};for(const c of CAMPOS_DIA)e[c]=$("dia-"+c).value;
+  pendDia={k,e};clearTimeout(tDia);tDia=setTimeout(guardarDiaYa,800);pintarPieDia()}
+function guardarDiaYa(){clearTimeout(tDia);const p=pendDia;pendDia=null;if(!p||!colDiario)return;const {k,e}=p;
+  if(!tieneAlgo(e)){if(diario.has(k))colDiario.doc(k).delete().catch(()=>{});return}
+  const doc={fecha:k,imagen:e.imagen||"",sonido:e.sonido||"",escena:e.escena||"",texto:e.texto||"",consigna:e.consigna||consignaDe(k),creado:e.creado||Date.now(),editado:Date.now()};
+  colDiario.doc(k).set(doc).catch(()=>toast("No se guardó el diario. Revisá la conexión."))}
+for(const c of CAMPOS_DIA){const ta=$("dia-"+c);ta.addEventListener("input",()=>{autosize(ta);editarDia()});ta.addEventListener("focus",()=>{ultCampo=ta});ta.addEventListener("blur",guardarDiaYa)}
+$("tab-diario").onclick=entrarDiario;
+$("dia-ant").onclick=()=>irADia(sumarDias(diaSel,-1));$("dia-sig").onclick=()=>irADia(sumarDias(diaSel,1));$("dia-hoy").onclick=()=>irADia(hoyClave());
+$("dia-mes-ant").onclick=()=>{mesDia=mesDia.m?{y:mesDia.y,m:mesDia.m-1}:{y:mesDia.y-1,m:11};pintarTira()};
+$("dia-mes-sig").onclick=()=>{mesDia=mesDia.m<11?{y:mesDia.y,m:mesDia.m+1}:{y:mesDia.y+1,m:0};pintarTira()};
+$("dia-otra").onclick=()=>{consignaOff++;const e=diario.get(diaSel);const t=CONSIGNAS[(hashDia(diaSel)+consignaOff)%CONSIGNAS.length];$("dia-consigna-txt").textContent=t;
+  if(tieneAlgo(e)||(pendDia&&pendDia.k===diaSel)){const base=pendDia&&pendDia.k===diaSel?pendDia.e:{...e};base.consigna=t;pendDia={k:diaSel,e:base};guardarDiaYa()}else{pendDia=null}};
+$("dia-a-idea").addEventListener("pointerdown",e=>e.preventDefault());
+$("dia-a-idea").onclick=async()=>{
+  const ta=document.activeElement&&CAMPOS_DIA.some(c=>$("dia-"+c)===document.activeElement)?document.activeElement:ultCampo;
+  const sel=ta?ta.value.slice(ta.selectionStart,ta.selectionEnd).trim():"";
+  if(!sel){toast("Marcá con el mouse (o el dedo) un pedazo de lo que escribiste y tocá de nuevo.");return}
+  if(!cols.ideas){toast("No hay conexión con la base. Recargá la página.");return}
+  const numero=data.ideas.reduce((m,i)=>Math.max(m,i.numero||0),0)+1;
+  try{await cols.ideas.add({texto:sel,tipo:"otro",creado:Date.now(),numero,origen:"diario",diario:diaSel});toast(`Pegado en Ideas como #${numero}.`)}catch(_){toast("No se pudo pegar. Probá de nuevo.")}};
 
 /* ---------- Línea de tiempo ---------- */
 function abrirTiempo(){
@@ -1917,7 +2103,7 @@ $("link-nota").onfocus=e=>e.target.select();
 $("copiar-link").onclick=async()=>{const v=$("link-nota").value;try{await navigator.clipboard.writeText(v);toast("Link copiado.")}catch(_){$("link-nota").focus();$("link-nota").select();toast("No pude copiarlo solo: ya quedó seleccionado, copialo vos.")}};
 
 /* ---------- Arranque ---------- */
-drawComposer();setVista(vista);
+drawComposer();setVista(vista);try{if(localStorage.getItem("pestana")==="diario")entrarDiario()}catch(_){}
 (async()=>{
   const db=window.claude?await window.claude.use("db"):null;
   if(!db){$("guardar").disabled=true;toast("La base de datos no está disponible en esta vista.");return}
@@ -1939,6 +2125,8 @@ drawComposer();setVista(vista);
   docCats.onSnapshot(s=>{const l=s.exists&&s.data().lista;if(!Array.isArray(l)||!l.length)return;
     if(document.activeElement&&$("panel-cats").contains(document.activeElement))return;
     cats=l.map(c=>({...c}));if(!$("panel-cats").hidden)pintarCats();refrescarCats()},()=>{});
+  colDiario=db.collection("diario");
+  colDiario.onSnapshot(s=>{diario=new Map(s.docs.map(d=>[d.id,d.data()]));pintarPieDia();if(enDiario)pintarDiario()},()=>{});
   colFlechas=db.collection("flechas");
   colFlechas.onSnapshot(s=>{flechas=s.docs.map(d=>({id:d.id,...d.data()}));if(selFlecha&&!flechas.some(f=>f.id===selFlecha))selFlecha=null;pintarFlechas()},()=>{});
   colTrazos=db.collection("trazos");
