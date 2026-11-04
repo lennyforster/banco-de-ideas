@@ -322,7 +322,13 @@ body.sin-ui .barra,body.sin-ui .lateral,body.sin-ui .herramientas,body.sin-ui .z
 .chip-modo button{border:0;border-radius:999px;padding:7px 12px;font:600 .82rem var(--ui);background:var(--paper);color:var(--ink);cursor:pointer}
 .menu-fila{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:4px}
 .menu-fila .menu-it{text-align:center;padding:11px 6px;font-size:.85rem}
-#btn-menu{display:none}
+#btn-menu{display:inline-block;padding:9px 13px;letter-spacing:.08em}
+#mezclar,#btn-cal,#btn-tiempo,#vistaseg,#salir{display:none!important}
+#panel-menu{left:auto;right:max(12px,env(safe-area-inset-right,0px));transform:none;width:min(340px,calc(100vw - 24px))}
+.menu-lista .buscar{width:100%;box-shadow:none;background:rgba(43,37,32,.06);margin-bottom:4px}
+#chip-busca{background:var(--ink);color:var(--paper);max-width:46vw;overflow:hidden;text-overflow:ellipsis}
+@media (min-width:561px){.menu-fila{display:none!important}}
+body.en-diario #chip-busca{display:none}
 .menu-lista{display:grid;gap:4px}
 .menu-it{border:0;background:rgba(43,37,32,.06);border-radius:10px;padding:13px 14px;text-align:left;font:600 .95rem var(--ui);color:var(--ink);cursor:pointer}
 .menu-it.suave{background:none;color:var(--soft);font-weight:500}
@@ -355,7 +361,7 @@ body.en-diario #zoom-hoja{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) +
 .dc-grilla button{position:relative;height:44px;border:0;border-radius:6px;background:none;font:600 1.05rem var(--hand);color:var(--ink);cursor:pointer;padding:0}
 .dc-grilla button span{position:relative;z-index:1}
 .dc-grilla button::before{content:"";position:absolute;left:18%;right:18%;top:52%;height:34%;border-radius:2px;transform:rotate(-4deg);background:transparent}
-.dc-grilla button.n1::before{background:rgba(255,231,106,.7)}.dc-grilla button.n2::before{background:rgba(255,205,60,.9);height:44%;top:46%}.dc-grilla button.n3::before{background:rgba(255,159,67,.9);height:52%;top:40%;left:12%;right:12%}
+.dc-grilla button.escrito::before{background:rgba(255,214,64,.85);height:42%;top:46%}
 .dc-grilla button.hoy::after{content:"";position:absolute;inset:3px 6px;border:2px solid #c2462a;border-radius:50% 46% 52% 48%;transform:rotate(-6deg)}
 .dc-grilla button.sel{background:rgba(43,37,32,.09)}
 .dc-grilla button:hover:not(:disabled){background:rgba(43,37,32,.06)}
@@ -371,9 +377,6 @@ body.en-diario #zoom-hoja{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) +
 @media (max-width:560px){#btn-dia-cal .lbl-dc{display:none}#btn-dia-cal{padding:9px 12px}}
 .btn:focus:not(:focus-visible),.tool:focus:not(:focus-visible),.lat:focus:not(:focus-visible){outline:none}
 @media (max-width:560px){
-  #btn-menu{display:inline-block;padding:9px 13px;letter-spacing:.08em}
-  #mezclar,#btn-cal,#btn-tiempo,#vistaseg,#salir{display:none!important}
-  .barra .buscar{order:5;flex:1 1 100%;width:auto}
   .tab{padding:7px 11px}
   .lateral{display:none!important}
   .tool.solo-celu{display:inline-block}
@@ -771,11 +774,12 @@ window.claude={use:async n=>{if(n==="db"){if(!listo)listo=conectar();return list
   <input type="search" class="buscar" id="buscar" placeholder="Buscar en todo…" aria-label="Buscar en todo, también adentro de los post-its">
   <button class="btn amarillo" id="mezclar" type="button">Mezclar</button>
   <button class="btn" id="btn-dia-cal" type="button" aria-label="Calendario del diario"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="3" width="12" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span class="lbl-dc">Calendario</span></button>
+  <button class="btn" id="chip-busca" type="button" hidden title="Sacar la búsqueda"></button>
   <button class="btn" id="btn-menu" type="button" aria-label="Más opciones" aria-haspopup="true">•••</button>
   <button class="btn" id="salir" type="button" title="Cerrar sesión en este dispositivo">Salir</button>
   <button class="btn" id="btn-cal" type="button">Calendario</button>
   <button class="btn" id="btn-tiempo" type="button">Línea de tiempo</button>
-  <div class="grupo vistaseg" id="vistaseg" role="group" aria-label="Acomodar los post-its"><button type="button" class="seg" data-o="num" aria-pressed="false">N.º</button><button type="button" class="seg" data-o="cat" aria-pressed="false">Categoría</button></div>
+  <div class="grupo vistaseg" id="vistaseg" role="group" aria-label="Acomodar los post-its"><button type="button" class="seg" data-o="num" aria-pressed="false">N.º</button><button type="button" class="seg" data-o="cat" aria-pressed="false">Categoría</button><button type="button" class="seg" data-o="grid" aria-pressed="false">Grilla</button></div>
 </div>
 <div class="panel" id="panel-diacal" hidden>
   <div class="dc-cab"><button type="button" id="dc-ant" aria-label="Mes anterior">‹</button><div class="dc-titulo"><span id="dc-mes"></span><small id="dc-anio"></small></div><button type="button" id="dc-sig" aria-label="Mes siguiente">›</button><button type="button" class="cerrar" id="cerrar-diacal" aria-label="Cerrar">×</button></div>
@@ -790,7 +794,7 @@ window.claude={use:async n=>{if(n==="db"){if(!listo)listo=conectar();return list
     <button type="button" class="menu-it" data-ir="mezclar">Mezclar</button>
     <button type="button" class="menu-it" data-ir="btn-cal">Calendario</button>
     <button type="button" class="menu-it" data-ir="btn-tiempo">Línea de tiempo</button>
-    <div class="menu-orden"><span>Ordenar</span><div class="grupo"><button type="button" class="seg" data-o2="num">N.º</button><button type="button" class="seg" data-o2="cat">Categoría</button></div></div>
+    <div class="menu-orden"><span>Ordenar</span><div class="grupo"><button type="button" class="seg" data-o2="num">N.º</button><button type="button" class="seg" data-o2="cat">Categoría</button><button type="button" class="seg" data-o2="grid">Grilla</button></div></div>
     <button type="button" class="menu-it suave" data-ir="salir">Salir de esta cuenta</button>
   </div>
 </div>
@@ -850,7 +854,6 @@ window.claude={use:async n=>{if(n==="db"){if(!listo)listo=conectar();return list
 
 <div class="pila-vista" id="pila-vista" hidden role="dialog" aria-label="Pila de Keep">
   <div class="pv-cab"><button type="button" class="btn oscuro" id="pv-cerrar">← Volver</button><input type="text" class="pv-titulo" id="pv-titulo" placeholder="Ponele un título a la pila…" aria-label="Título de la pila" maxlength="80"><span class="t-tit" id="pv-tit"></span><span class="sep"></span><input type="search" class="buscar" id="pv-buscar" placeholder="Buscar en la pila…" aria-label="Buscar en la pila"><button type="button" class="btn" id="pv-deshacer" hidden>Deshacer pila</button></div>
-  <p class="pv-ayuda">Tocá una para abrirla. «Sacar» la pone en la plancha, al lado de la pila. Para sumar más, arrastrá un post-it arriba de la pila.</p>
   <div class="pv-grilla" id="pv-grilla"></div>
 </div>
 
@@ -1254,6 +1257,9 @@ function ordenar(k,modo){
   const lista=enPlancha(k).slice().sort((a,b)=>(a.numero||0)-(b.numero||0));const mover=(i,x,y)=>{i.x=x;i.y=y;escribir(cols[k],i.id,{x,y},{silencioso:true})};
   if(k==="ideas"&&modo==="cat"){const grupos=cats.map(c=>lista.filter(i=>i.tipo===c.id));grupos.push(lista.filter(i=>!cats.some(c=>c.id===i.tipo)));
     grupos.filter(g=>g.length).forEach((g,fila)=>g.forEach((i,n)=>mover(i,n*230,fila*270)))}
+  else if(modo==="grid"){const pos=c=>{const n=cats.findIndex(z=>z.id===c);return n<0?999:n};
+    const orden=k==="ideas"?lista.slice().sort((a,b)=>pos(a.tipo)-pos(b.tipo)||(a.numero||0)-(b.numero||0)):lista;
+    const cols=Math.max(4,Math.round(Math.sqrt(orden.length*1.6)));orden.forEach((i,n)=>mover(i,(n%cols)*222,Math.floor(n/cols)*222))}
   else lista.forEach((i,n)=>mover(i,(n%5)*240,Math.floor(n/5)*250));
   pintarMain();lzMain.encuadrar(lzMain.limites());
 }
@@ -1835,11 +1841,17 @@ document.addEventListener("keydown",e=>{if(e.key!=="Tab"||e.shiftKey||e.ctrlKey|
   if(a&&a.closest&&a.closest(".panel,.composer,#linkform,.pv-cab"))return;
   e.preventDefault();const on=document.body.classList.toggle("sin-ui");
   if(on&&!avisoTab){avisoTab=true;toast("Tab de nuevo para volver a ver todo.")}},true);
+/* ---------- Menú ••• (la búsqueda vive adentro) ---------- */
+$("panel-menu").querySelector(".menu-lista").prepend($("buscar"));
+function pintarChipBusca(){const c=$("chip-busca"),v=q.trim();c.hidden=!v;c.textContent=v?`“${v}” ×`:""}
+$("buscar").addEventListener("input",pintarChipBusca);
+$("chip-busca").onclick=()=>{$("buscar").value="";q="";pintarMain();pintarChipBusca()};
+$("buscar").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("panel-menu").hidden=true}});
 /* ---------- Menú del celular ---------- */
 try{if(matchMedia("(pointer:coarse)").matches&&Math.min(screen.width,screen.height)<600)document.body.classList.add("es-celu")}catch(_){}
 function pintarMenu(){const p=$("panel-menu");p.querySelector('[data-ir="mezclar"]').disabled=$("mezclar").disabled;
   const o=document.querySelector('#vistaseg .seg[aria-pressed="true"]')?.dataset.o;p.querySelectorAll("[data-o2]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.o2===o));p.querySelector(".menu-orden").hidden=$("vistaseg").hidden}
-$("btn-menu").onclick=()=>{const p=$("panel-menu");p.hidden=!p.hidden;if(!p.hidden)pintarMenu()};
+$("btn-menu").onclick=()=>{const p=$("panel-menu");p.hidden=!p.hidden;if(!p.hidden){pintarMenu();if(!enDiario&&matchMedia("(hover:hover)").matches)setTimeout(()=>$("buscar").focus(),30)}};
 $("cerrar-menu").onclick=()=>{$("panel-menu").hidden=true};
 document.querySelectorAll("#detalle .tool[data-mh]").forEach(b=>b.onclick=()=>{const m=b.dataset.mh;if(m==="undo"){deshacerUI(false);return}if(m==="redo"){deshacerUI(true);return}lzHoja.setModo(lzHoja.modo===m?null:m)});
 $("panel-menu").addEventListener("click",e=>{const mm=e.target.closest("[data-mm]");if(mm){const m=mm.dataset.mm;$("panel-menu").hidden=true;if(m==="undo")deshacerUI(false);else if(m==="redo")deshacerUI(true);else lzMain.setModo(lzMain.modo===m?null:m);return}
@@ -1855,7 +1867,7 @@ function pintarCalDC(){if(!mesDC)return;const {y,m}=mesDC,hoy=hoyDia(),g=$("dc-g
   $("dc-sig").disabled=y>ahora.getFullYear()||(y===ahora.getFullYear()&&m>=ahora.getMonth());
   g.replaceChildren(...["L","M","M","J","V","S","D"].map(d=>el("span","dow",d)));const off=(new Date(y,m,1).getDay()+6)%7,dias=new Date(y,m+1,0).getDate();for(let i=0;i<off;i++)g.append(el("span"));
   const lista=$("dc-lista");lista.replaceChildren();
-  for(let d=1;d<=dias;d++){const k=claveDia(y,m,d),e=entradaDia(k),nv=nivelDia(e),b=el("button",(nv?"n"+nv:"")+(k===hoy?" hoy":"")+(k===sel?" sel":""));b.type="button";b.append(el("span",null,String(d)));b.disabled=k>hoy;
+  for(let d=1;d<=dias;d++){const k=claveDia(y,m,d),e=entradaDia(k),nv=nivelDia(e),b=el("button",(nv?"escrito":"")+(k===hoy?" hoy":"")+(k===sel?" sel":""));b.type="button";b.append(el("span",null,String(d)));b.disabled=k>hoy;
     const t=textoDia(e).trim();b.title=nv?(t?t.slice(0,80):"Con cosas pegadas"):"";b.setAttribute("aria-label",fechaLarga(k)+(nv?", escrito":""));b.onclick=()=>irADia(k);g.append(b);
     if(nv){const it=el("button","dc-it");it.type="button";it.append(el("b",null,fechaDe(k).toLocaleDateString("es-AR",{weekday:"short",day:"numeric"}).replace(".","")),el("span",null,t?t.split("\n").find(x=>x.trim())||t:"(fotos y cosas pegadas)"));it.onclick=()=>irADia(k);lista.append(it)}}
   if(!lista.children.length)lista.append(el("p","dc-vacio","Este mes todavía no escribiste nada."))}
