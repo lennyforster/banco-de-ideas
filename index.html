@@ -323,6 +323,7 @@ body.sin-ui .barra,body.sin-ui .lateral,body.sin-ui .herramientas,body.sin-ui .z
 .menu-fila{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
 #btn-menu{display:inline-block;padding:9px 13px;letter-spacing:.08em}
 .barra-extra{display:none;align-items:center;gap:8px}
+#btn-cafe[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
 body.barra-abierta .barra-extra{display:flex;animation:abrirBarra .22s ease-out}
 @keyframes abrirBarra{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
 body.barra-abierta #chip-busca{display:none}
@@ -644,6 +645,22 @@ body.en-diario .dia-herr{display:flex}
 .nota.servilleta .txt,.nota.servilleta .autor,.principal.servilleta textarea{color:#1d3a9a;-webkit-text-fill-color:#1d3a9a;text-shadow:0 0 .4px rgba(29,58,154,.55)}
 .principal.servilleta textarea::placeholder{color:rgba(29,58,154,.4);-webkit-text-fill-color:rgba(29,58,154,.4)}
 .vista.lejos .nota.servilleta{background-color:#fbfaf5}
+
+/* ---------- Modo cafetería: mesa de bar y todo en servilletas ---------- */
+body.cafe .vista:not(.papel){background-color:#5e3d29!important;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221600%22%20height%3D%221200%22%3E%3Cfilter%20id%3D%22b%22%3E%3CfeGaussianBlur%20stdDeviation%3D%221.4%22/%3E%3C/filter%3E%3Cg%20fill%3D%22none%22%20filter%3D%22url%28%23b%29%22%3E%3Ccircle%20cx%3D%22420%22%20cy%3D%22310%22%20r%3D%2246%22%20stroke%3D%22rgba%2825%2C12%2C4%2C.55%29%22%20stroke-width%3D%224%22%20stroke-dasharray%3D%22210%2030%2050%209%22/%3E%3Ccircle%20cx%3D%22420%22%20cy%3D%22310%22%20r%3D%2242%22%20stroke%3D%22rgba%2825%2C12%2C4%2C.18%29%22%20stroke-width%3D%227%22/%3E%3Ccircle%20cx%3D%221210%22%20cy%3D%22860%22%20r%3D%2244%22%20stroke%3D%22rgba%2825%2C12%2C4%2C.45%29%22%20stroke-width%3D%223.5%22%20stroke-dasharray%3D%22150%2020%2090%2040%22/%3E%3Ccircle%20cx%3D%221236%22%20cy%3D%22842%22%20r%3D%2245%22%20stroke%3D%22rgba%2825%2C12%2C4%2C.25%29%22%20stroke-width%3D%223%22%20stroke-dasharray%3D%2290%20160%22/%3E%3Cpath%20d%3D%22M820%20560c14-6%2030%204%2026%2016-5%2012-24%2010-30%202%22%20stroke%3D%22rgba%2825%2C12%2C4%2C.3%29%22%20stroke-width%3D%223%22/%3E%3C/g%3E%3Cg%20fill%3D%22rgba%2825%2C12%2C4%2C.28%29%22%20filter%3D%22url%28%23b%29%22%3E%3Ccircle%20cx%3D%22845%22%20cy%3D%22590%22%20r%3D%224%22/%3E%3Ccircle%20cx%3D%22862%22%20cy%3D%22602%22%20r%3D%222.5%22/%3E%3Ccircle%20cx%3D%22470%22%20cy%3D%22378%22%20r%3D%223%22/%3E%3C/g%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22900%22%20height%3D%22900%22%3E%3Cfilter%20id%3D%22w%22%20x%3D%220%22%20y%3D%220%22%20width%3D%22100%25%22%20height%3D%22100%25%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.0009%200.016%22%20numOctaves%3D%225%22%20seed%3D%2211%22%20stitchTiles%3D%22stitch%22/%3E%3CfeColorMatrix%20values%3D%220%200%200%200%20.34%200%200%200%200%20.2%200%200%200%200%20.12%201.5%200%200%200%20-.6%22/%3E%3C/filter%3E%3Cfilter%20id%3D%22p%22%20x%3D%220%22%20y%3D%220%22%20width%3D%22100%25%22%20height%3D%22100%25%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.01%200.5%22%20numOctaves%3D%222%22%20seed%3D%223%22%20stitchTiles%3D%22stitch%22/%3E%3CfeColorMatrix%20values%3D%220%200%200%200%20.1%200%200%200%200%20.06%200%200%200%200%20.03%200%200%200%20.9%20-.42%22/%3E%3C/filter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%236c4730%22/%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url%28%23w%29%22/%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url%28%23p%29%22/%3E%3C/svg%3E"),radial-gradient(ellipse 85% 75% at 50% 42%,rgba(255,214,160,.13),rgba(10,5,2,.42) 100%)!important;background-repeat:repeat,repeat,no-repeat!important}
+body.cafe .nota::before,body.cafe .principal.servilleta::before{display:none}
+body.cafe .nota{box-shadow:0 1px 1px rgba(0,0,0,.25),0 6px 10px -6px rgba(0,0,0,.6)}
+body.cafe .nota .meta span:first-child::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--cat,transparent);margin-right:5px;vertical-align:0;box-shadow:0 0 0 1px rgba(0,0,0,.18)}
+.nota.servilleta.sv1::after,.principal.servilleta.sv1::after{right:9px;bottom:9px;width:calc(100% - 18px);height:calc(100% - 18px);border:1.5px solid #2a4fb8;box-shadow:inset 0 0 0 3px #fbfaf5,inset 0 0 0 4.5px #2a4fb8;background:none}
+.nota.servilleta.sv2::after{background:linear-gradient(#2a4fb8,#2a4fb8) left 0 top 0/100% 5px no-repeat,linear-gradient(#2a4fb8,#2a4fb8) left 0 top 8px/100% 1.5px no-repeat,linear-gradient(#2a4fb8,#2a4fb8) left 0 bottom 0/100% 1.5px no-repeat;height:calc(100% - 20px);bottom:10px;width:calc(100% - 20px);right:10px}
+.nota.servilleta.sv2{padding-top:30px}
+.nota.servilleta.sv3::after{background:linear-gradient(#2a4fb8,#2a4fb8) left 0 top 0/22px 2px no-repeat,linear-gradient(#2a4fb8,#2a4fb8) left 0 top 0/2px 22px no-repeat,linear-gradient(#2a4fb8,#2a4fb8) right 0 top 0/22px 2px no-repeat,linear-gradient(#2a4fb8,#2a4fb8) right 0 top 0/2px 22px no-repeat,linear-gradient(#2a4fb8,#2a4fb8) left 0 bottom 0/22px 2px no-repeat,linear-gradient(#2a4fb8,#2a4fb8) left 0 bottom 0/2px 22px no-repeat,linear-gradient(#2a4fb8,#2a4fb8) right 0 bottom 0/22px 2px no-repeat,linear-gradient(#2a4fb8,#2a4fb8) right 0 bottom 0/2px 22px no-repeat,url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20d%3D%22M10%201.5l2.2%205.6%206%20.4-4.6%203.8%201.5%205.9L10%2014l-5.1%203.2%201.5-5.9L1.8%207.5l6-.4z%22%20fill%3D%22%232a4fb8%22/%3E%3C/svg%3E") center bottom 1px/13px no-repeat;width:calc(100% - 18px);height:calc(100% - 18px);right:9px;bottom:9px}
+.nota.servilleta.sv4::after{border:2px dotted #2a4fb8;width:calc(100% - 18px);height:calc(100% - 18px);right:9px;bottom:9px;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2040%2040%22%20fill%3D%22none%22%20stroke%3D%22%232a4fb8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M9%2019h19v3a9.5%209.5%200%200%201-19%200z%22%20fill%3D%22%232a4fb8%22%20fill-opacity%3D%22.85%22/%3E%3Cpath%20d%3D%22M28%2021h2.5a3.5%203.5%200%200%201%200%207H27%22/%3E%3Cpath%20d%3D%22M6%2033.5c5%202%2023%202%2028%200%22/%3E%3Cpath%20d%3D%22M14%2015c-2-2%202-4%200-7M19.5%2015c-2-2%202-4%200-7M25%2015c-2-2%202-4%200-7%22/%3E%3C/svg%3E") center bottom 3px/22px no-repeat;opacity:.85}
+.nota.servilleta.manchada{background-image:radial-gradient(circle at var(--mx) var(--my),transparent 30px,rgba(120,72,30,.16) 31px,rgba(120,72,30,.26) 33px,rgba(120,72,30,.07) 35px,transparent 37px),
+    linear-gradient(90deg,transparent calc(50% - 1px),rgba(0,0,0,.045) 50%,rgba(255,255,255,.7) calc(50% + 1px),transparent calc(50% + 3px)),
+    linear-gradient(transparent calc(50% - 1px),rgba(0,0,0,.04) 50%,rgba(255,255,255,.7) calc(50% + 1px),transparent calc(50% + 3px)),
+    radial-gradient(circle at 40% 40%,rgba(255,255,255,.95) .8px,transparent 1.3px),
+    radial-gradient(circle at 60% 60%,rgba(60,50,40,.09) 1px,transparent 1.6px);background-size:auto,auto,auto,5px 5px,5px 5px}
 .papel-chips{display:flex;gap:8px;flex-wrap:wrap}
 .papel-chips .cchip i{border-radius:2px}
 .papel-chips .cchip.serv i{background:#fbfaf5;box-shadow:inset -3px -3px 0 -1.5px #2a4fb8,inset 0 0 0 1px rgba(43,37,32,.25)}
@@ -1045,6 +1062,7 @@ let vista="ideas",tipoNueva="otro",q="";
 const $=id=>document.getElementById(id);
 const el=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e};
 const tieneXY=o=>typeof o.x==="number"&&typeof o.y==="number";
+const hashId=id=>{let h=7;for(const ch of String(id))h=(h*33+ch.charCodeAt(0))|0;return Math.abs(h)};
 const giro=id=>{let h=0;for(const ch of String(id))h=(h*31+ch.charCodeAt(0))|0;return ((Math.abs(h)%7)-3)*0.9};
 const colorDe=(k,i)=>k==="ideas"?cat(i.tipo).color:"#ffffff";
 const bid=()=>Math.random().toString(36).slice(2,9);
@@ -1061,6 +1079,8 @@ class Lienzo{
   guardar(){if(!this.clave)return;clearTimeout(this._t);this._t=setTimeout(()=>{try{localStorage.setItem("vista:"+this.clave,JSON.stringify({s:this.s,tx:this.tx,ty:this.ty}))}catch(e){}},300)}
   apply(){const s=this.s;this.capa.style.transform=`translate(${this.tx}px,${this.ty}px) scale(${s})`;this.capa.style.setProperty("--inv",1/s);
     if(this.papel){let v=32*s;while(v<10)v*=4;this.vp.style.backgroundSize=`100% ${v}px,1.5px 100%`;this.vp.style.backgroundPosition=`0 ${this.ty}px,${this.tx-30*s}px 0`;
+      if(this.zoomUI)this.zoomUI.querySelector(".pct").textContent=Math.round(s*100)+"%";this.guardar();this.pedirRevision();return}
+    if(document.body.classList.contains("cafe")){let k=s;while(1600*k<500)k*=4;this.vp.style.backgroundSize=`${1600*k}px ${1200*k}px,900px 900px,100% 100%`;this.vp.style.backgroundPosition=`${this.tx}px ${this.ty}px,${this.tx}px ${this.ty}px,0 0`;
       if(this.zoomUI)this.zoomUI.querySelector(".pct").textContent=Math.round(s*100)+"%";this.guardar();this.pedirRevision();return}
     let b=20;while(b*s<10)b*=5;const g=n=>{const v=n*b/20*s;return `${v}px ${v}px`};this.vp.style.backgroundSize=[g(400),g(400),g(100),g(100),g(20),g(20),"180px 180px"].join(",");
     const p=`${this.tx}px ${this.ty}px`;this.vp.style.backgroundPosition=[p,p,p,p,p,p,"0 0"].join(",");
@@ -1202,9 +1222,11 @@ function nodoNota(k,i){
 function pintarNota(c,k,i,p){
   const esIdea=k==="ideas";
   if(!c.classList.contains("arrastrando")){c.style.left=p.x+"px";c.style.top=p.y+"px"}
-  const px0=proximo(i),firma=[i.numero,i.tipo,esIdea?label(i.tipo):"",colorDe(k,i),i.texto,i.autor,i.creado,i.estado,i.papel||"",px0?px0.d+px0.t:"",resumenExtra(i),coincide(i),modoHilo&&origenHilo===i.id].join("\u0001");
+  const px0=proximo(i),firma=[i.numero,i.tipo,esIdea?label(i.tipo):"",colorDe(k,i),i.texto,i.autor,i.creado,i.estado,i.papel||"",document.body.classList.contains("cafe"),px0?px0.d+px0.t:"",resumenExtra(i),coincide(i),modoHilo&&origenHilo===i.id].join("\u0001");
   if(c._firma===firma)return;c._firma=firma;
-  c.style.zIndex=2;c.style.setProperty("--c",colorDe(k,i));c.classList.toggle("servilleta",esIdea&&i.papel==="servilleta");c.style.setProperty("--r",giro(i.id)+"deg");
+  c.style.zIndex=2;c.style.setProperty("--c",colorDe(k,i));const cafe=document.body.classList.contains("cafe"),serv=cafe||(esIdea&&i.papel==="servilleta");c.classList.toggle("servilleta",serv);
+  const hh=hashId(i.id);for(let n=1;n<5;n++)c.classList.toggle("sv"+n,cafe&&hh%5===n);c.classList.toggle("manchada",cafe&&(hh>>3)%5===0);
+  if(cafe){c.style.setProperty("--mx",(20+(hh>>5)%60)+"%");c.style.setProperty("--my",(25+(hh>>9)%55)+"%");c.style.setProperty("--cat",colorDe(k,i))}c.style.setProperty("--r",giro(i.id)+"deg");
   c.setAttribute("aria-label",`Abrir ${esIdea?"idea":"frase"} ${i.numero||""}`);
   c.children[0].replaceChildren(el("span",null,`#${i.numero||"?"}${esIdea?" · "+label(i.tipo):""}`),el("span",null,i.creado?new Date(i.creado).toLocaleDateString("es-AR",{day:"2-digit",month:"2-digit"}).replace(/\//g,"."):""));
   const cuerpo=c.children[1];cuerpo.replaceChildren(el("p","txt",esIdea?(i.texto||""):`“${(i.texto||"").replace(/^[«“"]|[»”"]$/g,"")}”`));
@@ -1462,7 +1484,7 @@ function pintarCabecera(){
 function pintarHoja(){if(lzHoja.sel.size||lzHoja._barra)selLimpiar(lzHoja);
   const {k,doc}=abierto,capa=$("capa-hoja");capa.replaceChildren();
   const esDia=k==="diario";
-  const p=el("div","principal"+(k==="frases"?" frase":"")+(esDia?" dia":"")+(k==="ideas"&&doc.papel==="servilleta"?" servilleta":""));p.style.setProperty("--c",colorDe(k,doc));p.style.setProperty("--r",esDia?"0deg":"-1deg");p.style.zIndex=2;if(esDia)p.style.width=(innerWidth<600?Math.max(260,innerWidth-80):Math.min(980,innerWidth-260))+"px";
+  const p=el("div","principal"+(k==="frases"?" frase":"")+(esDia?" dia":"")+(!esDia&&(document.body.classList.contains("cafe")||k==="ideas"&&doc.papel==="servilleta")?" servilleta":""));p.style.setProperty("--c",colorDe(k,doc));p.style.setProperty("--r",esDia?"0deg":"-1deg");p.style.zIndex=2;if(esDia)p.style.width=(innerWidth<600?Math.max(260,innerWidth-80):Math.min(980,innerWidth-260))+"px";
   const m=el("div","meta");if(esDia)m.append(el("span",null,fechaLarga(abierto.id)));
   else m.append(el("span",null,`${k==="ideas"?"Idea":"Frase"} #${doc.numero||"?"}${k==="ideas"?" · "+label(doc.tipo):""}`),el("span",null,doc.creado?new Date(doc.creado).toLocaleDateString("es-AR"):""));
   const t=el("textarea");t.rows=1;t.value=doc.texto||"";t.placeholder=esDia?"¿Qué pasó hoy? Escribí lo que quieras. Podés pegar fotos, post-its, lo que sea.":k==="ideas"?"La idea":"La frase";t.setAttribute("aria-label","Texto principal");
@@ -1554,7 +1576,7 @@ function estadosUI(){const d=abierto.doc;$("h-estados").replaceChildren(...ESTAD
 /* ---------- Papel: post-it o servilleta de bar ---------- */
 function papelUI(){const d=abierto.doc;$("h-papel").replaceChildren(...[["","Post-it"],["servilleta","Servilleta"]].map(([id,nom])=>{const b=el("button","cchip"+(id?" serv":""));b.type="button";
   if(!id)b.style.setProperty("--c",colorDe("ideas",d));b.setAttribute("aria-pressed",(d.papel||"")===id);b.append(el("i"),nom);
-  b.onclick=()=>{d.papel=id;papelUI();const p=$("capa-hoja").querySelector(".principal");if(p)p.classList.toggle("servilleta",id==="servilleta");guardarHoja("papel",id)};return b}))}
+  b.onclick=()=>{d.papel=id;papelUI();const p=$("capa-hoja").querySelector(".principal");if(p)p.classList.toggle("servilleta",id==="servilleta"||document.body.classList.contains("cafe"));const n=nodosNota.get("ideas:"+abierto.id);if(n)n._firma=null;guardarHoja("papel",id)};return b}))}
 /* ---------- Calendarios ---------- */
 const calMes=new Map(),calSel=new Map();
 function gcalURL(e,extra){const a=e.d.replace(/-/g,"");const [y,m,d]=e.d.split("-").map(Number);const f=new Date(Date.UTC(y,m-1,d+1));
@@ -1911,9 +1933,16 @@ document.addEventListener("keydown",e=>{if(e.key!=="Tab"||e.shiftKey||e.ctrlKey|
 {const ex=el("div","barra-extra");ex.id="barra-extra";
   const herr=(m,txt,lbl)=>{const b=el("button","btn ic solo-celu-b",txt);b.type="button";b.dataset.mm=m;b.setAttribute("aria-label",lbl);b.title=lbl;return b};
   ex.append($("buscar"),$("btn-cal"),$("btn-tiempo"),$("mezclar"),$("vistaseg"),herr("undo","↶","Deshacer"),herr("redo","↷","Rehacer"),herr("sel","⬚","Elegir varios"),herr("flecha","↗","Flechas"),$("salir"));
+  const cf=el("button","btn","☕ Café");cf.type="button";cf.id="btn-cafe";cf.title="Modo cafetería: mesa de bar y servilletas";cf.setAttribute("aria-pressed","false");ex.lastElementChild.before(cf);
+  cf.onclick=()=>ponerCafe(!document.body.classList.contains("cafe"),true);
   $("btn-menu").before(ex);
   ex.addEventListener("click",e=>{const b=e.target.closest("[data-mm]");if(!b)return;const m=b.dataset.mm;if(m==="undo")deshacerUI(false);else if(m==="redo")deshacerUI(true);else lzMain.setModo(lzMain.modo===m?null:m)})}
 $("buscar").placeholder="Buscar en todo…";
+function ponerCafe(on,avisar){document.body.classList.toggle("cafe",on);$("btn-cafe").setAttribute("aria-pressed",String(on));try{localStorage.setItem("cafe",on?"1":"")}catch(_){}
+  for(const n of nodosNota.values())n._firma=null;lzMain.apply();lzHoja.apply();pintarMain();
+  const p=$("capa-hoja").querySelector(".principal");if(p&&abierto&&abierto.k!=="diario")p.classList.toggle("servilleta",on||abierto.k==="ideas"&&abierto.doc.papel==="servilleta");
+  if(avisar)toast(on?"Modo cafetería: todo en servilletas.":"De vuelta a la plancha de corte.")}
+try{if(localStorage.getItem("cafe")==="1"){document.body.classList.add("cafe");$("btn-cafe").setAttribute("aria-pressed","true");lzMain.apply()}}catch(_){}
 document.addEventListener("keydown",e=>{if(e.key!=="Escape"||!document.body.classList.contains("barra-abierta"))return;const a=document.activeElement;if(a&&a!==$("buscar")&&escribiendo())return;if(a===$("buscar"))a.blur();$("btn-menu").click()});
 function pintarChipBusca(){const c=$("chip-busca"),v=q.trim();c.hidden=!v;c.textContent=v?`“${v}” ×`:""}
 $("buscar").addEventListener("input",pintarChipBusca);
