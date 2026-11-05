@@ -2076,7 +2076,7 @@ const NOMBRES_REPO={"banco-de-ideas-datos":"Lenny","banco-de-ideas-datos-2":"Hel
 const miNombreVivo=()=>{try{return localStorage.getItem("vivo_nombre")||NOMBRES_REPO[localStorage.getItem("gh_repo")]||"Alguien"}catch(_){return "Alguien"}};
 const CAMPOS_VIVO=["bloques","hilos","trazos","tipo","estado"];
 const camposVivo=d=>({texto:d.texto||"",bloques:d.bloques||[],hilos:d.hilos||[],trazos:d.trazos||[],tipo:d.tipo||"otro",estado:d.estado||null,numero:d.numero||"",creado:d.creado||Date.now(),titulo:`Idea #${d.numero||"?"}`});
-function chipVivo(lista){let c=$("h-titulo").querySelector(".vivo-chip");if(!abierto||!abierto.doc.vivo){c?.remove();return}
+let genteVivo=[];function chipVivo(lista){if(lista)genteVivo=lista;else lista=genteVivo;let c=$("h-titulo").querySelector(".vivo-chip");if(!abierto||!abierto.doc.vivo){c?.remove();return}
   if(!c){c=el("span","vivo-chip");$("h-titulo").append(c)}const n=(lista||[]).length;c.textContent=n?`En vivo · ${lista.map(p=>p.nombre).join(", ")}`:"En vivo";
   $("vivo-gente").textContent=n?`Ahora: ${lista.map(p=>p.nombre).join(", ")}`:"Nadie más conectado ahora."}
 /* mouses de los demás en el tablero */
@@ -2107,13 +2107,13 @@ async function migrarImagenesVivo(S){if(window.__invitado||!abierto||abierto.doc
   for(const b of pend){try{const blob=await new Promise((ok,mal)=>{const im=new Image();im.onload=()=>fetch(im.src).then(r=>r.blob()).then(ok,mal);im.onerror=mal;window.cargarImg(im,b.a)});
       const nuevo=await m.subirImagen(blob);if(!abierto||abierto.doc.vivo!==S.id)return;const bb=abierto.doc.bloques.find(x=>x.id===b.id);if(bb){bb.a=nuevo;n++}}catch(e){console.error(e)}}
   if(n){guardarBloques();pintarHoja()}}
-async function enlazarVivo(t,doc){const id=doc.vivo;if(!id)return;chipVivo([]);
+async function enlazarVivo(t,doc){const id=doc.vivo;if(!id)return;if(!vivoAct||vivoAct.id!==id)genteVivo=[];chipVivo();
   try{const S=await sesionVivo(id);if(!abierto||abierto.doc.vivo!==id)return;
     if(!window.__invitado&&!S._sincro){S._sincro=true;if(S.vacio())S.ponerTodo(camposVivo(abierto.doc));else aplicarFotoVivo(S,S.foto());migrarImagenesVivo(S)}
     const tt=$("capa-hoja").querySelector(".principal textarea")||t;
     S.vincular(tt,{capa:tt.parentElement,onTexto:(v,cambio)=>{if(!abierto||abierto.doc.vivo!==id)return;autosize(tt);if(cambio&&abierto.doc.texto!==v){abierto.doc.texto=v;guardarLuego("texto",()=>abierto.doc.texto)}pintarHilos()}})}
   catch(e){console.error(e);toast(String(e.message).includes("no existe")?"Este post-it ya no está compartido.":"No se pudo conectar en vivo. Revisá la conexión.")}}
-function cerrarVivo(){if(vivoAct&&!window.__invitado){vivoAct.cerrar();vivoAct=null}pintarMouses([])}
+function cerrarVivo(){if(vivoAct&&!window.__invitado){vivoAct.cerrar();vivoAct=null;genteVivo=[]}pintarMouses([])}
 function abrirPanelVivo(){if(!abierto)return;$("vivo-link").value=URL_VIVO+"#vivo="+abierto.doc.vivo;$("panel-vivo").hidden=false;$("panel-mas").hidden=true}
 $("h-vivo").onclick=async()=>{if(!abierto||abierto.k!=="ideas")return;const d=abierto.doc;
   if(d.vivo){abrirPanelVivo();return}
