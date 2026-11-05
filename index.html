@@ -1991,7 +1991,7 @@ function leerDictado(t){t=t.trim().replace(/\s+/g," ");const n=sinTilde(t),corta
   for(const c of lista){const nom=sinTilde(c.nombre).trim();if(!nom)continue;const r=new RegExp("^((una |un )?idea (de |para )(un |una )?|para (un |una )?|(un |una )?)"+nom.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"s?\\b");const mm=r.exec(n);if(mm)return {tipo:"idea",cat:c.id,texto:corta(mm[0].length)}}
   return {tipo:"idea",cat:"otro",texto:t}}
 const mayus=t=>t?t.charAt(0).toUpperCase()+t.slice(1):t;
-window.onEntradas=lista=>{if(!cols.ideas||!data.ideas.length)return;const hechos=[];let nIdea=0,nFrase=0;
+window.onEntradas=lista=>{if(!cols.ideas||!cols.frases||!window.__ideasListas)return;const hechos=[];let nIdea=0,nFrase=0;
   for(const {path,texto} of lista){const t=(texto||"").trim(),nombre=path.slice(8,-4),id="atajo-"+nombre.replace(/[^a-zA-Z0-9-]/g,"");
     if(t&&!data.ideas.some(i=>i.id===id)&&!data.frases.some(i=>i.id===id)&&!data.ideas.some(i=>(i.bloques||[]).some(b=>b.id===id))){
       const mt=/^(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})/.exec(nombre),creado=mt?new Date(+mt[1],+mt[2]-1,+mt[3],+mt[4],+mt[5],+mt[6]).getTime():Date.now(),d=leerDictado(t);
@@ -2907,7 +2907,7 @@ drawComposer();setVista(vista);try{if(localStorage.getItem("pestana")==="diario"
   for(const k of ["ideas","frases"]){
     cols[k]=db.collection(k);
     cols[k].orderBy("creado","desc").onSnapshot(s=>{
-      data[k]=s.docs.map(d=>({id:d.id,...d.data(),_pend:!!(d.metadata&&d.metadata.hasPendingWrites)}));pintarMain();sincronizarAbierto(k);if(k==="ideas"&&window.revisarEntradas)setTimeout(window.revisarEntradas,0);
+      data[k]=s.docs.map(d=>({id:d.id,...d.data(),_pend:!!(d.metadata&&d.metadata.hasPendingWrites)}));pintarMain();sincronizarAbierto(k);if(k==="ideas"){window.__ideasListas=true;if(window.revisarEntradas)setTimeout(window.revisarEntradas,0)}
       if(!$("panel-cal").hidden&&!escribiendo())pintarCalMain();
       if(linkInicial){const i=data[k].find(x=>x.id===linkInicial);if(i){linkInicial=null;abrir(k,i.id)}}
       if(k===vista&&!encuadrado[k]&&data[k].length){lzMain.encuadrar(lzMain.limites());encuadrado[k]=true}
