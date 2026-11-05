@@ -123,3 +123,6 @@ export async function conectar(op) {
     async cerrar() { cerrado = true; clearTimeout(tCur); if (pend.length) await flush(); try { await ch.untrack(); } catch (_) { } cliente().removeChannel(ch); if (caretsEl) caretsEl.remove(); removeEventListener("resize", pintarCursores); }
   };
 }
+
+/* el texto más reciente de varios post-its compartidos (para tener al día la plancha) */
+export async function textos(ids) { if (!ids.length) return []; const { data, error } = await cliente().rpc("vivo_textos", { p_ids: ids }); if (error) throw error; return data || []; }

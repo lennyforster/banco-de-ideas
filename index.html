@@ -86,6 +86,13 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus
 .ay-barrita{display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:8px;background:var(--ink);color:var(--paper);font:600 .8rem var(--ui)}.ay-barrita i{font-family:Georgia,serif}
 .ay-barrita s{width:1px;height:14px;background:rgba(255,255,255,.25)}.ay-barrita em{width:11px;height:11px;border-radius:50%;background:var(--c);box-shadow:0 0 0 1.5px rgba(255,255,255,.85)}
 .ay-link{display:inline-grid;gap:1px;padding:6px 10px;background:#fffdf6;box-shadow:0 1px 3px rgba(0,0,0,.18);font:600 .78rem var(--hand)}.ay-link span{font:600 .66rem var(--mono);color:var(--link)}
+.vivo-cursores{position:absolute;inset:0;pointer-events:none;z-index:3}
+.vivo-caret{position:absolute;width:2px;background:var(--c);border-radius:1px}
+.vivo-caret span{position:absolute;left:0;top:-17px;white-space:nowrap;background:var(--c);color:#fff;font:600 10px/16px var(--ui);padding:0 6px;border-radius:4px 4px 4px 0}
+#h-vivo[aria-pressed="true"]{background:#1f9d6b;color:#fff}
+.vivo-chip{display:inline-flex;align-items:center;gap:6px;margin-left:8px;padding:4px 10px;border-radius:999px;background:#1f9d6b;color:#fff;font:600 .72rem var(--ui);vertical-align:middle}
+.vivo-chip::before{content:"";width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.3)}
+.nota.en-vivo .meta span:first-child::after{content:" ● en vivo";color:#1f9d6b;font-weight:600}
 .ay-pie{margin:18px 0 0;font:500 .85rem/1.4 var(--ui);color:var(--muted)}
 @media (max-width:640px){.ay-sec li{grid-template-columns:1fr;gap:2px}.guia{padding:0}.ay-hoja{height:100dvh;border-radius:0}.ay-main{grid-template-columns:1fr;grid-template-rows:auto 1fr}.ay-idx{flex-direction:row;flex-wrap:wrap;gap:6px;border-right:0;border-bottom:1px solid rgba(43,37,32,.1);overflow:visible}.ay-idx button{padding:6px 10px;font-size:.85rem;background:rgba(43,37,32,.06);border-radius:999px}}
 .vista{position:absolute;inset:0;overflow:hidden;touch-action:none;cursor:grab;background-color:var(--mat);
@@ -1016,7 +1023,7 @@ window.claude={use:async n=>{if(n==="db"){if(!listo)listo=conectar();return list
     <div class="meta"><span>Esta idea</span><button type="button" class="cerrar" id="cerrar-mas" aria-label="Cerrar">×</button></div>
     <div id="mas-cat" class="mas-sec"><span class="nota-panel">Categoría</span><div class="colores" id="h-colores" role="group" aria-label="Categoría"></div></div>
     <div id="mas-est" class="mas-sec"><span class="nota-panel">Estado</span><div class="colores" id="h-estados" role="group" aria-label="Estado de la idea"></div></div>
-    <div class="acc" style="justify-content:flex-start"><button class="btn" id="h-exportar" type="button">Exportar</button><button class="btn" id="h-compartir" type="button">Compartir</button><button class="btn" id="h-a-pila" type="button" hidden>Devolver a la pila</button><button class="btn" id="h-del" type="button">Despegar post-it</button></div>
+    <div class="acc" style="justify-content:flex-start"><button class="btn" id="h-exportar" type="button">Exportar</button><button class="btn" id="h-vivo" type="button">● En vivo</button><button class="btn" id="h-compartir" type="button">Compartir</button><button class="btn" id="h-a-pila" type="button" hidden>Devolver a la pila</button><button class="btn" id="h-del" type="button">Despegar post-it</button></div>
   </div>
   <form class="panel" id="linkform" hidden>
     <input type="text" id="l-url" placeholder="Pegá el link" aria-label="Link">
@@ -1027,6 +1034,12 @@ window.claude={use:async n=>{if(n==="db"){if(!listo)listo=conectar();return list
     <div class="meta"><span>Compartir esta nota</span><button type="button" class="cerrar" id="cerrar-compartir" aria-label="Cerrar">×</button></div>
     <div class="libre"><input type="text" id="link-nota" readonly aria-label="Link a esta nota"><button type="button" class="btn oscuro" id="copiar-link">Copiar</button></div>
     <span class="nota-panel">El link abre esta nota directo. Funciona solo en tus dispositivos (donde entraste con tu clave): sirve para guardarla o abrirla rápido, no para que otra persona la vea.</span>
+  </div>
+  <div class="panel ancho" id="panel-vivo" hidden>
+    <div class="meta"><span>Post-it en vivo</span><button type="button" class="cerrar" id="cerrar-vivo" aria-label="Cerrar">×</button></div>
+    <p class="nota-panel" id="vivo-txt">Pasale este link a quien quieras: entra directo a este post-it (sin ver el resto de tu plancha) y lo editan juntos en el momento, cada uno con su cursor.</p>
+    <div class="libre"><input type="text" id="vivo-link" readonly aria-label="Link del post-it en vivo"><button type="button" class="btn oscuro" id="vivo-copiar">Copiar</button></div>
+    <div class="acc" style="justify-content:space-between"><span class="nota-panel" id="vivo-gente"></span><button type="button" class="btn" id="vivo-dejar">Dejar de compartir</button></div>
   </div>
   <div class="panel ancho" id="panel-export" hidden>
     <div class="meta"><span>Exportar esta idea</span><button type="button" class="cerrar" id="cerrar-export" aria-label="Cerrar">×</button></div>
@@ -1262,9 +1275,9 @@ function nodoNota(k,i){
 function pintarNota(c,k,i,p){
   const esIdea=k==="ideas";
   if(!c.classList.contains("arrastrando")){c.style.left=p.x+"px";c.style.top=p.y+"px"}
-  const px0=proximo(i),firma=[i.numero,i.tipo,esIdea?label(i.tipo):"",colorDe(k,i),i.texto,i.autor,i.creado,i.estado,px0?px0.d+px0.t:"",resumenExtra(i),coincide(i),modoHilo&&origenHilo===i.id].join("\u0001");
+  const px0=proximo(i),firma=[i.numero,i.tipo,esIdea?label(i.tipo):"",colorDe(k,i),i.texto,i.autor,i.creado,i.estado,i.vivo||"",px0?px0.d+px0.t:"",resumenExtra(i),coincide(i),modoHilo&&origenHilo===i.id].join("\u0001");
   if(c._firma===firma)return;c._firma=firma;
-  c.style.zIndex=2;c.style.setProperty("--c",colorDe(k,i));c.style.setProperty("--r",giro(i.id)+"deg");
+  c.style.zIndex=2;c.style.setProperty("--c",colorDe(k,i));c.classList.toggle("en-vivo",!!i.vivo);c.style.setProperty("--r",giro(i.id)+"deg");
   c.setAttribute("aria-label",`Abrir ${esIdea?"idea":"frase"} ${i.numero||""}`);
   c.children[0].replaceChildren(el("span",null,`#${i.numero||"?"}${esIdea?" · "+label(i.tipo):""}`),el("span",null,i.creado?new Date(i.creado).toLocaleDateString("es-AR",{day:"2-digit",month:"2-digit"}).replace(/\//g,"."):""));
   const cuerpo=c.children[1];cuerpo.replaceChildren(el("p","txt",esIdea?(i.texto||""):`“${(i.texto||"").replace(/^[«“"]|[»”"]$/g,"")}”`));
@@ -1510,7 +1523,7 @@ function abrir(k,id,virtual){
   lzHoja.apply();if(k==="diario"){lzHoja.clave=null;posicionarDia()}else if(!lzHoja.usar("hoja:"+id))requestAnimationFrame(()=>lzHoja.encuadrar(lzHoja.limites()));
   requestAnimationFrame(()=>{document.querySelectorAll("#capa-hoja textarea").forEach(autosize);pintarHilos();$("volver").focus()});
 }
-function cerrar(){const eraDia=abierto&&abierto.k==="diario"?{id:abierto.id,doc:abierto.doc}:null;
+function cerrar(){cerrarVivo();$("panel-vivo").hidden=true;const eraDia=abierto&&abierto.k==="diario"?{id:abierto.id,doc:abierto.doc}:null;
   setTimeout(()=>{if(eraDia&&!pesoDia(eraDia.doc)&&!(eraDia.doc.trazos||[]).length&&entradaDia(eraDia.id))cols.diario.doc(eraDia.id).delete().catch(()=>{});pintarDiario()},50);
   selLimpiar(lzHoja);$("panel-export").hidden=true;$("panel-mas").hidden=true;vaciarPendientes();if(modoHilo)setModoHilo(false);selHilo=null;abierto=null;$("detalle").hidden=true;$("panel-compartir").hidden=true;$("capa-hoja").replaceChildren();gHoja=null;cortarHoja=null;gTrazosHoja=null;if(lzHoja.modo)lzHoja.setModo(null)}
 function sincronizarAbierto(k){
@@ -1525,7 +1538,7 @@ function sincronizarAbierto(k){
 function aplicarRemoto(nuevo){if(!abierto)return;abierto.doc=nuevo;abierto.remoto=null;pintarCabecera();pintarHoja();requestAnimationFrame(()=>{document.querySelectorAll("#capa-hoja textarea").forEach(autosize);pintarHilos()})}
 document.addEventListener("focusout",()=>setTimeout(()=>{if(abierto&&abierto.remoto&&!escribiendo())aplicarRemoto(abierto.remoto)},80));
 function pintarCabecera(){
-  const {k,doc}=abierto;$("h-titulo").textContent=k==="diario"?"Diario · "+fechaLarga(abierto.id,{day:"numeric",month:"short"}):`${k==="ideas"?"Idea":"Frase"} #${doc.numero||"?"}`;$("mas-cat").hidden=k!=="ideas";$("mas-est").hidden=k!=="ideas";if(k==="ideas")estadosUI();
+  const {k,doc}=abierto;$("h-titulo").textContent=k==="diario"?"Diario · "+fechaLarga(abierto.id,{day:"numeric",month:"short"}):`${k==="ideas"?"Idea":"Frase"} #${doc.numero||"?"}`;$("mas-cat").hidden=k!=="ideas";$("mas-est").hidden=k!=="ideas";$("h-vivo").hidden=k!=="ideas";$("h-vivo").setAttribute("aria-pressed",String(!!(k==="ideas"&&doc.vivo)));if(k==="ideas")estadosUI();
   if(k==="ideas")coloresUI($("h-colores"),doc.tipo||"otro",v=>{doc.tipo=v;pintarCabecera();const p=$("capa-hoja").querySelector(".principal");if(p)p.style.setProperty("--c",colorDe(k,doc));guardarHoja("tipo",v)});
 }
 function pintarHoja(){if(lzHoja.sel.size||lzHoja._barra)selLimpiar(lzHoja);
@@ -1536,6 +1549,7 @@ function pintarHoja(){if(lzHoja.sel.size||lzHoja._barra)selLimpiar(lzHoja);
   else m.append(el("span",null,`${k==="ideas"?"Idea":"Frase"} #${doc.numero||"?"}${k==="ideas"?" · "+label(doc.tipo):""}`),el("span",null,doc.creado?new Date(doc.creado).toLocaleDateString("es-AR"):""));
   const t=el("textarea");t.rows=1;t.value=doc.texto||"";t.placeholder=esDia?"¿Qué pasó hoy? Escribí lo que quieras. Podés pegar fotos, post-its, lo que sea.":k==="ideas"?"La idea":"La frase";t.setAttribute("aria-label","Texto principal");
   t.oninput=()=>{autosize(t);doc.texto=t.value;guardarLuego("texto",()=>abierto.doc.texto);pintarHilos()};p.append(m,t);
+  if(k==="ideas"&&doc.vivo)setTimeout(()=>enlazarVivo(t,doc),0);
   if(k==="frases"){const a=el("input");a.type="text";a.value=doc.autor||"";a.placeholder="¿quién la dijo?";a.setAttribute("aria-label","Autor");a.oninput=()=>{doc.autor=a.value;guardarLuego("autor",()=>abierto.doc.autor.trim())};p.append(a)}
   p.addEventListener("pointerdown",e=>{if(!e.target.closest("textarea,input"))e.stopPropagation()});
   p.addEventListener("click",()=>{if(lzHoja.modo==="flecha"){lzHoja.onTocarFlecha(p);return}if(modoHilo)tocarHilo("principal")});
@@ -2031,6 +2045,39 @@ window.onEntradas=lista=>{if(!cols.ideas||!cols.frases||!window.__ideasListas)re
       else{const numero=data.ideas.reduce((a,i)=>Math.max(a,i.numero||0),0)+1;cols.ideas.doc(id).set({texto:mayus(d.texto||t),tipo:d.cat||"otro",creado,numero,origen:"atajo"});hechos.push(d.cat&&d.cat!=="otro"?label(d.cat):"idea nueva")}}
     window.borrarEntrada(path)}
   if(hechos.length)toast(hechos.length===1?`Llegó del celu: ${hechos[0]}.`:`Llegaron ${hechos.length} cosas del celu: ${hechos.join(", ")}.`)};
+/* ---------- Post-its en vivo (se editan entre varios al mismo tiempo; viven en Supabase) ---------- */
+let vivoAct=null,vivoMod=null;const URL_VIVO=new URL("vivo.html",location.href).href.split("?")[0];
+const modVivo=()=>vivoMod||(vivoMod=import("./vivo.js"));
+const NOMBRES_REPO={"banco-de-ideas-datos":"Lenny","banco-de-ideas-datos-2":"Helena","banco-de-ideas-datos-3":"Toby","banco-de-ideas-datos-4":"Shu","banco-de-ideas-datos-5":"Ivan","banco-de-ideas-datos-6":"Sofía"};
+const miNombreVivo=()=>{try{return localStorage.getItem("vivo_nombre")||NOMBRES_REPO[localStorage.getItem("gh_repo")]||"Alguien"}catch(_){return "Alguien"}};
+function chipVivo(lista){let c=$("h-titulo").querySelector(".vivo-chip");if(!abierto||!abierto.doc.vivo){c?.remove();return}
+  if(!c){c=el("span","vivo-chip");$("h-titulo").append(c)}const n=(lista||[]).length;c.textContent=n?`En vivo · ${lista.map(p=>p.nombre).join(", ")}`:"En vivo";
+  $("vivo-gente").textContent=n?`Ahora: ${lista.map(p=>p.nombre).join(", ")}`:"Nadie más conectado ahora."}
+async function enlazarVivo(t,doc){if(!doc.vivo)return;if(vivoAct&&vivoAct.id===doc.vivo){vivoAct.vincular(t);chipVivo([]);return}
+  if(vivoAct){vivoAct.cerrar();vivoAct=null}chipVivo([]);const id=doc.vivo;
+  try{const m=await modVivo();if(!abierto||abierto.doc.vivo!==id)return;
+    const c=await m.conectar({id,textarea:t,nombre:miNombreVivo(),capa:t.parentElement,onGente:chipVivo,
+      onTexto:(v,cambio)=>{if(!abierto||abierto.doc.vivo!==id)return;autosize(t);if(cambio&&abierto.doc.texto!==v){abierto.doc.texto=v;guardarLuego("texto",()=>abierto.doc.texto)}pintarHilos()}});
+    if(!abierto||abierto.doc.vivo!==id){c.cerrar();return}vivoAct=c}
+  catch(e){console.error(e);toast(String(e.message).includes("no existe")?"Este post-it ya no está compartido.":"No se pudo conectar en vivo. Revisá la conexión.")}}
+function cerrarVivo(){if(vivoAct){vivoAct.cerrar();vivoAct=null}}
+function abrirPanelVivo(){if(!abierto)return;$("vivo-link").value=URL_VIVO+"#"+abierto.doc.vivo;$("panel-vivo").hidden=false;$("panel-mas").hidden=true}
+$("h-vivo").onclick=async()=>{if(!abierto||abierto.k!=="ideas")return;const d=abierto.doc;
+  if(d.vivo){abrirPanelVivo();return}
+  const b=$("h-vivo");b.disabled=true;b.textContent="Creando…";
+  try{const m=await modVivo();const id=await m.crear({titulo:`Idea #${d.numero||"?"}`,texto:d.texto||""});d.vivo=id;guardarHoja("vivo",id);b.setAttribute("aria-pressed","true");
+    const t=$("capa-hoja").querySelector(".principal textarea");if(t)enlazarVivo(t,d);abrirPanelVivo();const n=nodosNota.get("ideas:"+abierto.id);if(n)n._firma=null;toast("Listo: este post-it ya se puede editar en vivo.")}
+  catch(e){console.error(e);toast("No se pudo crear. Revisá la conexión.")}finally{b.disabled=false;b.textContent="● En vivo"}};
+$("cerrar-vivo").onclick=()=>{$("panel-vivo").hidden=true};
+$("vivo-copiar").onclick=async()=>{try{await navigator.clipboard.writeText($("vivo-link").value);toast("Link copiado.")}catch(_){$("vivo-link").select();toast("Copialo a mano: ya está marcado.")}};
+{let seguro=false,tm;$("vivo-dejar").onclick=()=>{const b=$("vivo-dejar");if(!abierto)return;
+  if(!seguro){seguro=true;b.textContent="¿Seguro? Tocá de nuevo";clearTimeout(tm);tm=setTimeout(()=>{seguro=false;b.textContent="Dejar de compartir"},3500);return}
+  seguro=false;b.textContent="Dejar de compartir";cerrarVivo();abierto.doc.vivo="";guardarHoja("vivo","");$("panel-vivo").hidden=true;$("h-vivo").setAttribute("aria-pressed","false");chipVivo();
+  const n=nodosNota.get("ideas:"+abierto.id);if(n)n._firma=null;toast("Ya no está compartido. El link deja de andar.")}}
+/* al abrir la web, traigo lo último que escribieron los demás en los post-its en vivo */
+let vivoRevisado=false;
+async function revisarVivos(){if(vivoRevisado||!cols.ideas)return;const vs=data.ideas.filter(i=>i.vivo);if(!vs.length)return;vivoRevisado=true;
+  try{const m=await modVivo(),rs=await m.textos(vs.map(i=>i.vivo));for(const r of rs){const i=data.ideas.find(x=>x.vivo===r.id);if(i&&typeof r.texto==="string"&&r.texto!==i.texto&&!(abierto&&abierto.id===i.id))cols.ideas.doc(i.id).update({texto:r.texto})}}catch(e){console.error(e);vivoRevisado=false}}
 /* ---------- Cómo se usa (sumar acá cada feature nueva) ---------- */
 const MAC=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent||""),CMD=MAC?"⌘":"Ctrl";
 /* claves visuales: texto, [teclas], {ic}, {chip,c}, {h:html}, o una lista de varias */
@@ -2078,7 +2125,8 @@ const AYUDA=[
   ["Imágenes","Pegalas con "+CMD+"+V o arrastralas desde la compu."],
   [{chip:"•••"},"Las opciones de la idea: categoría, estado (Semilla, En desarrollo, En marcha, Descartada), Exportar, Compartir y Despegar."],
   [{chip:"Exportar"},"Copia el texto o lo descarga como .txt para seguir en Docs o Word."],
-  [{chip:"Compartir"},"Te da un link directo a esa nota, que abre solo en tus dispositivos."]]},
+  [{chip:"Compartir"},"Te da un link directo a esa nota, que abre solo en tus dispositivos."],
+  [{h:'<span class="ay-chip" style="background:#1f9d6b;color:#fff">● En vivo</span>'},"Compartís ese post-it con un link: quien lo abre lo edita con vos en el momento, estilo Google Docs, con el cursor y el nombre de cada uno. No ve el resto de tu plancha. «Dejar de compartir» corta el link."]]},
  {t:"Menú •••",it:[
   [{chip:"•••"},"Arriba a la derecha: abre una fila con todo lo que sigue."],
   [{h:'<span class="ay-chip ay-busca">⌕ Buscar en todo…</span>'},"Busca en todo, también adentro de los post-its."],
@@ -2936,7 +2984,7 @@ drawComposer();setVista(vista);try{if(localStorage.getItem("pestana")==="diario"
   for(const k of ["ideas","frases"]){
     cols[k]=db.collection(k);
     cols[k].orderBy("creado","desc").onSnapshot(s=>{
-      data[k]=s.docs.map(d=>({id:d.id,...d.data(),_pend:!!(d.metadata&&d.metadata.hasPendingWrites)}));pintarMain();sincronizarAbierto(k);if(k==="ideas"){window.__ideasListas=true;if(window.revisarEntradas)setTimeout(window.revisarEntradas,0)}
+      data[k]=s.docs.map(d=>({id:d.id,...d.data(),_pend:!!(d.metadata&&d.metadata.hasPendingWrites)}));pintarMain();sincronizarAbierto(k);if(k==="ideas"){window.__ideasListas=true;setTimeout(revisarVivos,1500);if(window.revisarEntradas)setTimeout(window.revisarEntradas,0)}
       if(!$("panel-cal").hidden&&!escribiendo())pintarCalMain();
       if(linkInicial){const i=data[k].find(x=>x.id===linkInicial);if(i){linkInicial=null;abrir(k,i.id)}}
       if(k===vista&&!encuadrado[k]&&data[k].length){lzMain.encuadrar(lzMain.limites());encuadrado[k]=true}
