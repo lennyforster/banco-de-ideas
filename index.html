@@ -1982,12 +1982,26 @@ document.addEventListener("keydown",e=>{if(e.key!=="Tab"||e.shiftKey||e.ctrlKey|
   ex.addEventListener("click",e=>{const b=e.target.closest("[data-mm]");if(!b)return;const m=b.dataset.mm;if(m==="undo")deshacerUI(false);else if(m==="redo")deshacerUI(true);else lzMain.setModo(lzMain.modo===m?null:m)})}
 
 /* ---------- Ideas que llegan dictadas desde el atajo del celu (archivos entrada/*.txt) ---------- */
-window.onEntradas=lista=>{if(!cols.ideas||!data.ideas.length)return;let n=0;
+/* el dictado entiende cómo empieza: "Corto: …", "Frase de Borges: …", "Agregale a la 12 …" */
+const sinTilde=t=>t.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+function leerDictado(t){t=t.trim().replace(/\s+/g," ");const n=sinTilde(t),corta=k=>t.slice(k).replace(/^[\s,.:;\-–—]+/,"").trim();
+  let m=/^(agregale|agrega|sumale|suma|anotale|anota)( esto)? (a|en) (la )?(idea )?(numero |nro |n )?(\d+)\b/.exec(n);if(m)return {tipo:"agregar",numero:+m[7],texto:corta(m[0].length)};
+  m=/^frase( de ([^:,.]+?))?\s*[:,.]/.exec(n)||/^frase\b/.exec(n);if(m){const autor=m[2]?t.slice(m[0].indexOf(m[2]),m[0].indexOf(m[2])+m[2].length).trim():"";return {tipo:"frase",autor,texto:corta(m[0].length).replace(/^["«“]|["»”]$/g,"")}}
+  const lista=[...cats].sort((a,b)=>b.nombre.length-a.nombre.length);
+  for(const c of lista){const nom=sinTilde(c.nombre).trim();if(!nom)continue;const r=new RegExp("^((una |un )?idea (de |para )(un |una )?|para (un |una )?|(un |una )?)"+nom.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"s?\\b");const mm=r.exec(n);if(mm)return {tipo:"idea",cat:c.id,texto:corta(mm[0].length)}}
+  return {tipo:"idea",cat:"otro",texto:t}}
+const mayus=t=>t?t.charAt(0).toUpperCase()+t.slice(1):t;
+window.onEntradas=lista=>{if(!cols.ideas||!data.ideas.length)return;const hechos=[];let nIdea=0,nFrase=0;
   for(const {path,texto} of lista){const t=(texto||"").trim(),nombre=path.slice(8,-4),id="atajo-"+nombre.replace(/[^a-zA-Z0-9-]/g,"");
-    if(t&&!data.ideas.some(i=>i.id===id)){const m=/^(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})/.exec(nombre),creado=m?new Date(+m[1],+m[2]-1,+m[3],+m[4],+m[5],+m[6]).getTime():Date.now();
-      const numero=data.ideas.reduce((a,i)=>Math.max(a,i.numero||0),0)+1+n;cols.ideas.doc(id).set({texto:t.charAt(0).toUpperCase()+t.slice(1),tipo:"otro",creado,numero,origen:"atajo"});n++}
+    if(t&&!data.ideas.some(i=>i.id===id)&&!data.frases.some(i=>i.id===id)&&!data.ideas.some(i=>(i.bloques||[]).some(b=>b.id===id))){
+      const mt=/^(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})/.exec(nombre),creado=mt?new Date(+mt[1],+mt[2]-1,+mt[3],+mt[4],+mt[5],+mt[6]).getTime():Date.now(),d=leerDictado(t);
+      if(d.tipo==="agregar"){const it=data.ideas.find(i=>i.numero===d.numero);
+        if(it&&d.texto){const bl=[...(it.bloques||[])],y=bl.reduce((a,b)=>Math.max(a,(b.y||0)+200),0);bl.push({id,t:"txt",v:mayus(d.texto),x:480,y,w:300});cols.ideas.doc(it.id).update({bloques:bl});hechos.push(`sumado a la #${d.numero}`)}
+        else{const numero=data.ideas.reduce((a,i)=>Math.max(a,i.numero||0),0)+1;cols.ideas.doc(id).set({texto:mayus(t),tipo:"otro",creado,numero,origen:"atajo"});hechos.push("idea nueva (no encontré la #"+d.numero+")")}}
+      else if(d.tipo==="frase"&&cols.frases&&d.texto){const numero=data.frases.reduce((a,i)=>Math.max(a,i.numero||0),0)+1;cols.frases.doc(id).set({texto:mayus(d.texto),autor:d.autor?d.autor.replace(/\b\w/g,x=>x.toUpperCase()):"",creado,numero,origen:"atajo"});hechos.push("frase nueva")}
+      else{const numero=data.ideas.reduce((a,i)=>Math.max(a,i.numero||0),0)+1;cols.ideas.doc(id).set({texto:mayus(d.texto||t),tipo:d.cat||"otro",creado,numero,origen:"atajo"});hechos.push(d.cat&&d.cat!=="otro"?label(d.cat):"idea nueva")}}
     window.borrarEntrada(path)}
-  if(n)toast(n===1?"Llegó 1 idea dictada desde el celu.":`Llegaron ${n} ideas dictadas desde el celu.`)};
+  if(hechos.length)toast(hechos.length===1?`Llegó del celu: ${hechos[0]}.`:`Llegaron ${hechos.length} cosas del celu: ${hechos.join(", ")}.`)};
 /* ---------- Cómo se usa (sumar acá cada feature nueva) ---------- */
 const MAC=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent||""),CMD=MAC?"⌘":"Ctrl";
 /* claves visuales: texto, [teclas], {ic}, {chip,c}, {h:html}, o una lista de varias */
@@ -2002,7 +2016,8 @@ const AYUDA=[
   ["Arrastrar el fondo","Te movés por la plancha."],
   [{h:'<span class="ay-zoom"><span>−</span><small>80%</small><span>+</span><span>Ver todo</span></span>'},"Zoom con la rueda del mouse o pellizcando con dos dedos. «Ver todo» encuadra todo lo que hay."],
   ["Imágenes","Arrastralas desde la compu o pegalas con "+CMD+"+V y quedan sueltas en la plancha."],
-  ["Atajo del celu","Con el atajo «Nueva idea» del iPhone dictás y la idea aparece sola en la plancha la próxima vez que abrís la web."]]},
+  ["Atajo del celu","Con el atajo «Nueva idea» del iPhone dictás y la idea aparece sola en la plancha la próxima vez que abrís la web."],
+  ["Dictado inteligente","Empezá con la categoría («Corto, un tipo que…»), con «Frase de Borges: …» para mandarla a Frases, o con «Agregale a la 12 …» para sumar una nota adentro de la idea #12."]]},
  {t:"Atajos",it:[
   [["Shift","arrastrar"],"Sobre el fondo: dibujás un marco y elegís todo lo que queda adentro."],
   [["Shift","clic"],"Sobre un post-it o una pila: lo sumás o lo sacás de la selección."],
