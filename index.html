@@ -1026,7 +1026,7 @@ window.claude={use:async n=>{if(n==="db"){if(!listo)listo=conectar();return list
   <div class="panel ancho" id="panel-compartir" hidden>
     <div class="meta"><span>Compartir esta nota</span><button type="button" class="cerrar" id="cerrar-compartir" aria-label="Cerrar">×</button></div>
     <div class="libre"><input type="text" id="link-nota" readonly aria-label="Link a esta nota"><button type="button" class="btn oscuro" id="copiar-link">Copiar</button></div>
-    <span class="nota-panel">El link abre la página directo en esta nota. Para que otra persona pueda <b>editar</b>, invitala por mail como Editor desde el menú Compartir de la página. Con el link público solo puede mirar. Ojo: la persona ve toda la plancha, no solo esta nota.</span>
+    <span class="nota-panel">El link abre esta nota directo. Funciona solo en tus dispositivos (donde entraste con tu clave): sirve para guardarla o abrirla rápido, no para que otra persona la vea.</span>
   </div>
   <div class="panel ancho" id="panel-export" hidden>
     <div class="meta"><span>Exportar esta idea</span><button type="button" class="cerrar" id="cerrar-export" aria-label="Cerrar">×</button></div>
@@ -2078,7 +2078,7 @@ const AYUDA=[
   ["Imágenes","Pegalas con "+CMD+"+V o arrastralas desde la compu."],
   [{chip:"•••"},"Las opciones de la idea: categoría, estado (Semilla, En desarrollo, En marcha, Descartada), Exportar, Compartir y Despegar."],
   [{chip:"Exportar"},"Copia el texto o lo descarga como .txt para seguir en Docs o Word."],
-  [{chip:"Compartir"},"Te da un link directo a esa nota."]]},
+  [{chip:"Compartir"},"Te da un link directo a esa nota, que abre solo en tus dispositivos."]]},
  {t:"Menú •••",it:[
   [{chip:"•••"},"Arriba a la derecha: abre una fila con todo lo que sigue."],
   [{h:'<span class="ay-chip ay-busca">⌕ Buscar en todo…</span>'},"Busca en todo, también adentro de los post-its."],
