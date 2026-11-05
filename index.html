@@ -448,9 +448,18 @@ body.en-diario #vp-main,body.en-diario .composer,body.en-diario>.lateral,body.en
 .dpag-fecha{font:700 22px/1 var(--hand);color:var(--ink)}
 .dpag-hoy{font:600 10px var(--mono);text-transform:uppercase;letter-spacing:.12em;background:#c2462a;color:#fff;border-radius:999px;padding:4px 8px}
 .dpag-cuerpo{position:relative}
-.dpag-txt{display:block;width:100%;resize:none;overflow:hidden;border:0;background:transparent;color:var(--ink);font:500 var(--fdia,19px)/var(--rl) var(--hand);padding:0;min-height:var(--rl);user-select:text;-webkit-user-select:text}
+.dpag-txt{display:block;width:100%;white-space:pre-wrap;overflow-wrap:break-word;word-break:break-word;caret-color:var(--ink);overflow:hidden;border:0;background:transparent;color:var(--ink);font:500 var(--fdia,19px)/var(--rl) var(--hand);padding:0;min-height:var(--rl);user-select:text;-webkit-user-select:text}
 .dpag-txt:focus{outline:none}
-.dpag-txt::placeholder{color:rgba(43,37,32,.38)}
+.dpag-txt:empty::before{content:attr(data-ph);color:rgba(43,37,32,.38);pointer-events:none}
+.dpag-txt b{font-weight:700}
+.barrita-dia{position:fixed;z-index:30;display:flex;align-items:center;gap:2px;padding:4px;border-radius:10px;background:var(--ink);box-shadow:0 8px 20px -6px rgba(0,0,0,.5)}
+.barrita-dia[hidden]{display:none}
+.barrita-dia button{border:0;background:none;color:var(--paper);min-width:32px;height:32px;border-radius:7px;cursor:pointer;font:600 15px var(--ui);padding:0 6px}
+.barrita-dia button:hover{background:rgba(255,255,255,.12)}
+.barrita-dia button[aria-pressed="true"]{background:rgba(255,255,255,.22)}
+.barrita-dia .bd-sep{width:1px;height:20px;background:rgba(255,255,255,.2);margin:0 4px}
+.barrita-dia .bd-col{min-width:26px;padding:0;display:flex;align-items:center;justify-content:center}
+.barrita-dia .bd-col i{display:block;width:16px;height:16px;border-radius:50%;background:var(--c);box-shadow:0 0 0 2px rgba(255,255,255,.85)}
 .dpag-capa{position:absolute;inset:0;pointer-events:none}
 .dblq{position:absolute;pointer-events:auto;transform:rotate(var(--r,0deg));transition:box-shadow .15s}
 .dblq.arrastrando{z-index:5;transform:rotate(0) scale(1.02)}
@@ -1049,7 +1058,7 @@ const tieneXY=o=>typeof o.x==="number"&&typeof o.y==="number";
 const giro=id=>{let h=0;for(const ch of String(id))h=(h*31+ch.charCodeAt(0))|0;return ((Math.abs(h)%7)-3)*0.9};
 const colorDe=(k,i)=>k==="ideas"?cat(i.tipo).color:"#ffffff";
 const bid=()=>Math.random().toString(36).slice(2,9);
-const escribiendo=()=>{const a=document.activeElement;return a&&(a.tagName==="TEXTAREA"||a.tagName==="INPUT")};
+const escribiendo=()=>{const a=document.activeElement;return a&&(a.tagName==="TEXTAREA"||a.tagName==="INPUT"||a.isContentEditable)};
 let toastT;function toast(t){const x=$("toast");x.textContent=t;x.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>x.hidden=true,4200)}
 
 /* ---------- Lienzo: zoom con rueda o pellizco, paneo arrastrando el fondo ---------- */
@@ -1274,7 +1283,7 @@ function setVista(v){
   $("lbl").textContent=esIdea?"Nueva idea":"Nueva frase";$("abrir-composer").textContent=esIdea?"+ Nueva idea":"+ Nueva frase";
   $("texto").placeholder=esIdea?"¿Qué se te ocurrió?":"La frase, tal cual";
   $("autor").hidden=esIdea;$("colores").hidden=!esIdea;$("nueva").classList.toggle("frase",!esIdea);
-  $("btn-cats").hidden=!esIdea;if(!esIdea)$("panel-cats").hidden=true;$("panel-cal").hidden=true;pintarSeg();
+  $("btn-cats").hidden=!esIdea;$("btn-cal").hidden=!esIdea;if(!esIdea)$("panel-cats").hidden=true;$("panel-cal").hidden=true;pintarSeg();
   origenHilo=null;selHilo=null;$("panel-mezcla").hidden=true;
   encuadrado[v]=lzMain.usar("main:"+v);drawComposer();pintarMain();pintarTrazosMain();
   if(!encuadrado[v]&&data[v].length){lzMain.encuadrar(lzMain.limites());encuadrado[v]=true}
@@ -1909,7 +1918,7 @@ document.addEventListener("keydown",e=>{if(e.key!=="Tab"||e.shiftKey||e.ctrlKey|
 {const ex=el("div","barra-extra");ex.id="barra-extra";
   const herr=(m,txt,lbl)=>{const b=el("button","btn ic solo-celu-b",txt);b.type="button";b.dataset.mm=m;b.setAttribute("aria-label",lbl);b.title=lbl;return b};
   ex.append($("buscar"),$("btn-cal"),$("btn-tiempo"),$("mezclar"),$("vistaseg"),herr("undo","↶","Deshacer"),herr("redo","↷","Rehacer"),herr("sel","⬚","Elegir varios"),herr("flecha","↗","Flechas"),$("salir"));
-  {const ay=el("button","btn","? Cómo se usa");ay.type="button";ay.id="btn-ayuda";ay.onclick=()=>abrirAyuda();ex.lastElementChild.before(ay)}
+  {const ay=el("button","btn","Cómo se usa?");ay.type="button";ay.id="btn-ayuda";ay.onclick=()=>abrirAyuda();ex.lastElementChild.before(ay)}
   $("btn-menu").before(ex);
   ex.addEventListener("click",e=>{const b=e.target.closest("[data-mm]");if(!b)return;const m=b.dataset.mm;if(m==="undo")deshacerUI(false);else if(m==="redo")deshacerUI(true);else lzMain.setModo(lzMain.modo===m?null:m)})}
 
@@ -1959,7 +1968,7 @@ const AYUDA=[
   ["Compartir","Te da un link directo a esa nota."]]},
  {t:"Menú •••",it:[
   ["Buscar","Busca en todo, también adentro de los post-its."],
-  ["Calendario","Todas las fechas de tus post-its en un calendario."],
+  ["Calendario","Todas las fechas de tus ideas en un calendario (está en Ideas)."],
   ["Línea de tiempo","Tus ideas en el orden en que las fuiste anotando."],
   ["Mezclar","Junta dos ideas al azar para ver qué sale. Podés filtrar qué entra en la mezcla."],
   ["Ordenar","Por N.º, por Categoría o en Grilla."],
@@ -1971,6 +1980,8 @@ const AYUDA=[
   ["Calendario","Círculo amarillo: ese día escribiste. Aro rojo: hoy. Tocá un día para ir."],
   ["Hora en el margen","Pasá el mouse pegado a la línea roja y hacé clic: queda la hora en ese renglón. Clic sobre la hora para sacarla."],
   ["Barra de abajo","Pegás post-its, notas, texto, imágenes y links en la hoja."],
+  ["Formato","Marcá un pedazo de texto y aparece una barrita: negrita, itálica, subrayado y color. También "+CMD+"+B, "+CMD+"+I y "+CMD+"+U."],
+  ["Hora automática","Si volvés a escribir después de 15 minutos sin tocar el diario, la hora se pone sola en el margen de ese renglón."],
   ["«A Ideas»","Marcá un pedazo de texto y mandalo como idea nueva a tu plancha."]]},
  {t:"Tus datos",it:[
   [null,"Todo se guarda solo, en un repositorio privado de GitHub. No hay botón de guardar."],
@@ -2021,9 +2032,78 @@ function irADia(k){$("panel-diacal").hidden=true;irADiaFeed(k,true)}
 $("btn-dia-cal").onclick=abrirCalDia;$("cerrar-diacal").onclick=()=>{$("panel-diacal").hidden=true};$("dc-hoy").onclick=()=>irADia(hoyDia());
 $("dc-ant").onclick=()=>{mesDC=mesDC.m?{y:mesDC.y,m:mesDC.m-1}:{y:mesDC.y-1,m:11};pintarCalDC()};$("dc-sig").onclick=()=>{mesDC=mesDC.m<11?{y:mesDC.y,m:mesDC.m+1}:{y:mesDC.y+1,m:0};pintarCalDC()};
 
+
+/* ---------- Editor del diario: texto con formato (negrita, itálica, subrayado y color) ---------- */
+const TINTA_DIA="#2b2520",COL_DIA=[["#2b2520","Tinta"],["#c2462a","Rojo"],["#2a4fb8","Azul"],["#2f7d4f","Verde"],["#8a4fbf","Violeta"]];
+const esFin=n=>n&&n.nodeName==="BR"&&n.hasAttribute&&n.hasAttribute("data-fin");
+function textosDe(root){const out=[];(function rec(n){for(const c of n.childNodes){if(c.nodeType===3)out.push(c);else if(c.nodeType===1&&!esFin(c))rec(c)}})(root);return out}
+function textoPlano(root){return textosDe(root).map(t=>t.data).join("")}
+function colorHex(c){c=String(c||"").trim();if(/^#[0-9a-f]{6}$/i.test(c))return c.toLowerCase();if(/^#[0-9a-f]{3}$/i.test(c))return "#"+[...c.slice(1)].map(x=>x+x).join("").toLowerCase();
+  const m=/^rgba?\((\d+),\s*(\d+),\s*(\d+)/i.exec(c);return m?"#"+[m[1],m[2],m[3]].map(x=>(+x).toString(16).padStart(2,"0")).join(""):null}
+function serializar(root){let html="",txt="",fmt=false;const esc=t=>t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const envolver=(t,st)=>{let h=esc(t);if(st.c&&st.c!==TINTA_DIA){h=`<span style="color:${st.c}">${h}</span>`;fmt=true}if(st.u){h="<u>"+h+"</u>";fmt=true}if(st.i){h="<i>"+h+"</i>";fmt=true}if(st.b){h="<b>"+h+"</b>";fmt=true}return h};
+  (function rec(n,st){for(const c of n.childNodes){
+    if(c.nodeType===3){if(c.data){txt+=c.data;html+=envolver(c.data,st)}continue}
+    if(c.nodeType!==1||esFin(c))continue;const tag=c.nodeName;
+    if(tag==="BR"){txt+="\n";html+="\n";continue}
+    if((tag==="DIV"||tag==="P")&&txt&&!txt.endsWith("\n")){txt+="\n";html+="\n"}
+    const q={...st},cs=c.style||{};
+    if(tag==="B"||tag==="STRONG"||/^(bold|bolder|[6-9]00)$/.test(cs.fontWeight||""))q.b=1;if(cs.fontWeight==="normal"||cs.fontWeight==="400")q.b=0;
+    if(tag==="I"||tag==="EM"||cs.fontStyle==="italic")q.i=1;
+    if(tag==="U"||/underline/.test((cs.textDecorationLine||cs.textDecoration||"")))q.u=1;
+    const col=colorHex(c.getAttribute("color")||cs.color);if(col)q.c=col;
+    rec(c,q)}})(root,{});
+  return {texto:txt,rico:fmt?html:""}}
+function asegurarFin(ed){const fins=[...ed.querySelectorAll("br[data-fin]")],t=textoPlano(ed),hace=t.endsWith("\n");
+  fins.forEach((b,i)=>{if(!hace||b!==ed.lastChild)b.remove()});if(hace&&!esFin(ed.lastChild)){const b=document.createElement("br");b.setAttribute("data-fin","");ed.append(b)}}
+function pintarEditor(ed,texto,rico){if(rico){const d=new DOMParser().parseFromString("<body>"+rico+"</body>","text/html");const r=serializar(d.body);if(r.rico){ed.innerHTML=r.rico}else ed.textContent=r.texto}else ed.textContent=texto||"";asegurarFin(ed)}
+function offsetDe(ed,node,off){const r=document.createRange();r.setStart(ed,0);try{r.setEnd(node,off)}catch(_){return 0}return r.toString().length}
+function nodoDe(ed,pos,adelante){const ts=textosDe(ed);for(let i=0;i<ts.length;i++){const L=ts[i].data.length;if(pos<L||(pos===L&&!(adelante&&i<ts.length-1)))return {n:ts[i],off:pos};pos-=L}
+  const f=ed.lastChild&&esFin(ed.lastChild)?[...ed.childNodes].length-1:ed.childNodes.length;return {n:ed,off:Math.max(0,f)}}
+function insertarEnEditor(ed,t){const s=getSelection();if(!s.rangeCount||!ed.contains(s.anchorNode))return;const r=s.getRangeAt(0);r.deleteContents();
+  const tn=document.createTextNode(t);if(esFin(r.startContainer.childNodes?.[r.startOffset])&&r.startContainer===ed)ed.insertBefore(tn,ed.childNodes[r.startOffset]);else r.insertNode(tn);
+  const r2=document.createRange();r2.setStart(tn,tn.data.length);r2.collapse(true);s.removeAllRanges();s.addRange(r2);asegurarFin(ed);ed.dispatchEvent(new Event("input"))}
+function crearEditor(){const ed=el("div","dpag-txt");ed.contentEditable="true";ed.spellcheck=false;ed.setAttribute("role","textbox");ed.setAttribute("aria-multiline","true");
+  Object.defineProperties(ed,{
+    value:{get(){return textoPlano(this)},set(v){pintarEditor(this,v,"")}},
+    selectionStart:{get(){const s=getSelection();if(!s.rangeCount||!this.contains(s.getRangeAt(0).startContainer))return 0;const r=s.getRangeAt(0);return offsetDe(this,r.startContainer,r.startOffset)}},
+    selectionEnd:{get(){const s=getSelection();if(!s.rangeCount||!this.contains(s.getRangeAt(0).endContainer))return 0;const r=s.getRangeAt(0);return offsetDe(this,r.endContainer,r.endOffset)}},
+    readOnly:{get(){return this.contentEditable!=="true"},set(v){this.contentEditable=v?"false":"true"}},
+    placeholder:{get(){return this.dataset.ph||""},set(v){this.dataset.ph=v}}});
+  ed.setSelectionRange=(a,b)=>{const x=nodoDe(ed,a,true),y=nodoDe(ed,b==null?a:b,false),r=document.createRange();try{r.setStart(x.n,x.off);r.setEnd(y.n,y.off)}catch(_){return}const s=getSelection();s.removeAllRanges();s.addRange(r)};
+  ed.addEventListener("beforeinput",e=>{const t=e.inputType;
+    if(t==="insertParagraph"||t==="insertLineBreak"){e.preventDefault();insertarEnEditor(ed,"\n")}
+    else if(t==="insertFromPaste"||t==="insertFromDrop"||t==="insertFromPasteAsQuotation"){e.preventDefault();const tx=(e.dataTransfer&&e.dataTransfer.getData("text/plain"))||"";if(tx)insertarEnEditor(ed,tx.replace(/\r\n?/g,"\n"))}});
+  ed.addEventListener("drop",e=>{if([...(e.dataTransfer?.files||[])].length)e.preventDefault()});
+  return ed}
+function normalizarEditor(ed){if(!ed.querySelector("div,p,br:not([data-fin]),img")){asegurarFin(ed);return}const pos=document.activeElement===ed?ed.selectionStart:null,{texto,rico}=serializar(ed);
+  pintarEditor(ed,texto,rico);if(pos!=null)ed.setSelectionRange(pos,pos)}
+/* la barrita aparece cuando marcás texto */
+const barraDia=el("div","barrita-dia");barraDia.hidden=true;barraDia.setAttribute("role","toolbar");barraDia.setAttribute("aria-label","Formato");document.body.append(barraDia);
+{const mk=(html,lbl,fn,extra)=>{const b=el("button",extra||null);b.type="button";b.innerHTML=html;b.title=lbl;b.setAttribute("aria-label",lbl);b.addEventListener("pointerdown",e=>e.preventDefault());b.onclick=()=>{fn();estadoBarraDia()};barraDia.append(b);return b};
+  const cmd=(c,v)=>{try{document.execCommand("styleWithCSS",false,false)}catch(_){}document.execCommand(c,false,v)};
+  mk("<b>B</b>","Negrita ("+(/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent||"")?"⌘":"Ctrl")+"+B)",()=>cmd("bold")).dataset.c="bold";
+  mk("<i style='font-family:Georgia,serif'>I</i>","Itálica",()=>cmd("italic")).dataset.c="italic";
+  mk("<u>U</u>","Subrayado",()=>cmd("underline")).dataset.c="underline";
+  barraDia.append(el("span","bd-sep"));
+  for(const [c,n] of COL_DIA){const b=mk("<i></i>",n,()=>cmd("foreColor",c),"bd-col");b.style.setProperty("--c",c)}}
+function edDeSel(){const s=getSelection();if(!s.rangeCount||s.isCollapsed)return null;const a=s.anchorNode,f=s.focusNode;const ed=(a&&(a.nodeType===1?a:a.parentElement))?.closest?.(".dpag-txt");return ed&&ed.isContentEditable&&ed.contains(f)?ed:null}
+function estadoBarraDia(){barraDia.querySelectorAll("[data-c]").forEach(b=>{let on=false;try{on=document.queryCommandState(b.dataset.c)}catch(_){}b.setAttribute("aria-pressed",String(on))})}
+function ubicarBarraDia(){const ed=enDiario?edDeSel():null;if(!ed){barraDia.hidden=true;return}const r=getSelection().getRangeAt(0).getBoundingClientRect();if(!r||(!r.width&&!r.height)){barraDia.hidden=true;return}
+  barraDia.hidden=false;estadoBarraDia();const w=barraDia.offsetWidth,h=barraDia.offsetHeight,tactil=matchMedia("(pointer:coarse)").matches;
+  let top=tactil?r.bottom+14:r.top-h-10;if(!tactil&&top<70)top=r.bottom+10;if(tactil&&top+h>innerHeight-80)top=r.top-h-12;
+  barraDia.style.left=Math.max(8,Math.min(innerWidth-w-8,r.left+r.width/2-w/2))+"px";barraDia.style.top=Math.max(8,top)+"px"}
+document.addEventListener("selectionchange",()=>requestAnimationFrame(ubicarBarraDia));
+$("diario").addEventListener("scroll",()=>{if(!barraDia.hidden)ubicarBarraDia()},{passive:true});
+/* hora automática: si volvés a escribir después de un rato, la hora aparece sola en el margen */
+const PAUSA_DIA=15*60e3;
+function autoHora(p){if(p.k!==hoyDia())return;const ahora=Date.now(),txt=p.e.texto||"",pos=p.ta.selectionStart,ls=txt.split("\n"),l=txt.slice(0,pos).split("\n").length-1;
+  if(!ls[l]||!ls[l].trim())return;const ult=p.e.ult||0;p.e.ult=ahora;if(ahora-ult<PAUSA_DIA)return;
+  if(ls.slice(l+1).some(x=>x.trim()))return;const hs=p.e.horas||(p.e.horas=[]);if(hs.some(x=>x.l===l))return;
+  hs.push({l,h:horaAhora()})}
 /* ---------- Diario en scroll infinito: un día abajo del otro ---------- */
 const feed={pags:new Map(),extra:new Set(),pend:new Map()},ANCHO_REF=900,TIPOS_FEED=["post","txt","tx","img","link"];
-const firmaDia=e=>JSON.stringify([textoDia(e),(e&&e.bloques)||[],(e&&e.horas)||null]);
+const firmaDia=e=>JSON.stringify([textoDia(e),(e&&e.bloques)||[],(e&&e.horas)||null,(e&&e.rico)||""]);
 function diasFeed(){const hoy=hoyDia(),s=new Set([hoy,...feed.extra,...feed.pags.keys()]);for(const e of data.diario)if(nivelDia(e))s.add(e.id);return [...s].filter(k=>k<=hoy).sort()}
 function pintarFeed(){if(!enDiario)return;const cont=$("dia-feed"),dias=diasFeed();
   dias.forEach((k,i)=>{let p=feed.pags.get(k);if(!p){p=crearPagina(k);feed.pags.set(k,p)}else refrescarPagina(p);if(cont.children[i]!==p.el)cont.insertBefore(p.el,cont.children[i]||null)});
@@ -2046,14 +2126,14 @@ function pintarHoras(p){const hs=p.e.horas||[],cont=p.horasEl;if(!hs.length){con
     b.onpointerdown=e=>e.preventDefault();b.onclick=()=>{p.e.horas=p.e.horas.filter(y=>y!==x);pintarHoras(p);guardarDiaFeed(p)};cont.append(b)}}
 function crearPagina(k){const e=entradaLocal(k),hoy=k===hoyDia();
   const sec=el("section","dpag"+(hoy?" hoy":""));sec.dataset.k=k;const cab=el("header","dpag-cab");cab.append(el("span","dpag-fecha",fechaLarga(k)));if(hoy)cab.append(el("span","dpag-hoy","Hoy"));
-  const cuerpo=el("div","dpag-cuerpo"),ta=el("textarea","dpag-txt");ta.rows=1;ta.spellcheck=false;ta.value=e.texto||"";ta.setAttribute("aria-label","Diario del "+fechaLarga(k));
+  const cuerpo=el("div","dpag-cuerpo"),ta=crearEditor();pintarEditor(ta,e.texto||"",e.rico||"");ta.setAttribute("aria-label","Diario del "+fechaLarga(k));
   ta.placeholder=hoy?"¿Qué pasó hoy? Escribí lo que quieras.":"";const capa=el("div","dpag-capa"),horasEl=el("div","dpag-horas");cuerpo.append(horasEl,ta,capa);sec.append(cab,cuerpo);
   const srv0=entradaDia(k),p={k,e,el:sec,ta,capa,cuerpo,horasEl,sig:firmaDia(srv0||{texto:"",bloques:[]})};
-  ta.addEventListener("input",()=>{moverHoras(p,p.e.texto||"",ta.value);p.e.texto=ta.value;ajustarPagina(p);guardarDiaFeed(p)});ta.addEventListener("blur",()=>guardarDiaYaFeed(p));
+  ta.addEventListener("input",()=>{normalizarEditor(ta);const r=serializar(ta);moverHoras(p,p.e.texto||"",r.texto);p.e.texto=r.texto;p.e.rico=r.rico;autoHora(p);cacheFilas=null;ajustarPagina(p);guardarDiaFeed(p)});ta.addEventListener("blur",()=>guardarDiaYaFeed(p));
   pintarBloquesPag(p);return p}
 function refrescarPagina(p,forzar){if(!forzar&&(feed.pend.has(p.k)||p.el.contains(document.activeElement)))return;
   const srv=entradaDia(p.k);const sig=srv?firmaDia(srv):firmaDia({texto:"",bloques:[]});if(sig===p.sig)return;
-  p.e=entradaLocal(p.k);p.sig=sig;p.ta.value=p.e.texto;pintarBloquesPag(p);ajustarPagina(p)}
+  p.e=entradaLocal(p.k);p.sig=sig;pintarEditor(p.ta,p.e.texto,p.e.rico||"");cacheFilas=null;pintarBloquesPag(p);ajustarPagina(p)}
 function ajustarPagina(p){const ta=p.ta;ta.style.height="auto";const rl=RL();ta.style.height=Math.max(rl,Math.ceil(ta.scrollHeight/rl)*rl)+"px";
   const W=p.cuerpo.clientWidth||ANCHO_REF;let h=ta.offsetHeight;
   if(p.k===hoyDia()){const c=$("diario"),cs=getComputedStyle(c);h=Math.max(h,c.clientHeight-(parseFloat(cs.paddingTop)||96)-(parseFloat(cs.paddingBottom)||160)-2*rl-8)}
@@ -2065,7 +2145,7 @@ function ajustarPagina(p){const ta=p.ta;ta.style.height="auto";const rl=RL();ta.
   p.cuerpo.style.minHeight=Math.ceil(h/rl)*rl+"px";pintarHoras(p)}
 function guardarDiaFeed(p){clearTimeout(feed.pend.get(p.k));feed.pend.set(p.k,setTimeout(()=>guardarDiaYaFeed(p),700))}
 function guardarDiaYaFeed(p){const k=p.k;if(!feed.pend.has(k))return;clearTimeout(feed.pend.get(k));feed.pend.delete(k);if(!colDiario||!diarioCargado)return;
-  const doc={texto:p.e.texto||"",bloques:p.e.bloques||[],horas:p.e.horas||[]};p.sig=firmaDia(doc);const srv=entradaDia(k);
+  const doc={texto:p.e.texto||"",bloques:p.e.bloques||[],horas:p.e.horas||[],rico:p.e.rico||"",ult:p.e.ult||0};p.sig=firmaDia(doc);const srv=entradaDia(k);
   if(srv){const patch={...doc};if(srv.imagen||srv.sonido||srv.escena){patch.imagen="";patch.sonido="";patch.escena=""}escribir(colDiario,k,patch)}
   else if(doc.texto.trim()||doc.bloques.length)cola[k]=(cola[k]||Promise.resolve()).then(()=>entradaDia(k)?colDiario.doc(k).update(doc):colDiario.doc(k).set({fecha:k,creado:Date.now(),...doc})).catch(()=>toast("No se guardó el diario. Revisá la conexión."))}
 function guardarTodoFeed(){for(const k of [...feed.pend.keys()]){const p=feed.pags.get(k);if(p)guardarDiaYaFeed(p)}}
@@ -2110,7 +2190,7 @@ document.querySelectorAll("#dia-herr [data-dh]").forEach(b=>{b.addEventListener(
   else if(t==="link"){const u0=prompt("Pegá el link");if(!u0)return;let u=u0.trim();if(!/^https?:\/\//i.test(u))u="https://"+u;try{const q=new URL(u);if(!q.hostname.includes("."))throw 0}catch(_){toast("Ese link no parece válido.");return}agregarEnDia({t:"link",url:u,titulo:""})}
   else if(t==="idea")mandarAIdeasFeed()}});
 let diaDestino=null;
-async function mandarAIdeasFeed(){const a=document.activeElement,ta=a&&a.tagName==="TEXTAREA"&&$("dia-feed").contains(a)?a:null,sel=ta?ta.value.slice(ta.selectionStart,ta.selectionEnd).trim():"";
+async function mandarAIdeasFeed(){const a=document.activeElement,ta=a&&(a.tagName==="TEXTAREA"||a.classList.contains("dpag-txt"))&&$("dia-feed").contains(a)?a:null,sel=ta?ta.value.slice(ta.selectionStart,ta.selectionEnd).trim():"";
   if(!sel){toast("Marcá un pedazo de lo que escribiste y tocá de nuevo «A Ideas».");return}if(!cols.ideas)return;
   const numero=data.ideas.reduce((m,i)=>Math.max(m,i.numero||0),0)+1;const p=pagActual();
   try{await cols.ideas.add({texto:sel,tipo:"otro",creado:Date.now(),numero,origen:"diario",diario:p?p.k:""});toast(`Pegado en Ideas como #${numero}.`)}catch(_){toast("No se pudo pegar. Probá de nuevo.")}}
@@ -2118,10 +2198,11 @@ window.addEventListener("gh-historial",()=>{if(enDiario)for(const p of feed.pags
 /* La hora en el margen: pasás el mouse (o tocás) pegado al margen rojo y te ofrece la hora para ese renglón */
 const marcaHora=el("button","marca-hora");marcaHora.type="button";marcaHora.hidden=true;document.body.append(marcaHora);
 const espejo=el("div","espejo-dia");document.body.append(espejo);let cacheFilas=null,marcaDest=null;
-function filasDe(ta){const v=ta.value,w=ta.clientWidth,key=v.length+"|"+w+"|"+v.slice(-40)+v.slice(0,40);if(cacheFilas&&cacheFilas.ta===ta&&cacheFilas.key===key)return cacheFilas;
-  const cs=getComputedStyle(ta);espejo.style.width=w+"px";espejo.style.font=cs.font;espejo.style.letterSpacing=cs.letterSpacing;
-  const lineas=v.split("\n"),tops=[];let fila=0;for(const l of lineas){tops.push(fila);espejo.textContent=l||" ";fila+=Math.max(1,Math.round(espejo.offsetHeight/RL()))}
-  return cacheFilas={ta,key,lineas,tops,total:fila}}
+function filasDe(ta){const v=ta.value,w=ta.clientWidth,key=v.length+"|"+w+"|"+ta.innerHTML.length+"|"+v.slice(-40)+v.slice(0,40);if(cacheFilas&&cacheFilas.ta===ta&&cacheFilas.key===key)return cacheFilas;
+  const rl=RL(),top0=ta.getBoundingClientRect().top,lineas=v.split("\n"),tops=[];let pos=0,fin=-1;
+  const filaDe=(a)=>{const x=nodoDe(ta,a,true),y=nodoDe(ta,a+1,false),r=document.createRange();try{r.setStart(x.n,x.off);r.setEnd(y.n,y.off)}catch(_){return null}const rs=r.getClientRects(),c=rs.length?rs[0]:null;if(!c||(!c.height&&!c.width))return null;return Math.max(0,Math.floor(((c.top+c.bottom)/2-top0)/rl))};
+  for(const l of lineas){if(!l.length){tops.push(fin+1);fin=fin+1}else{const a=filaDe(pos),b=filaDe(pos+l.length-1);const ini=a==null?fin+1:Math.max(a,fin+1);tops.push(ini);fin=b==null?ini:Math.max(ini,b)}pos+=l.length+1}
+  return cacheFilas={ta,key,lineas,tops,total:fin+1}}
 const horaAhora=()=>{const f=new Date();return pad(f.getHours())+":"+pad(f.getMinutes())};
 function ubicarMarca(e){if(!enDiario||e.target.closest&&e.target.closest(".dblq,.marca-hora"))return e.target.closest&&e.target.closest(".marca-hora")?null:ocultarMarca();
   const p=feed.pags.get(hoyDia());if(!p)return ocultarMarca();const c=$("diario"),cr=c.getBoundingClientRect(),margen=cr.left+(parseFloat(getComputedStyle(c).getPropertyValue("--margen"))||72),
@@ -2138,9 +2219,10 @@ $("diario").addEventListener("pointerdown",e=>{if(e.pointerType!=="mouse")ubicar
 $("diario").addEventListener("scroll",()=>{if(!marcaHora.hidden)ocultarMarca()},{passive:true});
 document.addEventListener("pointermove",e=>{if(e.pointerType==="mouse"&&!marcaHora.hidden&&!$("diario").contains(e.target)&&e.target!==marcaHora)ocultarMarca()});
 marcaHora.addEventListener("pointerdown",e=>e.preventDefault());
-marcaHora.onclick=()=>{const d=marcaDest;if(!d)return;const ta=d.p.ta,lineas=ta.value.split("\n");while(lineas.length<=d.linea)lineas.push("");
-  const p=d.p;ta.value=lineas.join("\n");p.e.texto=ta.value;p.e.horas=[...(p.e.horas||[]).filter(x=>x.l!==d.linea),{l:d.linea,h:horaAhora()}];
-  const pos=lineas.slice(0,d.linea+1).join("\n").length;ta.focus({preventScroll:true});ta.setSelectionRange(pos,pos);cacheFilas=null;ajustarPagina(p);guardarDiaFeed(p);ocultarMarca()};
+marcaHora.onclick=()=>{const d=marcaDest;if(!d)return;const p=d.p,ta=p.ta,n=ta.value.split("\n").length;
+  if(n<=d.linea){const f=ta.lastChild&&esFin(ta.lastChild)?ta.lastChild:null;ta.insertBefore(document.createTextNode("\n".repeat(d.linea-n+1)),f);asegurarFin(ta)}
+  const r=serializar(ta);p.e.texto=r.texto;p.e.rico=r.rico;p.e.horas=[...(p.e.horas||[]).filter(x=>x.l!==d.linea),{l:d.linea,h:horaAhora()}];p.e.ult=Date.now();
+  const lineas=r.texto.split("\n"),pos=lineas.slice(0,d.linea+1).join("\n").length;ta.focus({preventScroll:true});ta.setSelectionRange(pos,pos);cacheFilas=null;ajustarPagina(p);guardarDiaFeed(p);ocultarMarca()};
 
 /* ---------- Pilas: la de Keep y las que armás tirando un post-it arriba de otro ---------- */
 let pilaPos=null,pilaTitulo="",docPila=null,pilaCargada=false,pilas=[],colPilas=null,pilasCargadas=false,pvPila="keep";const nodosPila=new Map(),disolviendo=new Set();
