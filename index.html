@@ -1671,7 +1671,7 @@ function tocarHilo(id){
   if(!abierto)return;if(!origenHilo||origenHilo===id){origenHilo=origenHilo===id?null:id;marcarOrigen();return}
   const a=origenHilo,b=id;origenHilo=null;marcarOrigen();const d=abierto.doc;if(!Array.isArray(d.hilos))d.hilos=[];
   if(d.hilos.some(h=>h.tipo!=="flecha"&&((h.a===a&&h.b===b)||(h.a===b&&h.b===a)))){toast("Esas dos ya están unidas.");return}
-  d.hilos.push({id:bid(),a,b});pintarHilos();guardarHoja("hilos",d.hilos)}
+  const nid=bid();hiloNuevo=nid;d.hilos.push({id:nid,a,b});pintarHilos();guardarHoja("hilos",d.hilos)}
 function crearSvgHilos(capa){
   const svg=document.createElementNS(NS,"svg");svg.setAttribute("class","hilos");svg.setAttribute("width","1");svg.setAttribute("height","1");svg.setAttribute("aria-hidden","true");
   gHoja=document.createElementNS(NS,"g");svg.append(gHoja);
@@ -1679,8 +1679,26 @@ function crearSvgHilos(capa){
   cortarHoja.onclick=()=>{if(!abierto||!selHilo)return;abierto.doc.hilos=(abierto.doc.hilos||[]).filter(h=>h.id!==selHilo);selHilo=null;pintarHilos();guardarHoja("hilos",abierto.doc.hilos)};
   capa.append(svg,cortarHoja)}
 function anclaHoja(id){const n=nodoHoja(id);if(!n)return null;return {x:(parseFloat(n.style.left)||0)+(parseFloat(n.style.width)||n.offsetWidth)/2,y:(parseFloat(n.style.top)||0)+12}}
+/* los hilos son sogas con física: cuelgan, se balancean y se acomodan cuando movés las piezas */
+const sogas=new Map(),N_SOGA=18,quieto=matchMedia("(prefers-reduced-motion: reduce)").matches;let sogaRAF=null,sogaQuieta=0,hiloNuevo=null;
+function sogaDe(id,A,B,cx,cy){let s=sogas.get(id);if(s)return s;const recto=id===hiloNuevo;s={pts:[],nuevo:recto};
+  for(let i=0;i<N_SOGA;i++){const t=i/(N_SOGA-1),x=recto?A.x+(B.x-A.x)*t:(1-t)*(1-t)*A.x+2*(1-t)*t*cx+t*t*B.x,y=recto?A.y+(B.y-A.y)*t:(1-t)*(1-t)*A.y+2*(1-t)*t*cy+t*t*B.y;s.pts.push({x,y,px:x,py:y})}
+  sogas.set(id,s);return s}
+function dSoga(p){let d=`M${p[0].x.toFixed(1)},${p[0].y.toFixed(1)}`;for(let i=1;i<p.length-1;i++){const mx=(p[i].x+p[i+1].x)/2,my=(p[i].y+p[i+1].y)/2;d+=` Q${p[i].x.toFixed(1)},${p[i].y.toFixed(1)} ${mx.toFixed(1)},${my.toFixed(1)}`}const u=p[p.length-1];return d+` L${u.x.toFixed(1)},${u.y.toFixed(1)}`}
+function pasoSoga(s){const p=s.pts,n=p.length,L=(Math.hypot(s.B.x-s.A.x,s.B.y-s.A.y)*1.1+22)/(n-1);let mov=0;
+  for(let i=1;i<n-1;i++){const q=p[i],vx=(q.x-q.px)*.9,vy=(q.y-q.py)*.9;q.px=q.x;q.py=q.y;q.x+=vx;q.y+=vy+.45;mov=Math.max(mov,Math.abs(vx)+Math.abs(vy))}
+  for(let k=0;k<20;k++){p[0].x=s.A.x;p[0].y=s.A.y;p[n-1].x=s.B.x;p[n-1].y=s.B.y;
+    for(let i=0;i<n-1;i++){const a=p[i],b=p[i+1],dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1e-6,f=(d-L)/d*.5;if(i>0){a.x+=dx*f;a.y+=dy*f}if(i+1<n-1){b.x-=dx*f;b.y-=dy*f}}}
+  return mov}
+function pasoSogas(){sogaRAF=null;if(!abierto||!gHoja||quieto)return;let mov=0;
+  for(const s of sogas.values()){if(!s.A||!s.els||!s.els[1].isConnected)continue;
+    if(!s.lista){s.lista=true;if(!s.nuevo)for(let k=0;k<240;k++)pasoSoga(s);for(const q of s.pts){if(!s.nuevo){q.px=q.x;q.py=q.y}}}
+    mov=Math.max(mov,pasoSoga(s));const p=s.pts,d=dSoga(p);for(const e of s.els)e.setAttribute("d",d);
+    if(s.sel&&cortarHoja&&!cortarHoja.hidden){const m=p[p.length>>1];cortarHoja.style.left=m.x+"px";cortarHoja.style.top=m.y+"px"}}
+  sogaQuieta=mov<.04?sogaQuieta+1:0;if(sogaQuieta<20)sogaRAF=requestAnimationFrame(pasoSogas)}
+function moverSogas(){sogaQuieta=0;if(!sogaRAF&&!quieto)sogaRAF=requestAnimationFrame(pasoSogas)}
 function pintarHilos(){
-  if(!abierto||!gHoja)return;const g=gHoja;g.replaceChildren();const pins=new Map();let mostrar=false;
+  if(!abierto||!gHoja)return;const g=gHoja;g.replaceChildren();const pins=new Map();let mostrar=false;const vivas=new Set();
   const mk=(tag,at)=>{const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);return e};
   for(const h of abierto.doc.hilos||[]){
     if(h.tipo==="flecha"){const na=nodoHoja(h.a),nb=nodoHoja(h.b);if(!na||!nb)continue;
@@ -1690,10 +1708,12 @@ function pintarHilos(){
     const dist=Math.hypot(B.x-A.x,B.y-A.y),cx=(A.x+B.x)/2,cy=(A.y+B.y)/2+Math.min(140,dist*.16+14),d=`M${A.x},${A.y} Q${cx},${cy} ${B.x},${B.y}`;
     const hit=mk("path",{d,class:"hit"});hit.addEventListener("pointerdown",e=>e.stopPropagation());
     hit.addEventListener("click",()=>{selHilo=h.id;selB=null;document.querySelectorAll("#capa-hoja .pieza.sel").forEach(x=>x.classList.remove("sel"));pintarHilos()});
-    g.append(mk("path",{d,class:"sombra"}),mk("path",{d,class:"linea"+(selHilo===h.id?" sel":"")}),hit);pins.set(h.a,A);pins.set(h.b,B);
+    const sombra=mk("path",{d,class:"sombra"}),linea=mk("path",{d,class:"linea"+(selHilo===h.id?" sel":"")});g.append(sombra,linea,hit);pins.set(h.a,A);pins.set(h.b,B);
+    const soga=sogaDe(h.id,A,B,cx,cy);soga.A=A;soga.B=B;soga.els=[sombra,linea,hit];soga.sel=selHilo===h.id;vivas.add(h.id);
     if(selHilo===h.id){mostrar=true;cortarHoja.textContent="Cortar hilo";cortarHoja.style.left=(.25*A.x+.5*cx+.25*B.x)+"px";cortarHoja.style.top=(.25*A.y+.5*cy+.25*B.y)+"px"}}
   for(const p of pins.values())g.append(mk("circle",{cx:p.x,cy:p.y,r:7,class:"pin"}),mk("circle",{cx:p.x-2,cy:p.y-2.5,r:2,class:"brillo"}));
-  cortarHoja.hidden=!mostrar}
+  for(const id of [...sogas.keys()])if(!vivas.has(id))sogas.delete(id);
+  cortarHoja.hidden=!mostrar;moverSogas()}
 document.addEventListener("keydown",e=>{if((e.key==="Delete"||e.key==="Backspace")&&!escribiendo()&&abierto&&selHilo&&cortarHoja){e.preventDefault();e.stopImmediatePropagation();cortarHoja.click()}},true);
 
 /* ---------- Flechas ---------- */
