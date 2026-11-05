@@ -1985,17 +1985,26 @@ document.addEventListener("keydown",e=>{if(e.key!=="Tab"||e.shiftKey||e.ctrlKey|
 /* el dictado entiende cómo empieza: "Corto: …", "Frase de Borges: …", "Agregale a la 12 …" */
 const sinTilde=t=>t.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
 function leerDictado(t){t=t.trim().replace(/\s+/g," ");const n=sinTilde(t),corta=k=>t.slice(k).replace(/^[\s,.:;\-–—]+/,"").trim();
-  let m=/^(agregale|agrega|sumale|suma|anotale|anota)( esto)? (a|en) (la )?(idea )?(numero |nro |n )?(\d+)\b/.exec(n);if(m)return {tipo:"agregar",numero:+m[7],texto:corta(m[0].length)};
+  let m=/^(querido diario|diario)\b/.exec(n);if(m)return {tipo:"diario",texto:corta(m[0].length)};
+  m=/^(agregale|agrega|sumale|suma|anotale|anota)( esto)? (a|en) (la )?(idea )?(numero |nro |n )?(\d+)\b/.exec(n);if(m)return {tipo:"agregar",numero:+m[7],texto:corta(m[0].length)};
   m=/^frase( de ([^:,.]+?))?\s*[:,.]/.exec(n)||/^frase\b/.exec(n);if(m){const autor=m[2]?t.slice(m[0].indexOf(m[2]),m[0].indexOf(m[2])+m[2].length).trim():"";return {tipo:"frase",autor,texto:corta(m[0].length).replace(/^["«“]|["»”]$/g,"")}}
   const lista=[...cats].sort((a,b)=>b.nombre.length-a.nombre.length);
   for(const c of lista){const nom=sinTilde(c.nombre).trim();if(!nom)continue;const r=new RegExp("^((una |un )?idea (de |para )(un |una )?|para (un |una )?|(un |una )?)"+nom.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"s?\\b");const mm=r.exec(n);if(mm)return {tipo:"idea",cat:c.id,texto:corta(mm[0].length)}}
   return {tipo:"idea",cat:"otro",texto:t}}
 const mayus=t=>t?t.charAt(0).toUpperCase()+t.slice(1):t;
+/* "Diario, …" dictado: un bloque nuevo en la página de ese día, con la hora en que lo dijiste */
+function diarioDesdeCelu(id,texto,creado){const f=new Date(creado-3*36e5),k=claveDia(f.getFullYear(),f.getMonth(),f.getDate()),c=new Date(creado),h=pad(c.getHours())+":"+pad(c.getMinutes());
+  const e=entradaDia(k),base=e?JSON.parse(JSON.stringify(e)):{fecha:k,texto:"",bloques:[]};let tramos=Array.isArray(base.tramos)&&base.tramos.length?base.tramos:migrarTramos(base);
+  if(tramos.some(t=>t.id===id))return;tramos=tramos.filter(t=>(t.texto||"").trim()||t.h);tramos.push({id,h,texto,rico:""});
+  const plano=tramos.map(t=>t.texto||"").filter(x=>x.trim()).join("\n\n"),ult=Math.max(base.ult||0,creado);
+  if(e)colDiario.doc(k).update({tramos,texto:plano,ult,horas:[],rico:"",caja:null});else colDiario.doc(k).set({fecha:k,creado:Date.now(),texto:plano,tramos,bloques:[],ult});
+  const pg=feed.pags.get(k);if(pg&&!pg.el.contains(document.activeElement)&&!feed.pend.has(k))setTimeout(()=>refrescarPagina(pg,true),0)}
 window.onEntradas=lista=>{if(!cols.ideas||!cols.frases||!window.__ideasListas)return;const hechos=[];let nIdea=0,nFrase=0;
   for(const {path,texto} of lista){const t=(texto||"").trim(),nombre=path.slice(8,-4),id="atajo-"+nombre.replace(/[^a-zA-Z0-9-]/g,"");
     if(t&&!data.ideas.some(i=>i.id===id)&&!data.frases.some(i=>i.id===id)&&!data.ideas.some(i=>(i.bloques||[]).some(b=>b.id===id))){
       const mt=/^(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})/.exec(nombre),creado=mt?new Date(+mt[1],+mt[2]-1,+mt[3],+mt[4],+mt[5],+mt[6]).getTime():Date.now(),d=leerDictado(t);
-      if(d.tipo==="agregar"){const it=data.ideas.find(i=>i.numero===d.numero);
+      if(d.tipo==="diario"){if(!diarioCargado||!colDiario)continue;if(d.texto){diarioDesdeCelu(id,mayus(d.texto),creado);hechos.push("diario")}}
+      else if(d.tipo==="agregar"){const it=data.ideas.find(i=>i.numero===d.numero);
         if(it&&d.texto){const bl=[...(it.bloques||[])],y=bl.reduce((a,b)=>Math.max(a,(b.y||0)+200),0);bl.push({id,t:"txt",v:mayus(d.texto),x:480,y,w:300});cols.ideas.doc(it.id).update({bloques:bl});hechos.push(`sumado a la #${d.numero}`)}
         else{const numero=data.ideas.reduce((a,i)=>Math.max(a,i.numero||0),0)+1;cols.ideas.doc(id).set({texto:mayus(t),tipo:"otro",creado,numero,origen:"atajo"});hechos.push("idea nueva (no encontré la #"+d.numero+")")}}
       else if(d.tipo==="frase"&&cols.frases&&d.texto){const numero=data.frases.reduce((a,i)=>Math.max(a,i.numero||0),0)+1;cols.frases.doc(id).set({texto:mayus(d.texto),autor:d.autor?d.autor.replace(/\b\w/g,x=>x.toUpperCase()):"",creado,numero,origen:"atajo"});hechos.push("frase nueva")}
@@ -2017,7 +2026,7 @@ const AYUDA=[
   [{h:'<span class="ay-zoom"><span>−</span><small>80%</small><span>+</span><span>Ver todo</span></span>'},"Zoom con la rueda del mouse o pellizcando con dos dedos. «Ver todo» encuadra todo lo que hay."],
   ["Imágenes","Arrastralas desde la compu o pegalas con "+CMD+"+V y quedan sueltas en la plancha."],
   ["Atajo del celu","Con el atajo «Nueva idea» del iPhone dictás y la idea aparece sola en la plancha la próxima vez que abrís la web."],
-  ["Dictado inteligente","Empezá con la categoría («Corto, un tipo que…»), con «Frase de Borges: …» para mandarla a Frases, o con «Agregale a la 12 …» para sumar una nota adentro de la idea #12."]]},
+  ["Dictado inteligente","Empezá con la categoría («Corto, un tipo que…»), con «Frase de Borges: …» para mandarla a Frases, o con «Agregale a la 12 …» para sumar una nota adentro de la idea #12. Si empezás con «Diario, …» se escribe en el diario de ese día, con la hora."]]},
  {t:"Atajos",it:[
   [["Shift","arrastrar"],"Sobre el fondo: dibujás un marco y elegís todo lo que queda adentro."],
   [["Shift","clic"],"Sobre un post-it o una pila: lo sumás o lo sacás de la selección."],
@@ -2923,7 +2932,7 @@ drawComposer();setVista(vista);try{if(localStorage.getItem("pestana")==="diario"
     if(document.activeElement&&$("panel-cats").contains(document.activeElement))return;
     cats=l.map(c=>({...c}));if(!$("panel-cats").hidden)pintarCats();refrescarCats()},()=>{});
   colDiario=db.collection("diario");cols.diario=colDiario;
-  colDiario.onSnapshot(s=>{data.diario=s.docs.map(d=>({id:d.id,...d.data(),_pend:!!(d.metadata&&d.metadata.hasPendingWrites)}));diarioCargado=true;sincronizarAbierto("diario");pintarDiario();if(abrirHoyAlCargar){abrirHoyAlCargar=false;if(enDiario)requestAnimationFrame(enfocarHoy)}},()=>{});
+  colDiario.onSnapshot(s=>{data.diario=s.docs.map(d=>({id:d.id,...d.data(),_pend:!!(d.metadata&&d.metadata.hasPendingWrites)}));diarioCargado=true;if(window.revisarEntradas)setTimeout(window.revisarEntradas,0);sincronizarAbierto("diario");pintarDiario();if(abrirHoyAlCargar){abrirHoyAlCargar=false;if(enDiario)requestAnimationFrame(enfocarHoy)}},()=>{});
   colFlechas=db.collection("flechas");
   colFlechas.onSnapshot(s=>{flechas=s.docs.map(d=>({id:d.id,...d.data()}));if(selFlecha&&!flechas.some(f=>f.id===selFlecha))selFlecha=null;pintarFlechas()},()=>{});
   colTrazos=db.collection("trazos");
