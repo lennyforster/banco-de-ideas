@@ -2000,7 +2000,7 @@ function racha(){let k=hoyDia();if(!nivelDia(entradaDia(k)))k=sumarDias(k,-1);le
 const RL=()=>parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--rl"))||32;
 function ajustarDiario(){const b=document.querySelector("body > .barra");if(b)$("diario").style.paddingTop=Math.ceil((b.getBoundingClientRect().bottom+8)/RL())*RL()+"px"}
 window.addEventListener("resize",()=>{if(enDiario)ajustarDiario()});
-function entrarDiario(){
+function entrarDiario(){if(window.__invitado)return;
   if(lzMain.modo)lzMain.setModo(null);selLimpiar(lzMain);for(const pnl of ["panel-cal","panel-mezcla","panel-cats","panel-keep","panel-menu"])$(pnl).hidden=true;
   enDiario=true;document.body.classList.add("en-diario");$("tab-ideas").setAttribute("aria-selected","false");$("tab-frases").setAttribute("aria-selected","false");$("tab-diario").setAttribute("aria-selected","true");
   $("diario").hidden=false;try{localStorage.setItem("pestana","diario")}catch(_){}pintarDiario();requestAnimationFrame(()=>{ajustarDiario();if(diarioCargado)enfocarHoy();else abrirHoyAlCargar=true})}
