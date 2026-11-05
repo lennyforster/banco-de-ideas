@@ -40,15 +40,16 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus
 /* ---------- Cómo se usa ---------- */
 .guia{position:fixed;inset:0;z-index:80;background:rgba(20,14,10,.55);display:flex;align-items:center;justify-content:center;padding:16px}
 .guia[hidden]{display:none}
-.ay-hoja{width:min(760px,100%);max-height:min(860px,calc(100dvh - 32px));display:grid;grid-template-rows:auto auto 1fr;background:#fbf7ec;border-radius:10px;box-shadow:0 30px 60px -20px rgba(0,0,0,.6);overflow:hidden;color:var(--ink)}
-.ay-cab{display:flex;align-items:center;gap:12px;padding:18px 20px 6px}
-.ay-cab h2{flex:1;margin:0;font:700 1.6rem/1.1 var(--hand)}
-.ay-cab button{border:0;background:rgba(43,37,32,.07);width:36px;height:36px;border-radius:50%;font:600 1.2rem var(--ui);cursor:pointer;color:var(--ink)}
-.ay-idx{display:flex;gap:6px;overflow-x:auto;padding:8px 20px 12px;border-bottom:1px solid rgba(43,37,32,.12);scrollbar-width:none}
-.ay-idx::-webkit-scrollbar{display:none}
-.ay-idx button{flex:none;border:0;background:rgba(43,37,32,.07);border-radius:999px;padding:7px 12px;font:600 .82rem var(--ui);color:var(--ink);cursor:pointer}
-.ay-idx button:hover{background:rgba(43,37,32,.13)}
-.ay-cuerpo{overflow-y:auto;padding:6px 20px 28px;scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+.ay-hoja{width:min(860px,100%);height:min(620px,calc(100dvh - 32px));display:grid;grid-template-rows:auto 1fr;background:#fbf7ec;border-radius:12px;box-shadow:0 30px 60px -20px rgba(0,0,0,.6);overflow:hidden;color:var(--ink)}
+.ay-cab{display:flex;align-items:center;gap:12px;padding:16px 18px 12px;border-bottom:1px solid rgba(43,37,32,.1)}
+.ay-cab h2{flex:1;margin:0;font:700 1.4rem/1.1 var(--hand)}
+.ay-cab button{border:0;background:rgba(43,37,32,.07);width:34px;height:34px;border-radius:50%;font:600 1.15rem var(--ui);cursor:pointer;color:var(--ink)}
+.ay-main{display:grid;grid-template-columns:210px 1fr;min-height:0}
+.ay-idx{display:flex;flex-direction:column;gap:2px;padding:12px 10px;overflow-y:auto;background:rgba(43,37,32,.04);border-right:1px solid rgba(43,37,32,.1)}
+.ay-idx button{border:0;background:none;text-align:left;border-radius:7px;padding:8px 12px;font:500 .92rem var(--ui);color:var(--ink);cursor:pointer}
+.ay-idx button:hover{background:rgba(43,37,32,.07)}
+.ay-idx button[aria-selected="true"]{background:var(--ink);color:var(--paper);font-weight:600}
+.ay-cuerpo{overflow-y:auto;padding:4px 24px 24px;-webkit-overflow-scrolling:touch}
 .ay-sec{padding-top:16px}
 .ay-sec h3{margin:0 0 8px;font:700 1.15rem var(--hand)}
 .ay-sec ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
@@ -57,7 +58,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus
 .ay-k{font:600 .85rem/1.6 var(--ui);color:var(--muted)}
 .ay-k kbd{display:inline-block;min-width:22px;padding:1px 7px;margin:0 2px 2px 0;border-radius:5px;background:#fff;box-shadow:inset 0 -2px 0 rgba(43,37,32,.18),0 0 0 1px rgba(43,37,32,.2);font:600 .78rem/1.6 var(--mono);color:var(--ink);text-align:center}
 .ay-pie{margin:18px 0 0;font:500 .85rem/1.4 var(--ui);color:var(--muted)}
-@media (max-width:560px){.ay-sec li{grid-template-columns:1fr;gap:2px}.guia{padding:0}.ay-hoja{max-height:100dvh;height:100dvh;border-radius:0}}
+@media (max-width:640px){.ay-sec li{grid-template-columns:1fr;gap:2px}.guia{padding:0}.ay-hoja{height:100dvh;border-radius:0}.ay-main{grid-template-columns:1fr;grid-template-rows:auto 1fr}.ay-idx{flex-direction:row;flex-wrap:wrap;gap:6px;border-right:0;border-bottom:1px solid rgba(43,37,32,.1);overflow:visible}.ay-idx button{padding:6px 10px;font-size:.85rem;background:rgba(43,37,32,.06);border-radius:999px}}
 .vista{position:absolute;inset:0;overflow:hidden;touch-action:none;cursor:grab;background-color:var(--mat);
   background-image:
     linear-gradient(45deg,transparent calc(50% - .5px),var(--mat-diag) calc(50% - .5px),var(--mat-diag) calc(50% + .5px),transparent calc(50% + .5px)),
@@ -480,7 +481,7 @@ body.en-diario #vp-main,body.en-diario .composer,body.en-diario>.lateral,body.en
 .dpag-cuerpo:hover .dtxt-mover,.dpag-cuerpo:hover .dtxt-ancho,.dpag-cuerpo.caja-on .dtxt-mover,.dpag-cuerpo.caja-on .dtxt-ancho{opacity:1}
 .dtxt-mover{width:22px;height:22px;margin:3px 0 0 -30px;border-radius:6px;cursor:grab;background:rgba(43,37,32,.06) radial-gradient(circle,rgba(43,37,32,.5) 1.2px,transparent 1.6px) 3px 3px/6px 6px}
 .dtxt-ancho{width:14px;margin-left:4px;cursor:ew-resize;display:flex;justify-content:center}
-.dtxt-ancho::before{content:"";width:3px;height:100%;max-height:120px;border-radius:2px;background:rgba(43,37,32,.28)}
+.dtxt-ancho::before{content:none}
 .dpag-cuerpo.caja-on .dpag-txt{outline:1.5px dashed rgba(43,37,32,.3);outline-offset:6px}
 .dpag-cuerpo.angosto .dtxt-mover,.dpag-cuerpo.angosto .dtxt-ancho{display:none}
 .dpag-cuerpo.angosto .dblq{transform:none}
@@ -840,7 +841,7 @@ window.claude={use:async n=>{if(n==="db"){if(!listo)listo=conectar();return list
 
 
 <!-- Plancha principal -->
-<div class="guia" id="ayuda" hidden role="dialog" aria-modal="true" aria-labelledby="ay-tit"><div class="ay-hoja"><div class="ay-cab"><h2 id="ay-tit">Cómo se usa</h2><button type="button" id="ay-cerrar" aria-label="Cerrar">×</button></div><nav class="ay-idx" id="ay-idx" aria-label="Secciones"></nav><div class="ay-cuerpo" id="ay-cuerpo"></div></div></div>
+<div class="guia" id="ayuda" hidden role="dialog" aria-modal="true" aria-labelledby="ay-tit"><div class="ay-hoja"><div class="ay-cab"><h2 id="ay-tit">Cómo se usa</h2><button type="button" id="ay-cerrar" aria-label="Cerrar">×</button></div><div class="ay-main"><nav class="ay-idx" id="ay-idx" role="tablist" aria-label="Secciones"></nav><div class="ay-cuerpo" id="ay-cuerpo" role="tabpanel"></div></div></div></div>
 <div class="vista" id="vp-main"><div class="capa" id="capa-main"></div></div>
 
 <div class="barra">
@@ -1990,7 +1991,7 @@ const AYUDA=[
   ["Scroll infinito","Arriba lo que escribiste antes, abajo el día de hoy. Entrás y ya podés escribir."],
   ["Día nuevo","Empieza a las 3 de la mañana, no a medianoche."],
   ["Calendario","Los días en que escribiste aparecen en negro con un puntito; los vacíos, en gris; hoy, en rojo. Tocá un día para ir."],
-  ["Mover el texto","En la compu, pasá el mouse por el texto: con la manija de la izquierda lo movés y con la barrita de la derecha lo hacés más ancho o más angosto."],
+  ["Mover el texto","En la compu, pasá el mouse por el texto: con la manija de la izquierda lo movés y arrastrando su borde derecho lo hacés más ancho o más angosto."],
   ["Links","Pegá un link y aparece como tarjeta, sin tocar ningún botón. Arriba le podés escribir un título."],
   ["Hora en el margen","Pasá el mouse pegado a la línea roja y hacé clic: queda la hora en ese renglón. Clic sobre la hora para sacarla."],
   ["Barra de abajo","Pegás post-its, notas, texto, imágenes y links en la hoja."],
@@ -2001,12 +2002,12 @@ const AYUDA=[
   [null,"Todo se guarda solo, en un repositorio privado de GitHub. No hay botón de guardar."],
   [null,"Para abrir tu plancha en otro dispositivo, entrás a la web y pegás tu clave una vez."]]}
 ];
-function pintarAyuda(){const idx=$("ay-idx"),cu=$("ay-cuerpo");idx.replaceChildren();cu.replaceChildren();
-  AYUDA.forEach((sec,n)=>{const id="ay-s"+n,b=el("button",null,sec.t);b.type="button";b.onclick=()=>{const t=$(id);cu.scrollTo({top:t.offsetTop-cu.offsetTop-4,behavior:"smooth"})};idx.append(b);
-    const se=el("section","ay-sec");se.id=id;se.append(el("h3",null,sec.t));const ul=el("ul");
-    for(const [k,txt] of sec.it){const li=el("li",k?null:"solo");if(k){const kk=el("span","ay-k");if(Array.isArray(k))k.forEach((x,i)=>{if(i)kk.append(" + ");kk.append(el("kbd",null,x))});else kk.textContent=k;li.append(kk)}li.append(el("span",null,txt));ul.append(li)}
-    se.append(ul);cu.append(se)});
-  cu.append(el("p","ay-pie","¿Algo no anda o se te ocurre una mejora? Anotalo en un post-it y avisale a Lenny."))}
+let ayActiva=0;
+function pintarAyuda(){const idx=$("ay-idx");idx.replaceChildren();
+  AYUDA.forEach((sec,n)=>{const b=el("button",null,sec.t);b.type="button";b.setAttribute("role","tab");b.setAttribute("aria-selected",String(n===ayActiva));b.onclick=()=>{ayActiva=n;pintarAyuda()};idx.append(b)});
+  const cu=$("ay-cuerpo"),sec=AYUDA[ayActiva];cu.replaceChildren();const se=el("section","ay-sec");se.append(el("h3",null,sec.t));const ul=el("ul");
+  for(const [k,txt] of sec.it){const li=el("li",k?null:"solo");if(k){const kk=el("span","ay-k");if(Array.isArray(k))k.forEach((x,i)=>{if(i)kk.append(" + ");kk.append(el("kbd",null,x))});else kk.textContent=k;li.append(kk)}li.append(el("span",null,txt));ul.append(li)}
+  se.append(ul);cu.append(se,el("p","ay-pie","¿Algo no anda o se te ocurre una mejora? ¡Avisame!"));cu.scrollTop=0}
 function abrirAyuda(){pintarAyuda();$("ayuda").hidden=false;$("ay-cuerpo").scrollTop=0;if(document.body.classList.contains("barra-abierta"))$("btn-menu").click();setTimeout(()=>$("ay-cerrar").focus(),30)}
 function cerrarAyuda(){$("ayuda").hidden=true}
 $("ay-cerrar").onclick=cerrarAyuda;$("ayuda").addEventListener("click",e=>{if(e.target===$("ayuda"))cerrarAyuda()});
