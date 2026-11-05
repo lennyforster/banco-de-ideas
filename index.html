@@ -75,7 +75,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus
 .ay-pila .ay-post{position:absolute;left:3px;top:3px}
 .ay-pila em{position:absolute;top:-6px;right:-8px;min-width:16px;height:16px;border-radius:999px;background:var(--ink);color:var(--paper);font:700 9px/16px var(--ui);text-align:center;font-style:normal}
 .ay-pila.keep .ay-post{background:#dcc6f2}
-.ay-bsel{display:inline-flex;flex-wrap:wrap;max-width:100%;align-items:center;gap:4px;padding:4px 6px 4px 10px;border-radius:14px;background:var(--ink);color:var(--paper);font:500 .7rem var(--ui)}.ay-bsel>*{white-space:nowrap}.ay-btn{cursor:pointer;border:0;font:inherit;text-decoration:none;background:#1f6b4a;color:#fff}.ay-mouse{display:inline-flex;align-items:flex-start}.ay-mouse span{margin:12px 0 0 -2px;background:#e0457b;color:#fff;font:600 11px/18px var(--ui);padding:0 7px;border-radius:9px}.ay-bsel b{padding:3px 7px;border-radius:999px;background:rgba(255,255,255,.14);font-weight:600}
+.ay-bsel{display:inline-flex;flex-wrap:wrap;max-width:100%;align-items:center;gap:4px;padding:4px 6px 4px 10px;border-radius:14px;background:var(--ink);color:var(--paper);font:500 .7rem var(--ui)}.ay-bsel>*{white-space:nowrap}.ay-vis:has(.ay-btn){display:flex;flex-wrap:wrap;gap:10px 8px}.ay-btn{cursor:pointer;border:0;font:inherit;text-decoration:none;background:#1f6b4a;color:#fff}.ay-mouse{display:inline-flex;align-items:flex-start}.ay-mouse span{margin:12px 0 0 -2px;background:#e0457b;color:#fff;font:600 11px/18px var(--ui);padding:0 7px;border-radius:9px}.ay-bsel b{padding:3px 7px;border-radius:999px;background:rgba(255,255,255,.14);font-weight:600}
 .ay-tools{display:inline-flex;flex-wrap:wrap;gap:3px;padding:4px;border-radius:999px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.16);font:600 .7rem var(--ui)}.ay-tools b{padding:3px 7px;border-radius:999px}.ay-tools b.am{background:#ffe76a}
 .ay-hilo{display:inline-block;width:46px;height:14px;margin-left:4px;vertical-align:middle;background:radial-gradient(circle,#c81e1e 3px,transparent 3.5px) left center/8px 8px no-repeat,radial-gradient(circle,#c81e1e 3px,transparent 3.5px) right center/8px 8px no-repeat,linear-gradient(#c81e1e,#c81e1e) center/38px 2px no-repeat}
 .ay-cal{display:inline-flex;gap:10px;padding:4px 10px;border-radius:8px;background:#fbf7ec;box-shadow:0 1px 3px rgba(0,0,0,.14);font:500 .95rem var(--hand);color:rgba(43,37,32,.38)}
@@ -2150,8 +2150,7 @@ const AYUDA=[
   ["Arrastrar el fondo","Te movés por la plancha."],
   [{h:'<span class="ay-zoom"><span>−</span><small>80%</small><span>+</span><span>Ver todo</span></span>'},"Zoom con la rueda del mouse o pellizcando con dos dedos. «Ver todo» encuadra todo lo que hay."],
   ["Imágenes","Arrastralas desde la compu o pegalas con "+CMD+"+V y quedan sueltas en la plancha."],
-  ["Atajo del celu","Con el atajo «Nueva idea» del iPhone dictás y la idea aparece sola en la plancha la próxima vez que abrís la web."],
-  ["Dictado inteligente","Empezá con la categoría («Corto, un tipo que…»), con «Frase de Borges: …» para mandarla a Frases, o con «Agregale a la 12 …» para sumar una nota adentro de la idea #12. Si empezás con «Diario, …» se escribe en el diario de ese día, con la hora."]]},
+  ["Atajo del celu","Funciona para anotar ideas, frases o el diario hablándole al iPhone, sin abrir la web. Es muy práctico: fijate cómo se usa en la pestaña «Atajo del iPhone»."]]},
  {t:"Atajos",it:[
   [["Shift","arrastrar"],"Sobre el fondo: dibujás un marco y elegís todo lo que queda adentro."],
   [["Shift","clic"],"Sobre un post-it o una pila: lo sumás o lo sacás de la selección."],
@@ -2198,8 +2197,8 @@ const AYUDA=[
  {t:"Atajo del iPhone",it:[
   [null,"Con un atajo en el iPhone apretás un botón, hablás, y la idea aparece sola en la web. Ni siquiera hace falta abrirla."],
   [{h:'<span class="ay-atajo-link"></span>'},"Bajalo desde el iPhone y tocá «Agregar atajo». Se instala en la app Atajos."],
-  [{h:'<button type="button" class="ay-chip ay-btn" data-copiar="repo">Copiar mi repo</button><button type="button" class="ay-chip ay-btn" data-copiar="clave">Copiar mi clave</button>'},"Al instalarlo te pide dos datos: copialos de acá, desde el iPhone. Son tuyos: no se los pases a nadie."],
-  ["Para usarlo","Decí «Oye Siri, Nueva Idea», ponelo en la pantalla de inicio o en el botón de Acción, y hablá."],
+  [{h:'<button type="button" class="ay-chip ay-btn" data-copiar="repo">Copiar mi dirección</button><button type="button" class="ay-chip ay-btn" data-copiar="clave">Copiar mi clave</button>'},"Después, en Atajos, tocá el atajo «Banco de ideas» para editarlo. En «Obtener contenido de URL», reemplazá TU-REPO por tu dirección y, en «Mostrar más», TU-CLAVE por tu clave. Copialas de acá, desde el iPhone. Son tuyas: no se las pases a nadie."],
+  ["Para usarlo","Decí «Oye Siri, Banco de ideas», ponelo en la pantalla de inicio o en el botón de Acción, y hablá."],
   ["«Corto: un tipo que…»","Si arrancás con el nombre de una categoría, la idea va ahí. Si no, va a Otro."],
   ["«Frase de Borges: …»","Se guarda como frase, con su autor. «Frase: …» la guarda sin autor."],
   ["«Agregale a la 12: …»","Lo suma adentro de la idea número 12, como un post-it."],
@@ -2235,10 +2234,10 @@ function claveAyuda(k){const kk=el("span","ay-k");
   const uno=x=>{if(typeof x==="string")return document.createTextNode(x);if(x.ic){const s=el("span","ay-lat");s.innerHTML=ICO[x.ic];return s}if(x.chip){return el("span","ay-chip"+(x.c?" "+x.c:""),x.chip)}if(x.h){const s=el("span","ay-vis");s.innerHTML=x.h;return s}return document.createTextNode("")};
   if(Array.isArray(k)){if(k.every(x=>typeof x==="string"))k.forEach((x,i)=>{if(i)kk.append(" + ");kk.append(el("kbd",null,x))});else k.forEach(x=>kk.append(uno(x)))}
   else if(typeof k==="string")kk.textContent=k;else kk.append(uno(k));return kk}
-const LINK_ATAJO="";
+const LINK_ATAJO="https://www.icloud.com/shortcuts/b26a67fb680a4cea80192c682e9ae0fc";
 document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.closest("[data-copiar]");if(!b||!$("ayuda").contains(b))return;
-  let v=null;try{v=localStorage.getItem(b.dataset.copiar==="repo"?"gh_repo":"gh_token")}catch(_){}if(!v){toast("En este dispositivo no hay sesión: entrá primero a tu banco.");return}
-  try{await navigator.clipboard.writeText(v);toast(b.dataset.copiar==="repo"?"Repo copiado.":"Clave copiada. No se la pases a nadie.")}catch(_){toast("No pude copiar. Probá de nuevo.")}});
+  let v=null;try{v=localStorage.getItem(b.dataset.copiar==="repo"?"gh_repo":"gh_token")}catch(_){}if(v&&b.dataset.copiar==="repo")v="https://api.github.com/repos/lennyforster/"+v+"/contents/entrada/";if(!v){toast("En este dispositivo no hay sesión: entrá primero a tu banco.");return}
+  try{await navigator.clipboard.writeText(v);toast(b.dataset.copiar==="repo"?"Dirección copiada.":"Clave copiada. No se la pases a nadie.")}catch(_){toast("No pude copiar. Probá de nuevo.")}});
 let ayActiva=0;
 function pintarAyuda(){const idx=$("ay-idx");idx.replaceChildren();
   AYUDA.forEach((sec,n)=>{const b=el("button",null,sec.t);b.type="button";b.setAttribute("role","tab");b.setAttribute("aria-selected",String(n===ayActiva));b.onclick=()=>{ayActiva=n;pintarAyuda()};idx.append(b)});
