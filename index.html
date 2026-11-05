@@ -53,7 +53,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus
 .ay-sec{padding-top:16px}
 .ay-sec h3{margin:0 0 8px;font:700 1.15rem var(--hand)}
 .ay-sec ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
-.ay-sec li{display:grid;grid-template-columns:minmax(150px,210px) 1fr;gap:14px;align-items:center;padding:7px 0;border-bottom:1px dashed rgba(43,37,32,.12);font:400 .95rem/1.45 var(--ui)}
+.ay-sec li{display:grid;grid-template-columns:minmax(150px,210px) minmax(0,1fr);gap:14px;align-items:center;padding:7px 0;border-bottom:1px dashed rgba(43,37,32,.12);font:400 .95rem/1.45 var(--ui)}
 .ay-sec li.solo{grid-template-columns:1fr}
 .ay-k{font:600 .85rem/1.6 var(--ui);color:var(--muted)}
 .ay-k kbd{display:inline-block;min-width:22px;padding:1px 7px;margin:0 2px 2px 0;border-radius:5px;background:#fff;box-shadow:inset 0 -2px 0 rgba(43,37,32,.18),0 0 0 1px rgba(43,37,32,.2);font:600 .78rem/1.6 var(--mono);color:var(--ink);text-align:center}
@@ -75,7 +75,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus
 .ay-pila .ay-post{position:absolute;left:3px;top:3px}
 .ay-pila em{position:absolute;top:-6px;right:-8px;min-width:16px;height:16px;border-radius:999px;background:var(--ink);color:var(--paper);font:700 9px/16px var(--ui);text-align:center;font-style:normal}
 .ay-pila.keep .ay-post{background:#dcc6f2}
-.ay-bsel{display:inline-flex;align-items:center;gap:4px;padding:4px 6px 4px 10px;border-radius:999px;background:var(--ink);color:var(--paper);font:500 .7rem var(--ui)}.ay-bsel b{padding:3px 7px;border-radius:999px;background:rgba(255,255,255,.14);font-weight:600}
+.ay-bsel{display:inline-flex;flex-wrap:wrap;max-width:100%;align-items:center;gap:4px;padding:4px 6px 4px 10px;border-radius:14px;background:var(--ink);color:var(--paper);font:500 .7rem var(--ui)}.ay-bsel>*{white-space:nowrap}.ay-btn{cursor:pointer;border:0;font:inherit;text-decoration:none;background:#1f6b4a;color:#fff}.ay-mouse{display:inline-flex;align-items:flex-start}.ay-mouse span{margin:12px 0 0 -2px;background:#e0457b;color:#fff;font:600 11px/18px var(--ui);padding:0 7px;border-radius:9px}.ay-bsel b{padding:3px 7px;border-radius:999px;background:rgba(255,255,255,.14);font-weight:600}
 .ay-tools{display:inline-flex;flex-wrap:wrap;gap:3px;padding:4px;border-radius:999px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.16);font:600 .7rem var(--ui)}.ay-tools b{padding:3px 7px;border-radius:999px}.ay-tools b.am{background:#ffe76a}
 .ay-hilo{display:inline-block;width:46px;height:14px;margin-left:4px;vertical-align:middle;background:radial-gradient(circle,#c81e1e 3px,transparent 3.5px) left center/8px 8px no-repeat,radial-gradient(circle,#c81e1e 3px,transparent 3.5px) right center/8px 8px no-repeat,linear-gradient(#c81e1e,#c81e1e) center/38px 2px no-repeat}
 .ay-cal{display:inline-flex;gap:10px;padding:4px 10px;border-radius:8px;background:#fbf7ec;box-shadow:0 1px 3px rgba(0,0,0,.14);font:500 .95rem var(--hand);color:rgba(43,37,32,.38)}
@@ -2184,7 +2184,27 @@ const AYUDA=[
   [{chip:"•••"},"Las opciones de la idea: categoría, estado (Semilla, En desarrollo, En marcha, Descartada), Exportar, Compartir y Despegar."],
   [{chip:"Exportar"},"Copia el texto o lo descarga como .txt para seguir en Docs o Word."],
   [{chip:"Compartir"},"Te da un link directo a esa nota, que abre solo en tus dispositivos."],
-  [{h:'<span class="ay-chip" style="background:#1f9d6b;color:#fff">● En vivo</span>'},"Compartís ese post-it con un link: quien lo abre trabaja con vos en el momento en todo lo de adentro (texto, post-its, notas, links, imágenes, hilos y dibujos), estilo Miro, viendo el mouse y el nombre de cada uno. No ve el resto de tu plancha. «Dejar de compartir» corta el link."]]},
+  [{h:'<span class="ay-chip" style="background:#1f9d6b;color:#fff">● En vivo</span>'},"Para trabajar un post-it con otra gente al mismo tiempo. Mirá la pestaña «En vivo»."]]},
+ {t:"En vivo",it:[
+  [null,"Trabajás un post-it con otra gente al mismo tiempo, como en Miro o Google Docs. Cada uno desde su compu o su celu."],
+  [{h:'<span class="ay-chip" style="background:#1f9d6b;color:#fff">● En vivo</span>'},"Adentro de una idea, en •••. Se crea un link para ese post-it."],
+  [{chip:"Copiar link"},"Mandáselo a quien quieras. No necesita cuenta: entra, pone su nombre y listo."],
+  ["Todo el tablero","Todo lo de adentro se comparte: texto, post-its, notas, links, imágenes, hilos rojos y dibujos. Lo que cambia uno lo ve el otro al toque."],
+  [{h:'<span class="ay-mouse"><svg width="16" height="18" viewBox="0 0 18 20" aria-hidden="true"><path d="M2 1.5l13.5 9.2-6.3.9-3.3 5.6z" fill="#e0457b" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><span>Fercho</span></span>'},"Ves el mouse de cada uno con su nombre. En el texto grande, también dónde está escribiendo."],
+  [{h:'<span class="ay-chip" style="background:#1f9d6b;color:#fff">En vivo · Fercho</span>'},"Arriba dice quién está conectado ahora."],
+  ["Solo ese post-it","El que entra no ve nada más de tu banco: ni otras ideas, ni frases, ni el diario."],
+  ["Se guarda solo","Todo lo que hacen queda guardado en tu banco, aunque después dejes de compartir."],
+  [{chip:"Dejar de compartir"},"Tocás dos veces y el link deja de andar al toque."]]},
+ {t:"Atajo del iPhone",it:[
+  [null,"Con un atajo en el iPhone apretás un botón, hablás, y la idea aparece sola en la web. Ni siquiera hace falta abrirla."],
+  [{h:'<span class="ay-atajo-link"></span>'},"Bajalo desde el iPhone y tocá «Agregar atajo». Se instala en la app Atajos."],
+  [{h:'<button type="button" class="ay-chip ay-btn" data-copiar="repo">Copiar mi repo</button><button type="button" class="ay-chip ay-btn" data-copiar="clave">Copiar mi clave</button>'},"Al instalarlo te pide dos datos: copialos de acá, desde el iPhone. Son tuyos: no se los pases a nadie."],
+  ["Para usarlo","Decí «Oye Siri, Nueva Idea», ponelo en la pantalla de inicio o en el botón de Acción, y hablá."],
+  ["«Corto: un tipo que…»","Si arrancás con el nombre de una categoría, la idea va ahí. Si no, va a Otro."],
+  ["«Frase de Borges: …»","Se guarda como frase, con su autor. «Frase: …» la guarda sin autor."],
+  ["«Agregale a la 12: …»","Lo suma adentro de la idea número 12, como un post-it."],
+  ["«Diario: …»","Lo escribe en el diario de hoy, con la hora en que lo dijiste."],
+  ["¿Cuándo aparece?","Al rato de abrir la web. Si la tenés abierta, en unos segundos."]]},
  {t:"Menú •••",it:[
   [{chip:"•••"},"Arriba a la derecha: abre una fila con todo lo que sigue."],
   [{h:'<span class="ay-chip ay-busca">⌕ Buscar en todo…</span>'},"Busca en todo, también adentro de los post-its."],
@@ -2215,11 +2235,16 @@ function claveAyuda(k){const kk=el("span","ay-k");
   const uno=x=>{if(typeof x==="string")return document.createTextNode(x);if(x.ic){const s=el("span","ay-lat");s.innerHTML=ICO[x.ic];return s}if(x.chip){return el("span","ay-chip"+(x.c?" "+x.c:""),x.chip)}if(x.h){const s=el("span","ay-vis");s.innerHTML=x.h;return s}return document.createTextNode("")};
   if(Array.isArray(k)){if(k.every(x=>typeof x==="string"))k.forEach((x,i)=>{if(i)kk.append(" + ");kk.append(el("kbd",null,x))});else k.forEach(x=>kk.append(uno(x)))}
   else if(typeof k==="string")kk.textContent=k;else kk.append(uno(k));return kk}
+const LINK_ATAJO="";
+document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.closest("[data-copiar]");if(!b||!$("ayuda").contains(b))return;
+  let v=null;try{v=localStorage.getItem(b.dataset.copiar==="repo"?"gh_repo":"gh_token")}catch(_){}if(!v){toast("En este dispositivo no hay sesión: entrá primero a tu banco.");return}
+  try{await navigator.clipboard.writeText(v);toast(b.dataset.copiar==="repo"?"Repo copiado.":"Clave copiada. No se la pases a nadie.")}catch(_){toast("No pude copiar. Probá de nuevo.")}});
 let ayActiva=0;
 function pintarAyuda(){const idx=$("ay-idx");idx.replaceChildren();
   AYUDA.forEach((sec,n)=>{const b=el("button",null,sec.t);b.type="button";b.setAttribute("role","tab");b.setAttribute("aria-selected",String(n===ayActiva));b.onclick=()=>{ayActiva=n;pintarAyuda()};idx.append(b)});
   const cu=$("ay-cuerpo"),sec=AYUDA[ayActiva];cu.replaceChildren();const se=el("section","ay-sec");se.append(el("h3",null,sec.t));const ul=el("ul");
   for(const [k,txt] of sec.it){const li=el("li",k?null:"solo");if(k)li.append(claveAyuda(k));li.append(el("span",null,txt));ul.append(li)}
+  for(const a of ul.querySelectorAll(".ay-atajo-link")){if(LINK_ATAJO){const l=el("a","ay-chip ay-btn","Bajar el atajo");l.href=LINK_ATAJO;l.target="_blank";l.rel="noopener";a.append(l)}else a.append(el("span","ay-chip","Pedíselo a Lenny"))}
   se.append(ul);cu.append(se,el("p","ay-pie","¿Algo no anda o se te ocurre una mejora? ¡Avisame!"));cu.scrollTop=0}
 function abrirAyuda(){pintarAyuda();$("ayuda").hidden=false;$("ay-cuerpo").scrollTop=0;if(document.body.classList.contains("barra-abierta"))$("btn-menu").click();setTimeout(()=>$("ay-cerrar").focus(),30)}
 function cerrarAyuda(){$("ayuda").hidden=true}
