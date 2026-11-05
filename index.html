@@ -2076,7 +2076,9 @@ $("vivo-copiar").onclick=async()=>{try{await navigator.clipboard.writeText($("vi
   const n=nodosNota.get("ideas:"+abierto.id);if(n)n._firma=null;toast("Ya no está compartido. El link deja de andar.")}}
 /* al abrir la web, traigo lo último que escribieron los demás en los post-its en vivo */
 let vivoRevisado=false;
-async function revisarVivos(){if(vivoRevisado||!cols.ideas)return;const vs=data.ideas.filter(i=>i.vivo);if(!vs.length)return;vivoRevisado=true;
+/* un toque a Supabase cada vez que se abre la web (como mucho uno por día por dispositivo), para que no pause el proyecto por falta de uso */
+function toqueSupabase(){try{const hoy=new Date().toDateString();if(localStorage.getItem("sb_toque")===hoy)return;modVivo().then(m=>m.existe("toque-diario-para-no-pausar")).then(()=>{try{localStorage.setItem("sb_toque",hoy)}catch(_){}}).catch(()=>{})}catch(_){}}
+async function revisarVivos(){toqueSupabase();if(vivoRevisado||!cols.ideas)return;const vs=data.ideas.filter(i=>i.vivo);if(!vs.length)return;vivoRevisado=true;
   try{const m=await modVivo(),rs=await m.textos(vs.map(i=>i.vivo));for(const r of rs){const i=data.ideas.find(x=>x.vivo===r.id);if(i&&typeof r.texto==="string"&&r.texto!==i.texto&&!(abierto&&abierto.id===i.id))cols.ideas.doc(i.id).update({texto:r.texto})}}catch(e){console.error(e);vivoRevisado=false}}
 /* ---------- Cómo se usa (sumar acá cada feature nueva) ---------- */
 const MAC=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent||""),CMD=MAC?"⌘":"Ctrl";
