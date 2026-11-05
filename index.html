@@ -93,6 +93,17 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus
 .vivo-chip{display:inline-flex;align-items:center;gap:6px;margin-left:8px;padding:4px 10px;border-radius:999px;background:#1f9d6b;color:#fff;font:600 .72rem var(--ui);vertical-align:middle}
 .vivo-chip::before{content:"";width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.3)}
 .nota.en-vivo .meta span:first-child::after{content:" ● en vivo";color:#1f9d6b;font-weight:600}
+.nombre-vivo{position:fixed;inset:0;z-index:90;background:rgba(20,14,10,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.nombre-vivo[hidden]{display:none}
+.nombre-vivo form{background:#fbf7ec;border-radius:12px;padding:22px;width:min(360px,100%);display:grid;gap:12px;box-shadow:0 30px 60px -20px rgba(0,0,0,.6)}
+.nombre-vivo h2{margin:0;font:700 1.35rem var(--hand)}.nombre-vivo p{margin:0;color:var(--muted);font-size:.9rem}
+.nombre-vivo input{font:500 1rem var(--ui);padding:11px 12px;border-radius:8px;border:1px solid rgba(43,37,32,.25);background:#fff}
+.nombre-vivo button{border:0;border-radius:999px;padding:11px;background:var(--ink);color:var(--paper);font:600 .95rem var(--ui);cursor:pointer}
+body.invitado #volver,body.invitado #h-mas,body.invitado>.barra,body.invitado #barra-extra,body.invitado #vp-main,body.invitado #zoom-main,body.invitado #btn-claude,body.invitado #h-dictar,body.invitado #add-a-idea,body.invitado #abrir-composer,body.invitado #abrir-dictar{display:none!important}
+.vivo-mouses{position:absolute;left:0;top:0;width:0;height:0;z-index:40;pointer-events:none}
+.vivo-mouse{position:absolute;transform-origin:0 0;transform:scale(var(--inv,1));transition:left .09s linear,top .09s linear}
+.vivo-mouse svg{display:block;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))}
+.vivo-mouse span{position:absolute;left:14px;top:16px;white-space:nowrap;background:var(--c);color:#fff;font:600 11px/18px var(--ui);padding:0 7px;border-radius:9px}
 .ay-pie{margin:18px 0 0;font:500 .85rem/1.4 var(--ui);color:var(--muted)}
 @media (max-width:640px){.ay-sec li{grid-template-columns:1fr;gap:2px}.guia{padding:0}.ay-hoja{height:100dvh;border-radius:0}.ay-main{grid-template-columns:1fr;grid-template-rows:auto 1fr}.ay-idx{flex-direction:row;flex-wrap:wrap;gap:6px;border-right:0;border-bottom:1px solid rgba(43,37,32,.1);overflow:visible}.ay-idx button{padding:6px 10px;font-size:.85rem;background:rgba(43,37,32,.06);border-radius:999px}}
 .vista{position:absolute;inset:0;overflow:hidden;touch-action:none;cursor:grab;background-color:var(--mat);
@@ -736,6 +747,7 @@ const GH={owner:"lennyforster",branch:"main",repos:["banco-de-ideas-datos","banc
 const API="https://api.github.com";let RB=null;
 const LS={get(k){try{return localStorage.getItem(k)}catch(_){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(_){}},del(k){try{localStorage.removeItem(k)}catch(_){}}};
 let TOKEN=LS.get("gh_token");
+const INVITADO=(()=>{const m=/(?:^|[#&?])vivo=([a-z0-9]{20,})/.exec(location.hash+"&"+location.search.slice(1));return m?m[1]:null})();window.__invitado=INVITADO;
 const docs=new Map();           // "ideas/abc" -> datos
 const pend=new Map();           // cambios sin subir: clave -> datos | null (borrar)
 const binPend=new Map();        // "img/x.png" -> sha del blob subido | null (borrar)
@@ -767,7 +779,7 @@ function avisar(claves){
   for(const k of claves)for(const l of docL.get(k)||[])try{l(snapDoc(k))}catch(e){console.error(e)}
 }
 /* --- traer lo que hay en GitHub --- */
-async function traer(){
+async function traer(){if(INVITADO)return;
   const ref=await api(`${RB}/git/ref/heads/${GH.branch}`);const sha=ref.object.sha;if(sha===ultimoCommit)return;
   const c=await api(`${RB}/git/commits/${sha}`);const t=await api(`${RB}/git/trees/${c.tree.sha}?recursive=1`);
   const vistos=new Set(),cambiados=new Set(),pedir=[];remotos=new Set();
@@ -787,6 +799,7 @@ window.borrarEntrada=p=>{entradasLeidas=entradasLeidas.filter(e=>e.path!==p);bin
 let subiendo=false,tSubir=null,enVueloBin=null;
 function programar(ms){clearTimeout(tSubir);tSubir=setTimeout(subir,ms===undefined?900:ms)}
 async function subir(){
+  if(INVITADO){pend.clear();binPend.clear();return}
   if(subiendo||(!pend.size&&!binPend.size))return;subiendo=true;
   const lote=new Map(pend),loteBin=new Map(binPend);pend.clear();binPend.clear();enVuelo=lote;enVueloBin=loteBin;
   try{
@@ -845,13 +858,14 @@ const urls=new Map();
 const leerB64=b=>new Promise((ok,mal)=>{const fr=new FileReader();fr.onload=()=>ok(String(fr.result).split(",")[1]);fr.onerror=mal;fr.readAsDataURL(b)});
 const assets={
   async upload(blob,o){const tipo=(o&&o.type)||blob.type||"image/png";if(blob.size>20*1024*1024)throw {code:"too_large"};
+    if(INVITADO||window.__subirVivo){const m=await import("./vivo.js");const id=await m.subirImagen(blob.type?blob:new Blob([blob],{type:tipo})).catch(()=>{throw {code:"store_unavailable"}});const url=m.urlImagen(id);urls.set(id,url);return {id,url,sizeBytes:blob.size,contentType:tipo}}
     const ext=({"image/png":"png","image/jpeg":"jpg","image/gif":"gif","image/webp":"webp"})[tipo]||"bin";
     const b=await api(`${RB}/git/blobs`,{method:"POST",body:{content:await leerB64(blob),encoding:"base64"}}).catch(e=>{throw {code:e.status===401?"upstream_auth":"store_unavailable"}});
     const path=`img/${rid()}.${ext}`;binPend.set(path,b.sha);programar(300);const url=URL.createObjectURL(blob);urls.set(path,url);return {id:path,url,sizeBytes:blob.size,contentType:tipo}},
   async delete(id){return {deleted:!!id}},/* las imágenes quedan guardadas para poder deshacer */
   async list(){return {assets:[],usage:{files:0,bytes:0,maxFiles:0,maxBytes:0}}}
 };
-window.cargarImg=async(img,id)=>{if(!id)return;if(urls.has(id)){img.src=urls.get(id);return}
+window.cargarImg=async(img,id)=>{if(!id)return;if(id.startsWith("sb:")){img.src="https://nzgljqcgygzjxpqmvrsh.supabase.co/storage/v1/object/public/vivo/"+id.slice(3);return}if(urls.has(id)){img.src=urls.get(id);return}
   try{const b=await api(`${RB}/contents/${id.split("/").map(encodeURIComponent).join("/")}?ref=${GH.branch}`,{accept:"application/vnd.github.raw",blob:true});const u=URL.createObjectURL(b);urls.set(id,u);img.src=u}
   catch(e){img.dispatchEvent(new Event("error"))}};
 const downloads={async save({filename,data}){const b=data instanceof Blob?data:new Blob([data],{type:"text/plain;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=filename;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);return {status:"saved"}}};
@@ -868,7 +882,15 @@ async function elegirRepo(){
     catch(e){if(e.status===401){throw e}if(e.status!==404&&e.status!==403&&e.status!==409)red=true}}
   const e=new Error(red?"red":"sin repo");e.status=red?0:404;throw e;
 }
+function pedirNombreVivo(){let n=null;try{n=localStorage.getItem("vivo_nombre")}catch(_){}if(n)return Promise.resolve(n);
+  return new Promise(ok=>{const ov=document.getElementById("nombre-vivo");ov.hidden=false;const i=document.getElementById("nv-input");setTimeout(()=>i.focus(),50);
+    document.getElementById("nv-form").onsubmit=e=>{e.preventDefault();const v=i.value.trim();if(!v)return;try{localStorage.setItem("vivo_nombre",v)}catch(_){}ov.hidden=true;ok(v)}})}
+async function conectarInvitado(){document.body.classList.add("invitado");const nombre=await pedirNombreVivo();const m=await import("./vivo.js");let S;
+  for(;;){try{S=await m.sesion({id:INVITADO,nombre});break}catch(e){if(String(e.message).includes("no existe")){document.body.classList.add("vivo-fin");aviso("Este post-it ya no está compartido.");await new Promise(()=>{})}aviso("No pude conectar. Reintento en unos segundos…");await new Promise(r=>setTimeout(r,4000))}}
+  window.__sesionVivo=S;const f=S.foto();docs.set("ideas/"+INVITADO,{texto:f.texto||"",bloques:f.bloques||[],hilos:f.hilos||[],trazos:f.trazos||[],tipo:f.tipo||"otro",estado:f.estado||null,numero:f.numero||"",creado:f.creado||Date.now(),vivo:INVITADO,x:0,y:0});
+  return db}
 async function conectar(){
+  if(INVITADO)return conectarInvitado();
   if(!TOKEN){pedirClave("");await new Promise(r=>resolverClave=r)}
   for(;;){try{if(!RB)await elegirRepo();await traer();break}catch(e){
     if(e.status===401||e.status===403||e.status===404){TOKEN=null;LS.del("gh_token");RB=null;LS.del("gh_repo");pedirClave(e.status===404?"Esa clave no tiene acceso a ninguna plancha. Revisá que al crearla hayas elegido el repo de datos.":"Esa clave no funciona. Revisala y probá de nuevo.");await new Promise(r=>resolverClave=r)}
@@ -880,12 +902,13 @@ document.addEventListener("DOMContentLoaded",()=>{
   f.addEventListener("submit",e=>{e.preventDefault();const v=document.getElementById("cx-clave").value.trim();if(!v)return;TOKEN=v;LS.set("gh_token",v);document.getElementById("conectar").hidden=true;if(resolverClave){const r=resolverClave;resolverClave=null;r()}});
 });
 window.salirGH=()=>{LS.del("gh_token");LS.del("gh_cache");LS.del("gh_repo");location.reload()};
-window.claude={use:async n=>{if(n==="db"){if(!listo)listo=conectar();return listo}if(n==="assets"){if(!listo)listo=conectar();await listo;return assets}if(n==="downloads")return downloads;return null}};
+window.claude={use:async n=>{if(INVITADO&&n==="db"){if(!listo)listo=conectar();return listo}if(n==="db"){if(!listo)listo=conectar();return listo}if(n==="assets"){if(!listo)listo=conectar();await listo;return assets}if(n==="downloads")return downloads;return null}};
 })();
 </script>
 
 
 <!-- Plancha principal -->
+<div class="nombre-vivo" id="nombre-vivo" hidden><form id="nv-form"><h2>¿Cómo te llamás?</h2><p>Vas a entrar a un post-it compartido. Tu nombre aparece al lado de tu cursor.</p><input id="nv-input" maxlength="30" autocomplete="nickname" placeholder="Tu nombre"><button type="submit">Entrar</button></form></div>
 <div class="guia" id="ayuda" hidden role="dialog" aria-modal="true" aria-labelledby="ay-tit"><div class="ay-hoja"><div class="ay-cab"><h2 id="ay-tit">Cómo se usa</h2><button type="button" id="ay-cerrar" aria-label="Cerrar">×</button></div><div class="ay-main"><nav class="ay-idx" id="ay-idx" role="tablist" aria-label="Secciones"></nav><div class="ay-cuerpo" id="ay-cuerpo" role="tabpanel"></div></div></div></div>
 <div class="vista" id="vp-main"><div class="capa" id="capa-main"></div></div>
 
@@ -1473,7 +1496,7 @@ async function subir(file){
   if(!assets){toast("Para subir imágenes tenés que poder editar esta página.");return null}
   if(!/^image\/(png|jpeg|gif|webp)$/.test(file.type)){toast("Ese formato no se puede subir. Usá PNG, JPG, GIF o WEBP.");return null}
   toast("Subiendo imagen…");file=await achicarImagen(file);
-  try{const r=await assets.upload(file,{type:file.type});$("toast").hidden=true;return r}
+  try{window.__subirVivo=!!(abierto&&abierto.doc.vivo);const r=await assets.upload(file,{type:file.type});window.__subirVivo=false;$("toast").hidden=true;return r}
   catch(e){const c=e&&e.code;toast(c==="too_large"?"La imagen pesa más de 20 MB. Achicala y probá de nuevo.":c==="quota_or_state"?"No queda espacio para más imágenes. Quitá alguna vieja.":c==="rate_limited"?"Demasiadas subidas seguidas. Esperá un momento.":"No se pudo subir la imagen. Probá de nuevo.");return null}
 }
 async function decoEnPlancha(file,p){
@@ -1500,7 +1523,8 @@ lzHoja.onBorrarSel=ns=>{if(!abierto)return;const ids=new Set(ns.map(n=>n.dataset
 let abierto=null,selB=null,borrarB=null,borrarSure=false;
 const timers={},pend={};let enVuelo=0;
 function estado(t){$("estado").textContent=t}
-function guardarHoja(campo,valor){if(!abierto)return;const {k,id}=abierto;enVuelo++;estado("Guardando…");let pr;
+function guardarHoja(campo,valor){if(!abierto)return;
+  if(vivoAct&&!vivoSilencio&&abierto.doc.vivo===vivoAct.id&&CAMPOS_VIVO.includes(campo))vivoAct.poner(campo,valor);const {k,id}=abierto;enVuelo++;estado("Guardando…");let pr;
   if(k==="diario"&&!entradaDia(id)){const base=JSON.parse(JSON.stringify(abierto.doc));delete base.id;delete base._pend;base[campo]=valor;base.fecha=id;base.creado=base.creado||Date.now();
     pr=cola[id]=(cola[id]||Promise.resolve()).then(()=>entradaDia(id)?cols.diario.doc(id).update({[campo]:valor}):cols.diario.doc(id).set(base)).then(()=>true,()=>{toast("No se guardó. Revisá la conexión.");return false})}
   else pr=escribir(cols[k],id,{[campo]:valor});
@@ -1523,7 +1547,7 @@ function abrir(k,id,virtual){
   lzHoja.apply();if(k==="diario"){lzHoja.clave=null;posicionarDia()}else if(!lzHoja.usar("hoja:"+id))requestAnimationFrame(()=>lzHoja.encuadrar(lzHoja.limites()));
   requestAnimationFrame(()=>{document.querySelectorAll("#capa-hoja textarea").forEach(autosize);pintarHilos();$("volver").focus()});
 }
-function cerrar(){cerrarVivo();$("panel-vivo").hidden=true;const eraDia=abierto&&abierto.k==="diario"?{id:abierto.id,doc:abierto.doc}:null;
+function cerrar(){if(window.__invitado)return;cerrarVivo();$("panel-vivo").hidden=true;const eraDia=abierto&&abierto.k==="diario"?{id:abierto.id,doc:abierto.doc}:null;
   setTimeout(()=>{if(eraDia&&!pesoDia(eraDia.doc)&&!(eraDia.doc.trazos||[]).length&&entradaDia(eraDia.id))cols.diario.doc(eraDia.id).delete().catch(()=>{});pintarDiario()},50);
   selLimpiar(lzHoja);$("panel-export").hidden=true;$("panel-mas").hidden=true;vaciarPendientes();if(modoHilo)setModoHilo(false);selHilo=null;abierto=null;$("detalle").hidden=true;$("panel-compartir").hidden=true;$("capa-hoja").replaceChildren();gHoja=null;cortarHoja=null;gTrazosHoja=null;if(lzHoja.modo)lzHoja.setModo(null)}
 function sincronizarAbierto(k){
@@ -2045,27 +2069,56 @@ window.onEntradas=lista=>{if(!cols.ideas||!cols.frases||!window.__ideasListas)re
       else{const numero=data.ideas.reduce((a,i)=>Math.max(a,i.numero||0),0)+1;cols.ideas.doc(id).set({texto:mayus(d.texto||t),tipo:d.cat||"otro",creado,numero,origen:"atajo"});hechos.push(d.cat&&d.cat!=="otro"?label(d.cat):"idea nueva")}}
     window.borrarEntrada(path)}
   if(hechos.length)toast(hechos.length===1?`Llegó del celu: ${hechos[0]}.`:`Llegaron ${hechos.length} cosas del celu: ${hechos.join(", ")}.`)};
-/* ---------- Post-its en vivo (se editan entre varios al mismo tiempo; viven en Supabase) ---------- */
-let vivoAct=null,vivoMod=null;const URL_VIVO=new URL("vivo.html",location.href).href.split("?")[0];
+/* ---------- Post-its en vivo: todo el tablero de adentro se comparte (texto, piezas, hilos, dibujos, imágenes) ---------- */
+let vivoAct=null,vivoMod=null,vivoSilencio=false;const URL_VIVO=new URL("./",location.href).href.split("?")[0].split("#")[0];
 const modVivo=()=>vivoMod||(vivoMod=import("./vivo.js"));
 const NOMBRES_REPO={"banco-de-ideas-datos":"Lenny","banco-de-ideas-datos-2":"Helena","banco-de-ideas-datos-3":"Toby","banco-de-ideas-datos-4":"Shu","banco-de-ideas-datos-5":"Ivan","banco-de-ideas-datos-6":"Sofía"};
 const miNombreVivo=()=>{try{return localStorage.getItem("vivo_nombre")||NOMBRES_REPO[localStorage.getItem("gh_repo")]||"Alguien"}catch(_){return "Alguien"}};
+const CAMPOS_VIVO=["bloques","hilos","trazos","tipo","estado"];
+const camposVivo=d=>({texto:d.texto||"",bloques:d.bloques||[],hilos:d.hilos||[],trazos:d.trazos||[],tipo:d.tipo||"otro",estado:d.estado||null,numero:d.numero||"",creado:d.creado||Date.now(),titulo:`Idea #${d.numero||"?"}`});
 function chipVivo(lista){let c=$("h-titulo").querySelector(".vivo-chip");if(!abierto||!abierto.doc.vivo){c?.remove();return}
   if(!c){c=el("span","vivo-chip");$("h-titulo").append(c)}const n=(lista||[]).length;c.textContent=n?`En vivo · ${lista.map(p=>p.nombre).join(", ")}`:"En vivo";
   $("vivo-gente").textContent=n?`Ahora: ${lista.map(p=>p.nombre).join(", ")}`:"Nadie más conectado ahora."}
-async function enlazarVivo(t,doc){if(!doc.vivo)return;if(vivoAct&&vivoAct.id===doc.vivo){vivoAct.vincular(t);chipVivo([]);return}
-  if(vivoAct){vivoAct.cerrar();vivoAct=null}chipVivo([]);const id=doc.vivo;
-  try{const m=await modVivo();if(!abierto||abierto.doc.vivo!==id)return;
-    const c=await m.conectar({id,textarea:t,nombre:miNombreVivo(),capa:t.parentElement,onGente:chipVivo,
-      onTexto:(v,cambio)=>{if(!abierto||abierto.doc.vivo!==id)return;autosize(t);if(cambio&&abierto.doc.texto!==v){abierto.doc.texto=v;guardarLuego("texto",()=>abierto.doc.texto)}pintarHilos()}});
-    if(!abierto||abierto.doc.vivo!==id){c.cerrar();return}vivoAct=c}
+/* mouses de los demás en el tablero */
+const FLECHA_MOUSE=c=>`<svg width="18" height="20" viewBox="0 0 18 20"><path d="M2 1.5l13.5 9.2-6.3.9-3.3 5.6z" fill="${c}" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
+function pintarMouses(lista){const capa=$("capa-hoja");let cont=capa.querySelector(".vivo-mouses");if(!abierto||!abierto.doc.vivo){cont?.remove();return}
+  if(!cont){cont=el("div","vivo-mouses");capa.append(cont)}const vistos=new Set();
+  for(const m of lista){const k="m"+m.id;vistos.add(k);let n=cont.querySelector(`[data-k="${k}"]`);
+    if(!n){n=el("div","vivo-mouse");n.dataset.k=k;n.innerHTML=FLECHA_MOUSE(m.c||"#e0457b");n.append(el("span",null,m.n||"Alguien"));n.style.setProperty("--c",m.c||"#e0457b");cont.append(n)}
+    n.style.left=m.x+"px";n.style.top=m.y+"px"}
+  for(const n of [...cont.children])if(!vistos.has(n.dataset.k))n.remove()}
+$("vp-hoja").addEventListener("pointermove",e=>{if(vivoAct&&abierto&&abierto.doc.vivo===vivoAct.id&&e.pointerType==="mouse"){const p=lzHoja.aMundo(e.clientX,e.clientY);vivoAct.mouse(p.x,p.y)}},{passive:true});
+$("vp-hoja").addEventListener("pointerleave",()=>{if(vivoAct)vivoAct.mouse(null,null)});
+/* cuando otro cambia piezas, hilos o dibujos */
+function aplicarFotoVivo(S,f){if(!abierto||abierto.doc.vivo!==S.id)return;const d=abierto.doc;
+  const nuevo=JSON.parse(JSON.stringify(d));nuevo.bloques=f.bloques||[];nuevo.hilos=f.hilos||[];nuevo.trazos=f.trazos||[];if(f.tipo)nuevo.tipo=f.tipo;if(f.estado!==undefined)nuevo.estado=f.estado;
+  const firma=o=>JSON.stringify([o.bloques,o.hilos,o.trazos,o.tipo||"",o.estado||null]);if(firma(nuevo)===firma(d))return;prepararDoc(nuevo);
+  vivoSilencio=true;try{for(const k of CAMPOS_VIVO)if(JSON.stringify(nuevo[k])!==JSON.stringify(d[k]))guardarHoja(k,nuevo[k])}finally{vivoSilencio=false}
+  const a=document.activeElement,principal=$("capa-hoja").querySelector(".principal textarea");
+  if(a&&a!==principal&&$("detalle").contains(a)&&(a.tagName==="TEXTAREA"||a.tagName==="INPUT")){abierto.remoto=nuevo;return}
+  const enTexto=a&&a===principal,s0=enTexto?principal.selectionStart:0,s1=enTexto?principal.selectionEnd:0;
+  aplicarRemoto(nuevo);if(enTexto){const t=$("capa-hoja").querySelector(".principal textarea");if(t){t.focus({preventScroll:true});t.setSelectionRange(s0,s1)}}}
+async function sesionVivo(id){if(vivoAct&&vivoAct.id===id)return vivoAct;
+  if(window.__sesionVivo&&window.__sesionVivo.id===id)vivoAct=window.__sesionVivo;
+  else{if(vivoAct){vivoAct.cerrar();vivoAct=null}const m=await modVivo();vivoAct=await m.sesion({id,nombre:miNombreVivo()})}
+  const S=vivoAct;if(!S._enganchada){S._enganchada=true;S.onGente(chipVivo);S.onCambio(f=>aplicarFotoVivo(S,f));S.onMouse(pintarMouses)}return S}
+/* las imágenes del post-it pasan a Supabase para que las vean todos */
+async function migrarImagenesVivo(S){if(window.__invitado||!abierto||abierto.doc.vivo!==S.id)return;const d=abierto.doc,m=await modVivo(),pend=d.bloques.filter(b=>b.t==="img"&&b.a&&!m.esImgVivo(b.a));let n=0;
+  for(const b of pend){try{const blob=await new Promise((ok,mal)=>{const im=new Image();im.onload=()=>fetch(im.src).then(r=>r.blob()).then(ok,mal);im.onerror=mal;window.cargarImg(im,b.a)});
+      const nuevo=await m.subirImagen(blob);if(!abierto||abierto.doc.vivo!==S.id)return;const bb=abierto.doc.bloques.find(x=>x.id===b.id);if(bb){bb.a=nuevo;n++}}catch(e){console.error(e)}}
+  if(n){guardarBloques();pintarHoja()}}
+async function enlazarVivo(t,doc){const id=doc.vivo;if(!id)return;chipVivo([]);
+  try{const S=await sesionVivo(id);if(!abierto||abierto.doc.vivo!==id)return;
+    if(!window.__invitado&&!S._sincro){S._sincro=true;if(S.vacio())S.ponerTodo(camposVivo(abierto.doc));else aplicarFotoVivo(S,S.foto());migrarImagenesVivo(S)}
+    const tt=$("capa-hoja").querySelector(".principal textarea")||t;
+    S.vincular(tt,{capa:tt.parentElement,onTexto:(v,cambio)=>{if(!abierto||abierto.doc.vivo!==id)return;autosize(tt);if(cambio&&abierto.doc.texto!==v){abierto.doc.texto=v;guardarLuego("texto",()=>abierto.doc.texto)}pintarHilos()}})}
   catch(e){console.error(e);toast(String(e.message).includes("no existe")?"Este post-it ya no está compartido.":"No se pudo conectar en vivo. Revisá la conexión.")}}
-function cerrarVivo(){if(vivoAct){vivoAct.cerrar();vivoAct=null}}
-function abrirPanelVivo(){if(!abierto)return;$("vivo-link").value=URL_VIVO+"#"+abierto.doc.vivo;$("panel-vivo").hidden=false;$("panel-mas").hidden=true}
+function cerrarVivo(){if(vivoAct&&!window.__invitado){vivoAct.cerrar();vivoAct=null}pintarMouses([])}
+function abrirPanelVivo(){if(!abierto)return;$("vivo-link").value=URL_VIVO+"#vivo="+abierto.doc.vivo;$("panel-vivo").hidden=false;$("panel-mas").hidden=true}
 $("h-vivo").onclick=async()=>{if(!abierto||abierto.k!=="ideas")return;const d=abierto.doc;
   if(d.vivo){abrirPanelVivo();return}
   const b=$("h-vivo");b.disabled=true;b.textContent="Creando…";
-  try{const m=await modVivo();const id=await m.crear({titulo:`Idea #${d.numero||"?"}`,texto:d.texto||""});d.vivo=id;guardarHoja("vivo",id);b.setAttribute("aria-pressed","true");
+  try{vaciarPendientes();const m=await modVivo();const id=await m.crear(camposVivo(d));d.vivo=id;guardarHoja("vivo",id);b.setAttribute("aria-pressed","true");
     const t=$("capa-hoja").querySelector(".principal textarea");if(t)enlazarVivo(t,d);abrirPanelVivo();const n=nodosNota.get("ideas:"+abierto.id);if(n)n._firma=null;toast("Listo: este post-it ya se puede editar en vivo.")}
   catch(e){console.error(e);toast("No se pudo crear. Revisá la conexión.")}finally{b.disabled=false;b.textContent="● En vivo"}};
 $("cerrar-vivo").onclick=()=>{$("panel-vivo").hidden=true};
@@ -2074,6 +2127,9 @@ $("vivo-copiar").onclick=async()=>{try{await navigator.clipboard.writeText($("vi
   if(!seguro){seguro=true;b.textContent="¿Seguro? Tocá de nuevo";clearTimeout(tm);tm=setTimeout(()=>{seguro=false;b.textContent="Dejar de compartir"},3500);return}
   seguro=false;b.textContent="Dejar de compartir";cerrarVivo();abierto.doc.vivo="";guardarHoja("vivo","");$("panel-vivo").hidden=true;$("h-vivo").setAttribute("aria-pressed","false");chipVivo();
   const n=nodosNota.get("ideas:"+abierto.id);if(n)n._firma=null;toast("Ya no está compartido. El link deja de andar.")}}
+/* invitado: entra directo al post-it compartido y no puede salir a ninguna plancha */
+let invitadoAbierto=false;
+function abrirInvitado(){if(!window.__invitado||invitadoAbierto)return;const i=data.ideas.find(x=>x.id===window.__invitado);if(!i)return;invitadoAbierto=true;abrir("ideas",i.id)}
 /* al abrir la web, traigo lo último que escribieron los demás en los post-its en vivo */
 let vivoRevisado=false;
 /* un toque a Supabase cada vez que se abre la web (como mucho uno por día por dispositivo), para que no pause el proyecto por falta de uso */
@@ -2128,7 +2184,7 @@ const AYUDA=[
   [{chip:"•••"},"Las opciones de la idea: categoría, estado (Semilla, En desarrollo, En marcha, Descartada), Exportar, Compartir y Despegar."],
   [{chip:"Exportar"},"Copia el texto o lo descarga como .txt para seguir en Docs o Word."],
   [{chip:"Compartir"},"Te da un link directo a esa nota, que abre solo en tus dispositivos."],
-  [{h:'<span class="ay-chip" style="background:#1f9d6b;color:#fff">● En vivo</span>'},"Compartís ese post-it con un link: quien lo abre lo edita con vos en el momento, estilo Google Docs, con el cursor y el nombre de cada uno. No ve el resto de tu plancha. «Dejar de compartir» corta el link."]]},
+  [{h:'<span class="ay-chip" style="background:#1f9d6b;color:#fff">● En vivo</span>'},"Compartís ese post-it con un link: quien lo abre trabaja con vos en el momento en todo lo de adentro (texto, post-its, notas, links, imágenes, hilos y dibujos), estilo Miro, viendo el mouse y el nombre de cada uno. No ve el resto de tu plancha. «Dejar de compartir» corta el link."]]},
  {t:"Menú •••",it:[
   [{chip:"•••"},"Arriba a la derecha: abre una fila con todo lo que sigue."],
   [{h:'<span class="ay-chip ay-busca">⌕ Buscar en todo…</span>'},"Busca en todo, también adentro de los post-its."],
@@ -2986,7 +3042,7 @@ drawComposer();setVista(vista);try{if(localStorage.getItem("pestana")==="diario"
   for(const k of ["ideas","frases"]){
     cols[k]=db.collection(k);
     cols[k].orderBy("creado","desc").onSnapshot(s=>{
-      data[k]=s.docs.map(d=>({id:d.id,...d.data(),_pend:!!(d.metadata&&d.metadata.hasPendingWrites)}));pintarMain();sincronizarAbierto(k);if(k==="ideas"){window.__ideasListas=true;setTimeout(revisarVivos,1500);if(window.revisarEntradas)setTimeout(window.revisarEntradas,0)}
+      data[k]=s.docs.map(d=>({id:d.id,...d.data(),_pend:!!(d.metadata&&d.metadata.hasPendingWrites)}));pintarMain();sincronizarAbierto(k);if(k==="ideas"){window.__ideasListas=true;if(window.__invitado)setTimeout(abrirInvitado,0);setTimeout(revisarVivos,1500);if(window.revisarEntradas)setTimeout(window.revisarEntradas,0)}
       if(!$("panel-cal").hidden&&!escribiendo())pintarCalMain();
       if(linkInicial){const i=data[k].find(x=>x.id===linkInicial);if(i){linkInicial=null;abrir(k,i.id)}}
       if(k===vista&&!encuadrado[k]&&data[k].length){lzMain.encuadrar(lzMain.limites());encuadrado[k]=true}
