@@ -53,10 +53,39 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus
 .ay-sec{padding-top:16px}
 .ay-sec h3{margin:0 0 8px;font:700 1.15rem var(--hand)}
 .ay-sec ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
-.ay-sec li{display:grid;grid-template-columns:minmax(150px,210px) 1fr;gap:14px;align-items:baseline;padding:7px 0;border-bottom:1px dashed rgba(43,37,32,.12);font:400 .95rem/1.45 var(--ui)}
+.ay-sec li{display:grid;grid-template-columns:minmax(150px,210px) 1fr;gap:14px;align-items:center;padding:7px 0;border-bottom:1px dashed rgba(43,37,32,.12);font:400 .95rem/1.45 var(--ui)}
 .ay-sec li.solo{grid-template-columns:1fr}
 .ay-k{font:600 .85rem/1.6 var(--ui);color:var(--muted)}
 .ay-k kbd{display:inline-block;min-width:22px;padding:1px 7px;margin:0 2px 2px 0;border-radius:5px;background:#fff;box-shadow:inset 0 -2px 0 rgba(43,37,32,.18),0 0 0 1px rgba(43,37,32,.2);font:600 .78rem/1.6 var(--mono);color:var(--ink);text-align:center}
+
+.ay-k{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
+.ay-lat{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);color:var(--ink)}
+.ay-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:999px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.16);font:600 .8rem var(--ui);color:var(--ink);white-space:nowrap}
+.ay-chip.amarillo{background:#ffe76a}
+.ay-busca{color:var(--muted);font-weight:500}
+.ay-seg{display:inline-flex;padding:3px;border-radius:999px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.16);font:600 .76rem var(--ui)}
+.ay-seg>*{padding:4px 9px;border-radius:999px;color:var(--muted)}.ay-seg b{background:var(--ink);color:var(--paper)}
+.ay-zoom{display:inline-flex;align-items:center;gap:8px;padding:4px 10px;border-radius:999px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.16);font:600 .78rem var(--ui)}.ay-zoom small{font:500 .7rem var(--mono);color:var(--muted)}
+.ay-post{display:inline-block;width:30px;height:30px;background:#ffe76a;box-shadow:0 1px 1px rgba(0,0,0,.12),0 5px 6px -4px rgba(0,0,0,.4);transform:rotate(-3deg);position:relative;vertical-align:middle}
+.ay-post small{position:absolute;inset:auto 0 3px;text-align:center;font:700 6.5px var(--ui);color:var(--ink)}
+.ay-apilar{display:inline-flex;align-items:center;gap:6px}.ay-flechita{color:var(--muted);font-weight:700}
+.ay-pila{position:relative;display:inline-block;width:36px;height:36px}
+.ay-pila i{position:absolute;left:8px;top:7px;width:30px;height:30px;background:#e9c94a;box-shadow:0 1px 2px rgba(0,0,0,.25);transform:rotate(9deg)}.ay-pila i+i{left:5px;top:5px;transform:rotate(-7deg);background:#f2d75e}
+.ay-pila.keep i{background:#c9aee6}.ay-pila.keep i+i{background:#d4bbee}
+.ay-pila .ay-post{position:absolute;left:3px;top:3px}
+.ay-pila em{position:absolute;top:-6px;right:-8px;min-width:16px;height:16px;border-radius:999px;background:var(--ink);color:var(--paper);font:700 9px/16px var(--ui);text-align:center;font-style:normal}
+.ay-pila.keep .ay-post{background:#dcc6f2}
+.ay-bsel{display:inline-flex;align-items:center;gap:4px;padding:4px 6px 4px 10px;border-radius:999px;background:var(--ink);color:var(--paper);font:500 .7rem var(--ui)}.ay-bsel b{padding:3px 7px;border-radius:999px;background:rgba(255,255,255,.14);font-weight:600}
+.ay-tools{display:inline-flex;flex-wrap:wrap;gap:3px;padding:4px;border-radius:999px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.16);font:600 .7rem var(--ui)}.ay-tools b{padding:3px 7px;border-radius:999px}.ay-tools b.am{background:#ffe76a}
+.ay-hilo{display:inline-block;width:46px;height:14px;margin-left:4px;vertical-align:middle;background:radial-gradient(circle,#c81e1e 3px,transparent 3.5px) left center/8px 8px no-repeat,radial-gradient(circle,#c81e1e 3px,transparent 3.5px) right center/8px 8px no-repeat,linear-gradient(#c81e1e,#c81e1e) center/38px 2px no-repeat}
+.ay-cal{display:inline-flex;gap:10px;padding:4px 10px;border-radius:8px;background:#fbf7ec;box-shadow:0 1px 3px rgba(0,0,0,.14);font:500 .95rem var(--hand);color:rgba(43,37,32,.38)}
+.ay-cal b{position:relative;color:var(--ink)}.ay-cal b::after{content:"";position:absolute;left:50%;bottom:-3px;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:currentColor}.ay-cal b.hoy{color:#c2462a}
+.ay-margen{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;background:#f8f3e6;border-radius:6px;font:500 .85rem var(--hand)}
+.ay-margen em{font:600 10px var(--mono);color:#c2462a;font-style:normal}.ay-margen i{width:1.5px;height:20px;background:rgba(226,59,59,.6)}
+.ay-grip{display:inline-block;width:22px;height:22px;border-radius:6px;background:rgba(43,37,32,.06) radial-gradient(circle,rgba(43,37,32,.5) 1.2px,transparent 1.6px) 3px 3px/6px 6px}
+.ay-barrita{display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:8px;background:var(--ink);color:var(--paper);font:600 .8rem var(--ui)}.ay-barrita i{font-family:Georgia,serif}
+.ay-barrita s{width:1px;height:14px;background:rgba(255,255,255,.25)}.ay-barrita em{width:11px;height:11px;border-radius:50%;background:var(--c);box-shadow:0 0 0 1.5px rgba(255,255,255,.85)}
+.ay-link{display:inline-grid;gap:1px;padding:6px 10px;background:#fffdf6;box-shadow:0 1px 3px rgba(0,0,0,.18);font:600 .78rem var(--hand)}.ay-link span{font:600 .66rem var(--mono);color:var(--link)}
 .ay-pie{margin:18px 0 0;font:500 .85rem/1.4 var(--ui);color:var(--muted)}
 @media (max-width:640px){.ay-sec li{grid-template-columns:1fr;gap:2px}.guia{padding:0}.ay-hoja{height:100dvh;border-radius:0}.ay-main{grid-template-columns:1fr;grid-template-rows:auto 1fr}.ay-idx{flex-direction:row;flex-wrap:wrap;gap:6px;border-right:0;border-bottom:1px solid rgba(43,37,32,.1);overflow:visible}.ay-idx button{padding:6px 10px;font-size:.85rem;background:rgba(43,37,32,.06);border-radius:999px}}
 .vista{position:absolute;inset:0;overflow:hidden;touch-action:none;cursor:grab;background-color:var(--mat);
@@ -151,7 +180,7 @@ textarea::placeholder,input::placeholder{color:rgba(43,37,32,.45)}
 .msel{outline:2.5px solid var(--paper)!important;outline-offset:5px;box-shadow:0 0 0 7px rgba(255,253,246,.18),0 10px 14px -8px rgba(20,10,0,.55)!important}
 .barra-sel{position:fixed;z-index:13;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 62px);display:flex;align-items:center;gap:6px;background:var(--ink);color:var(--paper);border-radius:999px;padding:5px 6px 5px 14px;box-shadow:0 6px 18px rgba(0,0,0,.35);font:600 .85rem var(--ui);white-space:nowrap}
 .barra-sel button{border:0;border-radius:999px;padding:7px 12px;font:600 .82rem var(--ui);cursor:pointer;background:rgba(255,253,246,.14);color:var(--paper)}
-.barra-sel .bs-borrar.sure{background:var(--danger);color:#fff}
+.barra-sel .bs-borrar.sure,#pv-borrar.sure{background:var(--danger);color:#fff}
 .nota .x-del{position:absolute;top:5px;right:5px;z-index:2;min-width:22px;height:22px;border-radius:999px;border:0;padding:0;background:rgba(43,37,32,.1);color:rgba(43,37,32,.55);font:600 14px/22px var(--ui);text-align:center;cursor:pointer;opacity:0;transition:opacity .15s,background .15s}
 @media (hover:hover){.nota:hover .x-del{opacity:1}.nota .x-del:hover{background:rgba(43,37,32,.2);color:var(--ink)}}
 .nota.msel .x-del{opacity:1}
@@ -478,11 +507,14 @@ body.en-diario #vp-main,body.en-diario .composer,body.en-diario>.lateral,body.en
 .dblq-link .dl-tit:focus{outline:none}
 .dblq-link .dl-tit::placeholder{color:rgba(43,37,32,.38);font-weight:500}
 .dtxt-mover,.dtxt-ancho{position:absolute;z-index:4;opacity:0;transition:opacity .15s;touch-action:none}
-.dpag-cuerpo:hover .dtxt-mover,.dpag-cuerpo:hover .dtxt-ancho,.dpag-cuerpo.caja-on .dtxt-mover,.dpag-cuerpo.caja-on .dtxt-ancho{opacity:1}
-.dtxt-mover{width:22px;height:22px;margin:3px 0 0 -30px;border-radius:6px;cursor:grab;background:rgba(43,37,32,.06) radial-gradient(circle,rgba(43,37,32,.5) 1.2px,transparent 1.6px) 3px 3px/6px 6px}
-.dtxt-ancho{width:14px;margin-left:4px;cursor:ew-resize;display:flex;justify-content:center}
-.dtxt-ancho::before{content:none}
-.dpag-cuerpo.caja-on .dpag-txt{outline:1.5px dashed rgba(43,37,32,.3);outline-offset:6px}
+.tramo{position:absolute;left:0;top:0}
+.tramo .dpag-txt{width:100%}
+.tramo .dpag-hora{position:absolute;top:0;right:auto;transform:translateX(-100%)}
+.tramo:hover .dtxt-mover,.tramo:hover .dtxt-ancho,.tramo.caja-on .dtxt-mover,.tramo.caja-on .dtxt-ancho{opacity:1}
+.dtxt-mover{left:0;top:0;width:22px;height:22px;margin:3px 0 0 -30px;border-radius:6px;cursor:grab;background:rgba(43,37,32,.06) radial-gradient(circle,rgba(43,37,32,.5) 1.2px,transparent 1.6px) 3px 3px/6px 6px}
+.tramo .dpag-hora~.dtxt-mover{margin-left:-30px}
+.dtxt-ancho{left:100%;top:0;bottom:0;width:14px;margin-left:2px;cursor:ew-resize}
+.tramo.caja-on .dpag-txt{outline:1.5px dashed rgba(43,37,32,.3);outline-offset:6px}
 .dpag-cuerpo.angosto .dtxt-mover,.dpag-cuerpo.angosto .dtxt-ancho{display:none}
 .dpag-cuerpo.angosto .dblq{transform:none}
 .dpag-cuerpo.angosto .dblq-grip{visibility:hidden;height:12px}
@@ -563,6 +595,7 @@ body.en-diario .dia-herr{display:flex}
 .vista.papel .fl-linea{stroke:var(--ink)}.vista.papel .fl-cabeza{fill:var(--ink);stroke:var(--ink)}
 .vista.papel .origen-f{outline-color:var(--ink)}
 @media (max-width:1100px){.dia-meses{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (pointer:coarse){#dia-herr{display:none!important}}
 @media (max-width:760px){:root{--rl:26px;--fdia:15px}.diario{--margen:46px;padding-right:16px;padding-left:58px}#dia-herr{display:none!important}.dpag-fecha{font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dia-feed{gap:var(--rl)}.dia-meses{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 12px}.dmm-grilla{gap:2px}.dg-stats{gap:16px}.dg-stats span{width:112px;min-height:100px}.dg-stats b{font-size:2rem}.dia-muro{columns:2 130px;column-gap:16px}.dia-entrada{padding:14px 10px 10px;margin-bottom:24px}.dia-hoy-txt{font-size:17px}}
 /* Pila de Keep */
 .pila{position:absolute;width:230px;height:230px;z-index:2;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none}
@@ -936,7 +969,7 @@ window.claude={use:async n=>{if(n==="db"){if(!listo)listo=conectar();return list
 </div>
 
 <div class="pila-vista" id="pila-vista" hidden role="dialog" aria-label="Pila de Keep">
-  <div class="pv-cab"><button type="button" class="btn oscuro" id="pv-cerrar">← Volver</button><input type="text" class="pv-titulo" id="pv-titulo" placeholder="Ponele un título a la pila…" aria-label="Título de la pila" maxlength="80"><span class="t-tit" id="pv-tit"></span><span class="sep"></span><input type="search" class="buscar" id="pv-buscar" placeholder="Buscar en la pila…" aria-label="Buscar en la pila"><button type="button" class="btn" id="pv-deshacer" hidden>Deshacer pila</button></div>
+  <div class="pv-cab"><button type="button" class="btn oscuro" id="pv-cerrar">← Volver</button><input type="text" class="pv-titulo" id="pv-titulo" placeholder="Ponele un título a la pila…" aria-label="Título de la pila" maxlength="80"><span class="t-tit" id="pv-tit"></span><span class="sep"></span><input type="search" class="buscar" id="pv-buscar" placeholder="Buscar en la pila…" aria-label="Buscar en la pila"><button type="button" class="btn" id="pv-deshacer" hidden>Deshacer pila</button><button type="button" class="btn" id="pv-borrar">Borrar pila</button></div>
   <div class="pv-grilla" id="pv-grilla"></div>
 </div>
 
@@ -1147,7 +1180,7 @@ function barraSel(lz){
     const borrar=el("button","bs-borrar","Borrar");borrar.type="button";const listo=el("button","bs-listo","Listo");listo.type="button";
     b.append(t,dup,borrar,listo);b.hidden=true;lz.vp.parentElement.append(b);lz._barra=b;lz._bsTxt=t;lz._bsBorrar=borrar;
     let seguro=false,tm;borrar.onclick=()=>{const ns=selNodos(lz);if(!ns.length)return;
-      if(!seguro){seguro=true;borrar.textContent=`¿Borrar ${ns.length}? Tocá de nuevo`;borrar.classList.add("sure");clearTimeout(tm);tm=setTimeout(()=>{seguro=false;borrar.textContent="Borrar";borrar.classList.remove("sure")},4000);return}
+      if(!seguro){seguro=true;const tot=ns.reduce((a,n)=>a+(n._pila&&typeof itemsPila==="function"?itemsPila(n._pila).length:1),0);borrar.textContent=`¿Borrar ${tot}? Tocá de nuevo`;borrar.classList.add("sure");clearTimeout(tm);tm=setTimeout(()=>{seguro=false;borrar.textContent="Borrar";borrar.classList.remove("sure")},4000);return}
       seguro=false;borrar.textContent="Borrar";borrar.classList.remove("sure");selLimpiar(lz);lz.onBorrarSel&&lz.onBorrarSel(ns)};
     listo.onclick=()=>selLimpiar(lz)}
   const n=selNodos(lz).length;lz._barra.hidden=!n;lz._bsTxt.textContent=n===1?"1 seleccionado":`${n} seleccionados`;
@@ -1266,6 +1299,7 @@ function pintarMain(){
 }
 async function borrarDePlancha(nodos){
   for(const n of nodos){
+    if(n._pila){await borrarPila(n._pila);continue}
     if(n._k&&n._id){const it=data[n._k].find(x=>x.id===n._id);try{await cols[n._k].doc(n._id).delete()}catch(_){toast("No se pudo borrar. Probá de nuevo.");continue}borrarFlechasDe(n._id);
       if(it&&assets)for(const b of it.bloques||[])if(b.t==="img")assets.delete(b.a).catch(()=>{})}
     else if(n.classList.contains("deco")&&n._id){const d=decos.find(z=>z.id===n._id);try{await colDeco.doc(n._id).delete()}catch(_){continue}borrarFlechasDe(n._id);if(d&&assets)assets.delete(d.a).catch(()=>{})}
@@ -1363,7 +1397,14 @@ async function pegarEn(k,body,x,y){
   try{const ref=await cols[k].add(body);animarPegado(k,ref.id)}
   catch(err){toast(err&&err.code==="quota_exceeded"?"La plancha está llena. Despegá algo viejo.":"No se pudo pegar. Probá de nuevo.")}
 }
+/* en el celu se pega sola, en un lugar libre cerca del centro de lo que estás viendo */
+function pegarAuto(k,body){const r=lzMain.rect(),c=lzMain.aMundo(r.left+r.width/2,r.top+r.height/2),cx=c.x-100,cy=c.y-100;
+  const ocup=[...posiciones(enPlancha(k)).values(),...[...nodosPila.values()].map(n=>({x:parseFloat(n.style.left)||0,y:parseFloat(n.style.top)||0}))];
+  const libre=(x,y)=>!ocup.some(o=>Math.abs(o.x-x)<215&&Math.abs(o.y-y)<215);let best={x:cx,y:cy};
+  busca:for(let rad=0;rad<12;rad++)for(let i=-rad;i<=rad;i++)for(let j=-rad;j<=rad;j++){if(Math.max(Math.abs(i),Math.abs(j))!==rad)continue;const x=cx+i*230,y=cy+j*230;if(libre(x,y)){best={x,y};break busca}}
+  pegarEn(k,body,best.x,best.y);if(Math.abs(best.x-cx)>10||Math.abs(best.y-cy)>10)lzMain.centrarEn?.(best.x+100,best.y+100)}
 function arrastrarParaPegar(k,body){
+  if(document.body.classList.contains("es-celu")||matchMedia("(pointer:coarse)").matches){pegarAuto(k,body);return}
   const esIdea=k==="ideas";
   const g=el("div","nota fantasma"+(esIdea?"":" frase"));g.style.setProperty("--c",esIdea?cat(body.tipo).color:"#ffffff");g.style.setProperty("--r","-2deg");
   const m=el("div","meta");m.append(el("span",null,`#${body.numero}${esIdea?" · "+label(body.tipo):""}`),el("span"));
@@ -1937,16 +1978,23 @@ document.addEventListener("keydown",e=>{if(e.key!=="Tab"||e.shiftKey||e.ctrlKey|
 
 /* ---------- Cómo se usa (sumar acá cada feature nueva) ---------- */
 const MAC=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent||""),CMD=MAC?"⌘":"Ctrl";
+/* claves visuales: texto, [teclas], {ic}, {chip,c}, {h:html}, o una lista de varias */
+const CAL_IC='<svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="3" width="12" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
 const AYUDA=[
  {t:"Lo básico",it:[
   [null,"Hay tres secciones, arriba a la izquierda: Ideas, Frases y Diario."],
-  ["«+ Nueva idea»","Escribís una idea nueva y elegís su categoría. Con "+CMD+"+Enter la pegás."],
+  [{h:'<span class="ay-seg"><b>Ideas</b><span>Frases</span><span>Diario</span></span>'},"Cambiás de sección."],
+  [{chip:"+ Nueva idea",c:"amarillo"},"Escribís una idea nueva y elegís su categoría. Con "+CMD+"+Enter la pegás."],
   ["Doble clic en el fondo","Escribís un post-it ahí mismo. Enter lo pega, Esc lo cancela. En el celu es doble toque."],
-  ["Tocar un post-it","Lo abrís. Adentro tenés una hoja entera para desarrollar la idea."],
-  ["Arrastrar","Arrastrá un post-it para moverlo. Arrastrá el fondo para moverte por la plancha."],
-  ["Zoom","Rueda del mouse o pellizco con dos dedos. «Ver todo» encuadra todo lo que hay."],
+  [{h:'<span class="ay-post"></span>'},"Tocá un post-it para abrirlo: adentro tenés una hoja entera para desarrollar la idea. Arrastralo para moverlo."],
+  ["Arrastrar el fondo","Te movés por la plancha."],
+  [{h:'<span class="ay-zoom"><span>−</span><small>80%</small><span>+</span><span>Ver todo</span></span>'},"Zoom con la rueda del mouse o pellizcando con dos dedos. «Ver todo» encuadra todo lo que hay."],
   ["Imágenes","Arrastralas desde la compu o pegalas con "+CMD+"+V y quedan sueltas en la plancha."]]},
  {t:"Atajos",it:[
+  [["Shift","arrastrar"],"Sobre el fondo: dibujás un marco y elegís todo lo que queda adentro."],
+  [["Shift","clic"],"Sobre un post-it o una pila: lo sumás o lo sacás de la selección."],
+  [{ic:"sel"},"Elegir varios sin teclado, ideal en el celu."],
+  [{h:'<span class="ay-bsel"><span>2 seleccionados</span><b>Duplicar</b><b>Borrar</b><b>Listo</b></span>'},"Con varios elegidos los movés juntos, los copiás, los duplicás o los borrás de una."],
   [[CMD,"Z"],"Deshacer."],
   [[CMD,"Shift","Z"],"Rehacer (también "+CMD+"+Y)."],
   [[CMD,"C"],"Copiar los post-its elegidos."],
@@ -1956,57 +2004,59 @@ const AYUDA=[
   [["Supr"],"Despegar lo que tenés elegido (también Borrar)."],
   [["Esc"],"Cerrar lo que esté abierto o soltar la selección."],
   [["Tab"],"Esconde toda la interfaz para ver solo la plancha. Tab de nuevo y vuelve."]]},
- {t:"Elegir varios",it:[
-  [["Shift","arrastrar"],"Sobre el fondo: dibujás un marco y elegís todo lo que queda adentro."],
-  [["Shift","clic"],"Sobre un post-it o una pila: lo sumás o lo sacás de la selección."],
-  ["Botón ⬚ (izquierda)","Lo mismo sin teclado, ideal en el celu."],
-  [null,"Con varios elegidos los movés juntos, los copiás, los duplicás o los despegás de una."]]},
  {t:"Pilas",it:[
-  ["Post-it sobre post-it","Arrastrá un post-it y soltalo arriba de otro: se arma una pila. Soltá más encima para sumarlos."],
-  ["Tocar la pila","Ves todo lo que tiene. Ahí le podés poner título, sacar una nota con «Sacar ↗» o «Deshacer pila»."],
-  ["Pila de Keep","Lo que importaste de Google Keep vive ahí hasta que lo vayas sacando."]]},
+  [{h:'<span class="ay-apilar"><span class="ay-post"></span><span class="ay-flechita">→</span><span class="ay-pila"><i></i><i></i><span class="ay-post"></span><em>2</em></span></span>'},"Arrastrá un post-it y soltalo arriba de otro: se arma una pila. Soltá más encima para sumarlos."],
+  [{h:'<span class="ay-pila"><i></i><i></i><span class="ay-post"></span><em>5</em></span>'},"Tocala para ver todo lo que tiene. Ahí le ponés título, sacás una nota con «Sacar ↗», o usás «Deshacer pila» (las notas quedan sueltas) o «Borrar pila» (se borra con todo)."],
+  [{h:'<span class="ay-pila keep"><i></i><i></i><span class="ay-post"><small>De Keep</small></span></span>'},"Lo que importaste de Google Keep vive en esa pila hasta que lo vayas sacando."]]},
  {t:"Barra izquierda",it:[
-  ["⬚ Elegir varios","Tocá post-its para elegirlos, o arrastrá un marco."],
-  ["↗ Flechas","Tocá un post-it y después otro: quedan unidos con una flecha."],
-  ["✎ Lápiz","Dibujás arriba de la plancha. Elegís color y grosor, y tiene goma."],
-  ["↶ ↷","Deshacer y rehacer."]]},
+  [[{ic:"sel"}," Elegir varios"],"Tocá post-its para elegirlos, o arrastrá un marco."],
+  [[{ic:"flecha"}," Flechas"],"Tocá un post-it y después otro: quedan unidos con una flecha."],
+  [[{ic:"lapiz"}," Lápiz"],"Dibujás arriba de la plancha. Elegís color y grosor, y tiene goma."],
+  [[{ic:"undo"},{ic:"redo"}],"Deshacer y rehacer."]]},
  {t:"Adentro de un post-it",it:[
-  ["Barra de abajo","Sumás Post-it, Nota, Texto, Link, Imagen, Calendario y Escaleta."],
-  ["Escaleta","Lista de escenas, con bifurcaciones para probar caminos distintos."],
-  ["Hilo rojo","Lo prendés, tocás dos cosas y quedan unidas con un hilo. «Listo, hilos» para terminar."],
+  [{h:'<span class="ay-tools"><b class="am">Post-it</b><b>Nota</b><b>Texto</b><b>Link</b><b>Imagen</b><b>Calendario</b></span>'},"La barra de abajo: sumás post-its, notas, texto, links, imágenes y calendarios a la hoja."],
+  [{chip:"Escaleta"},"Lista de escenas, con bifurcaciones para probar caminos distintos."],
+  [{h:'<span class="ay-chip">Hilo rojo</span><span class="ay-hilo"></span>'},"Lo prendés, tocás dos cosas y quedan unidas con un hilo. «Listo, hilos» para terminar."],
   ["Doble clic en el fondo","Un post-it nuevo ahí mismo."],
   ["Imágenes","Pegalas con "+CMD+"+V o arrastralas desde la compu."],
-  ["••• de la idea","Categoría, estado (Semilla, En desarrollo, En marcha, Descartada), Exportar, Compartir y Despegar."],
-  ["Exportar","Copia el texto o lo descarga como .txt para seguir en Docs o Word."],
-  ["Compartir","Te da un link directo a esa nota."]]},
+  [{chip:"•••"},"Las opciones de la idea: categoría, estado (Semilla, En desarrollo, En marcha, Descartada), Exportar, Compartir y Despegar."],
+  [{chip:"Exportar"},"Copia el texto o lo descarga como .txt para seguir en Docs o Word."],
+  [{chip:"Compartir"},"Te da un link directo a esa nota."]]},
  {t:"Menú •••",it:[
-  ["Buscar","Busca en todo, también adentro de los post-its."],
-  ["Calendario","Todas las fechas de tus ideas en un calendario (está en Ideas)."],
-  ["Línea de tiempo","Tus ideas en el orden en que las fuiste anotando."],
-  ["Mezclar","Junta dos ideas al azar para ver qué sale. Podés filtrar qué entra en la mezcla."],
-  ["Ordenar","Por N.º, por Categoría o en Grilla."],
-  ["Salir","Cierra la sesión en este dispositivo. Para volver vas a necesitar tu clave."],
+  [{chip:"•••"},"Arriba a la derecha: abre una fila con todo lo que sigue."],
+  [{h:'<span class="ay-chip ay-busca">⌕ Buscar en todo…</span>'},"Busca en todo, también adentro de los post-its."],
+  [{h:'<span class="ay-chip">'+CAL_IC+' Calendario</span>'},"Todas las fechas de tus ideas en un calendario (está en Ideas)."],
+  [{chip:"Línea de tiempo"},"Tus ideas en el orden en que las fuiste anotando."],
+  [{chip:"Mezclar"},"Junta dos ideas al azar para ver qué sale. Podés filtrar qué entra en la mezcla."],
+  [{h:'<span class="ay-seg"><b>N.º</b><span>Categoría</span><span>Grilla</span></span>'},"Cómo se ordenan los post-its."],
+  [{chip:"Cómo se usa?"},"Esta guía."],
+  [{chip:"Salir"},"Cierra la sesión en este dispositivo. Para volver vas a necesitar tu clave."],
   [null,"Abajo, en «+ Nueva idea», están «Editar categorías» e «Importar de Google Keep»."]]},
  {t:"Diario",it:[
   ["Scroll infinito","Arriba lo que escribiste antes, abajo el día de hoy. Entrás y ya podés escribir."],
   ["Día nuevo","Empieza a las 3 de la mañana, no a medianoche."],
-  ["Calendario","Los días en que escribiste aparecen en negro con un puntito; los vacíos, en gris; hoy, en rojo. Tocá un día para ir."],
-  ["Mover el texto","En la compu, pasá el mouse por el texto: con la manija de la izquierda lo movés y arrastrando su borde derecho lo hacés más ancho o más angosto."],
-  ["Links","Pegá un link y aparece como tarjeta, sin tocar ningún botón. Arriba le podés escribir un título."],
-  ["Hora en el margen","Pasá el mouse pegado a la línea roja y hacé clic: queda la hora en ese renglón. Clic sobre la hora para sacarla."],
-  ["Barra de abajo","Pegás post-its, notas, texto, imágenes y links en la hoja."],
-  ["Formato","Marcá un pedazo de texto y aparece una barrita: negrita, itálica, subrayado y color. También "+CMD+"+B, "+CMD+"+I y "+CMD+"+U."],
-  ["Hora automática","Si volvés a escribir después de 15 minutos sin tocar el diario, la hora se pone sola en el margen de ese renglón."],
-  ["«A Ideas»","Marcá un pedazo de texto y mandalo como idea nueva a tu plancha."]]},
+  [{h:'<span class="ay-cal"><span>2</span><b>3</b><b class="hoy">4</b><span>5</span></span>'},"Calendario: en negro con un puntito los días que escribiste, en gris los vacíos, en rojo hoy. Tocá un día para ir."],
+  [{h:'<span class="ay-margen"><em>14:50</em><i></i><span>volví del rental…</span></span>'},"Cada bloque horario es un cuadro aparte. Pasá el mouse pegado a la línea roja y hacé clic: arranca un bloque nuevo con la hora. Clic sobre la hora para sacarla."],
+  [{h:'<span class="ay-margen"><em>01:00</em><i></i><span>escribo de nuevo…</span></span>'},"Si volvés a escribir después de 15 minutos sin tocar el diario, lo nuevo arranca solo en un bloque nuevo con la hora."],
+  [{h:'<span class="ay-grip"></span>'},"En la compu, pasá el mouse por un bloque: con la manija de la izquierda lo movés y arrastrando su borde derecho lo hacés más ancho o más angosto."],
+  [["Borrar"],"Al principio de un bloque, lo une con el de arriba."],
+  [{h:'<span class="ay-barrita"><b>B</b><i>I</i><u>U</u><s></s><em style="--c:#2b2520"></em><em style="--c:#c2462a"></em><em style="--c:#2a4fb8"></em><em style="--c:#2f7d4f"></em><em style="--c:#8a4fbf"></em></span>'},"Marcá un pedazo de texto y aparece esta barrita: negrita, itálica, subrayado y color. También "+CMD+"+B, "+CMD+"+I y "+CMD+"+U."],
+  [{h:'<span class="ay-link"><b>Video del corto</b><span>youtube.com ↗</span></span>'},"Pegá un link y aparece como tarjeta, sin tocar ningún botón. Arriba le podés escribir un título."],
+  [{h:'<span class="ay-tools"><b class="am">Post-it</b><b>Nota</b><b>Texto</b><b>Imagen</b><b>Link</b></span>'},"En la compu, la barra de abajo pega cosas en la hoja."],
+  [{chip:"A Ideas",c:"amarillo"},"Marcá un pedazo de texto y mandalo como idea nueva a tu plancha."]]},
  {t:"Tus datos",it:[
   [null,"Todo se guarda solo, en un repositorio privado de GitHub. No hay botón de guardar."],
   [null,"Para abrir tu plancha en otro dispositivo, entrás a la web y pegás tu clave una vez."]]}
 ];
+function claveAyuda(k){const kk=el("span","ay-k");
+  const uno=x=>{if(typeof x==="string")return document.createTextNode(x);if(x.ic){const s=el("span","ay-lat");s.innerHTML=ICO[x.ic];return s}if(x.chip){return el("span","ay-chip"+(x.c?" "+x.c:""),x.chip)}if(x.h){const s=el("span","ay-vis");s.innerHTML=x.h;return s}return document.createTextNode("")};
+  if(Array.isArray(k)){if(k.every(x=>typeof x==="string"))k.forEach((x,i)=>{if(i)kk.append(" + ");kk.append(el("kbd",null,x))});else k.forEach(x=>kk.append(uno(x)))}
+  else if(typeof k==="string")kk.textContent=k;else kk.append(uno(k));return kk}
 let ayActiva=0;
 function pintarAyuda(){const idx=$("ay-idx");idx.replaceChildren();
   AYUDA.forEach((sec,n)=>{const b=el("button",null,sec.t);b.type="button";b.setAttribute("role","tab");b.setAttribute("aria-selected",String(n===ayActiva));b.onclick=()=>{ayActiva=n;pintarAyuda()};idx.append(b)});
   const cu=$("ay-cuerpo"),sec=AYUDA[ayActiva];cu.replaceChildren();const se=el("section","ay-sec");se.append(el("h3",null,sec.t));const ul=el("ul");
-  for(const [k,txt] of sec.it){const li=el("li",k?null:"solo");if(k){const kk=el("span","ay-k");if(Array.isArray(k))k.forEach((x,i)=>{if(i)kk.append(" + ");kk.append(el("kbd",null,x))});else kk.textContent=k;li.append(kk)}li.append(el("span",null,txt));ul.append(li)}
+  for(const [k,txt] of sec.it){const li=el("li",k?null:"solo");if(k)li.append(claveAyuda(k));li.append(el("span",null,txt));ul.append(li)}
   se.append(ul);cu.append(se,el("p","ay-pie","¿Algo no anda o se te ocurre una mejora? ¡Avisame!"));cu.scrollTop=0}
 function abrirAyuda(){pintarAyuda();$("ayuda").hidden=false;$("ay-cuerpo").scrollTop=0;if(document.body.classList.contains("barra-abierta"))$("btn-menu").click();setTimeout(()=>$("ay-cerrar").focus(),30)}
 function cerrarAyuda(){$("ayuda").hidden=true}
@@ -2096,13 +2146,19 @@ function normalizarEditor(ed){if(!ed.querySelector("div,p,br:not([data-fin]),img
   pintarEditor(ed,texto,rico);if(pos!=null)ed.setSelectionRange(pos,pos)}
 /* la barrita aparece cuando marcás texto */
 const barraDia=el("div","barrita-dia");barraDia.hidden=true;barraDia.setAttribute("role","toolbar");barraDia.setAttribute("aria-label","Formato");document.body.append(barraDia);
-{const mk=(html,lbl,fn,extra)=>{const b=el("button",extra||null);b.type="button";b.innerHTML=html;b.title=lbl;b.setAttribute("aria-label",lbl);b.addEventListener("pointerdown",e=>e.preventDefault());b.onclick=()=>{fn();estadoBarraDia()};barraDia.append(b);return b};
-  const cmd=(c,v)=>{try{document.execCommand("styleWithCSS",false,false)}catch(_){}document.execCommand(c,false,v)};
-  mk("<b>B</b>","Negrita ("+(/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent||"")?"⌘":"Ctrl")+"+B)",()=>cmd("bold")).dataset.c="bold";
-  mk("<i style='font-family:Georgia,serif'>I</i>","Itálica",()=>cmd("italic")).dataset.c="italic";
-  mk("<u>U</u>","Subrayado",()=>cmd("underline")).dataset.c="underline";
+let rangoDia=null,edRango=null;
+document.addEventListener("selectionchange",()=>{const ed=edDeSel();if(ed){rangoDia=getSelection().getRangeAt(0).cloneRange();edRango=ed}});
+function formatear(c,v){let ed=edDeSel();if(!ed&&edRango&&edRango.isConnected&&rangoDia){ed=edRango;ed.focus({preventScroll:true});const s=getSelection();s.removeAllRanges();s.addRange(rangoDia)}
+  if(!ed)return;if(document.activeElement!==ed)ed.focus({preventScroll:true});const antes=ed.innerHTML;let ok=false;
+  try{document.execCommand("styleWithCSS",false,false)}catch(_){}try{ok=document.execCommand(c,false,v)}catch(_){}
+  if(!ok||ed.innerHTML===antes){const s=getSelection();if(!s.rangeCount||s.isCollapsed)return;const r=s.getRangeAt(0);const tag=c==="bold"?"b":c==="italic"?"i":c==="underline"?"u":"span";const w=document.createElement(tag);if(tag==="span")w.style.color=v;w.append(r.extractContents());r.insertNode(w);s.removeAllRanges();const r2=document.createRange();r2.selectNodeContents(w);s.addRange(r2)}
+  ed.dispatchEvent(new Event("input"));estadoBarraDia()}
+{const mk=(html,lbl,fn,extra)=>{const b=el("button",extra||null);b.type="button";b.innerHTML=html;b.title=lbl;b.setAttribute("aria-label",lbl);for(const ev of ["pointerdown","mousedown"])b.addEventListener(ev,e=>e.preventDefault());b.onclick=()=>fn();barraDia.append(b);return b};
+  mk("<b>B</b>","Negrita ("+(/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent||"")?"⌘":"Ctrl")+"+B)",()=>formatear("bold")).dataset.c="bold";
+  mk("<i style='font-family:Georgia,serif'>I</i>","Itálica",()=>formatear("italic")).dataset.c="italic";
+  mk("<u>U</u>","Subrayado",()=>formatear("underline")).dataset.c="underline";
   barraDia.append(el("span","bd-sep"));
-  for(const [c,n] of COL_DIA){const b=mk("<i></i>",n,()=>cmd("foreColor",c),"bd-col");b.style.setProperty("--c",c)}}
+  for(const [c,n] of COL_DIA){const b=mk("<i></i>",n,()=>formatear("foreColor",c),"bd-col");b.style.setProperty("--c",c)}}
 function edDeSel(){const s=getSelection();if(!s.rangeCount||s.isCollapsed)return null;const a=s.anchorNode,f=s.focusNode;const ed=(a&&(a.nodeType===1?a:a.parentElement))?.closest?.(".dpag-txt");return ed&&ed.isContentEditable&&ed.contains(f)?ed:null}
 function estadoBarraDia(){barraDia.querySelectorAll("[data-c]").forEach(b=>{let on=false;try{on=document.queryCommandState(b.dataset.c)}catch(_){}b.setAttribute("aria-pressed",String(on))})}
 function ubicarBarraDia(){const ed=enDiario?edDeSel():null;if(!ed){barraDia.hidden=true;return}const r=getSelection().getRangeAt(0).getBoundingClientRect();if(!r||(!r.width&&!r.height)){barraDia.hidden=true;return}
@@ -2113,72 +2169,104 @@ document.addEventListener("selectionchange",()=>requestAnimationFrame(ubicarBarr
 $("diario").addEventListener("scroll",()=>{if(!barraDia.hidden)ubicarBarraDia()},{passive:true});
 /* hora automática: si volvés a escribir después de un rato, la hora aparece sola en el margen */
 const PAUSA_DIA=15*60e3;
-function autoHora(p){if(p.k!==hoyDia())return;const ahora=Date.now(),txt=p.e.texto||"",pos=p.ta.selectionStart,ls=txt.split("\n"),l=txt.slice(0,pos).split("\n").length-1;
-  if(!ls[l]||!ls[l].trim())return;const ult=p.e.ult||0;p.e.ult=ahora;if(ahora-ult<PAUSA_DIA)return;
-  if(ls.slice(l+1).some(x=>x.trim()))return;const hs=p.e.horas||(p.e.horas=[]);if(hs.some(x=>x.l===l))return;
-  hs.push({l,h:horaAhora()})}
 /* ---------- Diario en scroll infinito: un día abajo del otro ---------- */
 const feed={pags:new Map(),extra:new Set(),pend:new Map()},ANCHO_REF=900,TIPOS_FEED=["post","txt","tx","img","link"];
-const firmaDia=e=>JSON.stringify([textoDia(e),(e&&e.bloques)||[],(e&&e.horas)||null,(e&&e.rico)||"",(e&&e.caja)||null]);
+const firmaDia=e=>JSON.stringify([textoDia(e),(e&&e.bloques)||[],(e&&e.tramos)||null]);
 function diasFeed(){const hoy=hoyDia(),s=new Set([hoy,...feed.extra,...feed.pags.keys()]);for(const e of data.diario)if(nivelDia(e))s.add(e.id);return [...s].filter(k=>k<=hoy).sort()}
 function pintarFeed(){if(!enDiario)return;const cont=$("dia-feed"),dias=diasFeed();
   dias.forEach((k,i)=>{let p=feed.pags.get(k);if(!p){p=crearPagina(k);feed.pags.set(k,p)}else refrescarPagina(p);if(cont.children[i]!==p.el)cont.insertBefore(p.el,cont.children[i]||null)});
   for(const [k,p] of feed.pags)if(!dias.includes(k)){p.el.remove();feed.pags.delete(k)}
-  for(const p of feed.pags.values())p.ta.readOnly=!diarioCargado;
+  for(const p of feed.pags.values())for(const x of p.tr)x.ed.readOnly=!diarioCargado;
   requestAnimationFrame(()=>{for(const p of feed.pags.values())ajustarPagina(p)})}
-function entradaLocal(k){const e=JSON.parse(JSON.stringify(entradaDia(k)||{fecha:k,texto:"",bloques:[]}));if(!Array.isArray(e.bloques))e.bloques=[];e.texto=textoDia(e);
-  if(!Array.isArray(e.horas)){e.horas=[];const ls=e.texto.split("\n");ls.forEach((l,n)=>{const m=/^(\d{1,2}:\d{2}) ?/.exec(l);if(m){e.horas.push({l:n,h:m[1]});ls[n]=l.slice(m[0].length)}});e.texto=ls.join("\n")}
-  return e}
-/* cuando cambia el texto, cada hora sigue a su renglón */
-function moverHoras(p,viejo,nuevo){const hs=p.e.horas;if(!hs||!hs.length||viejo===nuevo)return;const A=viejo.split("\n"),B=nuevo.split("\n"),m=Math.min(A.length,B.length);
-  let a=0;while(a<m&&A[a]===B[a])a++;let z=0;while(z<m-a&&A[A.length-1-z]===B[B.length-1-z])z++;
-  const finA=A.length-z,medB=B.length-z-a,d=B.length-A.length,usados=new Set(),out=[];
-  for(const x of hs.slice().sort((u,v)=>u.l-v.l)){let l=x.l;if(l>=finA)l+=d;else if(l>=a){if(medB<=0)continue;l=a+Math.min(l-a,medB-1)}if(usados.has(l))continue;usados.add(l);out.push({l,h:x.h})}
-  p.e.horas=out}
-function pintarHoras(p){const hs=p.e.horas||[],cont=p.horasEl;if(!hs.length){cont.replaceChildren();return}
-  const F=filasDe(p.ta),c=$("diario"),margen=c.getBoundingClientRect().left+(parseFloat(getComputedStyle(c).getPropertyValue("--margen"))||72);
-  cont.style.left=(margen-p.cuerpo.getBoundingClientRect().left-(innerWidth<=760?6:8))+"px";cont.replaceChildren();
-  for(const x of hs){const fila=x.l<F.lineas.length?F.tops[x.l]:F.total+(x.l-F.lineas.length);const b=el("button","dpag-hora",x.h);b.type="button";b.title="Sacar esta hora";b.style.top=(p.ta.offsetTop+fila*RL())+"px";
-    b.onpointerdown=e=>e.preventDefault();b.onclick=()=>{p.e.horas=p.e.horas.filter(y=>y!==x);pintarHoras(p);guardarDiaFeed(p)};cont.append(b)}}
+function entradaLocal(k){const e=JSON.parse(JSON.stringify(entradaDia(k)||{fecha:k,texto:"",bloques:[]}));if(!Array.isArray(e.bloques))e.bloques=[];
+  if(!Array.isArray(e.tramos)||!e.tramos.length)e.tramos=migrarTramos(e);return e}
+/* cada bloque horario es un cuadro aparte ("tramo"): pasar el formato viejo (un texto con horas por renglón) a tramos */
+function recortarSalto(seg){const d=document.createElement("div");pintarEditor(d,seg.texto,seg.rico);const ts=textosDe(d);
+  for(const t of ts){const v=t.data.replace(/^\n+/,"");const ya=v.length>0;t.data=v;if(ya)break}
+  for(const t of ts.slice().reverse()){const v=t.data.replace(/\n+$/,"");const ya=v.length>0;t.data=v;if(ya)break}
+  return serializar(d)}
+function partirRico(texto,rico,cortes){const tmp=document.createElement("div");pintarEditor(tmp,texto,rico);
+  return cortes.map(([a,b])=>{if(b<=a)return {texto:"",rico:""};const x=nodoDe(tmp,a,true),y=nodoDe(tmp,b,false),r=document.createRange();try{r.setStart(x.n,x.off);r.setEnd(y.n,y.off)}catch(_){return {texto:texto.slice(a,b),rico:""}}
+    const d=document.createElement("div");d.append(r.cloneContents());return serializar(d)})}
+function migrarTramos(e){let texto=textoDia(e),rico=e.rico||"",horas=e.horas;
+  if(!Array.isArray(horas)){horas=[];rico="";const ls=texto.split("\n");ls.forEach((l,n)=>{const m=/^(\d{1,2}:\d{2}) ?/.exec(l);if(m){horas.push({l:n,h:m[1]});ls[n]=l.slice(m[0].length)}});texto=ls.join("\n")}
+  const ls=texto.split("\n"),offs=[];let o=0;for(const l of ls){offs.push(o);o+=l.length+1}
+  const hs=horas.filter(h=>h.l>=0&&h.l<ls.length).sort((a,b)=>a.l-b.l).filter((h,i,a)=>!i||a[i-1].l!==h.l);
+  const ini=[{l:0,h:null},...hs.filter(h=>h.l>0),...(hs.length&&hs[0].l===0?[]:[])];if(hs.length&&hs[0].l===0)ini[0].h=hs[0].h;
+  const cortes=ini.map((x,i)=>{const a=offs[x.l],b=i+1<ini.length?offs[ini[i+1].l]-1:texto.length;return [a,b]});
+  const partes=partirRico(texto,rico,cortes).map(recortarSalto),c=e.caja||{},out=[];
+  partes.forEach((pt,i)=>{if(!pt.texto.trim()&&!(i>0&&ini[i].h))return;out.push({id:bid(),h:ini[i].h,texto:pt.texto,rico:pt.rico,fx:+c.fx||0,fw:+c.fw||1})});
+  return out.length?out:[{id:bid(),h:null,texto:"",rico:""}]}
+const textoTramos=p=>p.e.tramos.map(t=>t.texto||"").filter(x=>x.trim()).join("\n\n");
 function crearPagina(k){const e=entradaLocal(k),hoy=k===hoyDia();
   const sec=el("section","dpag"+(hoy?" hoy":""));sec.dataset.k=k;const cab=el("header","dpag-cab");cab.append(el("span","dpag-fecha",fechaLarga(k)));if(hoy)cab.append(el("span","dpag-hoy","Hoy"));
-  const cuerpo=el("div","dpag-cuerpo"),ta=crearEditor();pintarEditor(ta,e.texto||"",e.rico||"");ta.setAttribute("aria-label","Diario del "+fechaLarga(k));
-  ta.placeholder=hoy?"¿Qué pasó hoy? Escribí lo que quieras.":"";const capa=el("div","dpag-capa"),horasEl=el("div","dpag-horas");cuerpo.append(horasEl,ta,capa);sec.append(cab,cuerpo);
-  const srv0=entradaDia(k),p={k,e,el:sec,ta,capa,cuerpo,horasEl,sig:firmaDia(srv0||{texto:"",bloques:[]})};
-  ta.onLink=u=>{const s=getSelection();let y=null;if(s.rangeCount){const rc=s.getRangeAt(0).getBoundingClientRect();if(rc&&(rc.top||rc.height))y=rc.top-cuerpo.getBoundingClientRect().top-20}linkEnDia(p,u,y)};
-  const mover=el("div","dtxt-mover"),ancho=el("div","dtxt-ancho");mover.title="Arrastrá para mover el texto";ancho.title="Arrastrá para hacerlo más ancho o más angosto";cuerpo.append(mover,ancho);p.mover=mover;p.anchoEl=ancho;
-  for(const h of [mover,ancho]){h.addEventListener("mouseenter",()=>cuerpo.classList.add("caja-on"));h.addEventListener("mouseleave",()=>{if(!h._drag)cuerpo.classList.remove("caja-on")})}
-  const arrastre=(h,fn)=>h.addEventListener("pointerdown",ev=>{if(ev.button!==0)return;ev.preventDefault();h._drag=true;try{h.setPointerCapture(ev.pointerId)}catch(_){}cuerpo.classList.add("caja-on");
-    const W=cuerpo.clientWidth||ANCHO_REF,c0={...cajaTxt(p)},x0=ev.clientX,y0=ev.clientY;
-    const mv=e2=>{p.e.caja=fn(c0,(e2.clientX-x0)/W,e2.clientY-y0,W);ajustarPagina(p)};
-    const up=()=>{h._drag=false;h.removeEventListener("pointermove",mv);h.removeEventListener("pointerup",up);h.removeEventListener("pointercancel",up);cuerpo.classList.remove("caja-on");cacheFilas=null;ajustarPagina(p);guardarDiaFeed(p)};
+  const cuerpo=el("div","dpag-cuerpo"),capa=el("div","dpag-capa"),trEl=el("div","dpag-tramos");cuerpo.append(trEl,capa);sec.append(cab,cuerpo);
+  const srv0=entradaDia(k),p={k,e,el:sec,capa,cuerpo,trEl,tr:[],sig:firmaDia(srv0||{texto:"",bloques:[]})};
+  Object.defineProperty(p,"ta",{get(){return p.tr.length?p.tr[p.tr.length-1].ed:null}});
+  pintarTramos(p);pintarBloquesPag(p);return p}
+function pintarTramos(p){p.tr=p.e.tramos.map(t=>nodoTramo(p,t));p.trEl.replaceChildren(...p.tr.map(x=>x.w));
+  const hoy=p.k===hoyDia(),vacia=p.tr.length===1&&!(p.e.tramos[0].texto||"").trim();p.tr.forEach((x,i)=>{x.ed.placeholder=hoy&&vacia&&!i?"¿Qué pasó hoy? Escribí lo que quieras.":"";x.ed.readOnly=!diarioCargado})}
+function nodoTramo(p,t){const w=el("div","tramo"),ed=crearEditor(),hb=el("button","dpag-hora");hb.type="button";hb.title="Sacar esta hora";
+  pintarEditor(ed,t.texto||"",t.rico||"");ed.setAttribute("aria-label","Diario del "+fechaLarga(p.k));
+  const mover=el("div","dtxt-mover"),ancho=el("div","dtxt-ancho");mover.title="Arrastrá para mover este bloque";ancho.title="Arrastrá para hacerlo más ancho o más angosto";w.append(hb,ed,mover,ancho);
+  const x={t,w,ed,hb,mover,ancho};
+  hb.onpointerdown=e=>e.preventDefault();hb.onclick=()=>{t.h=null;ajustarPagina(p);guardarDiaFeed(p)};
+  for(const h of [mover,ancho]){h.addEventListener("mouseenter",()=>w.classList.add("caja-on"));h.addEventListener("mouseleave",()=>{if(!h._drag)w.classList.remove("caja-on")})}
+  const arrastre=(h,fn)=>h.addEventListener("pointerdown",ev=>{if(ev.button!==0)return;ev.preventDefault();h._drag=true;try{h.setPointerCapture(ev.pointerId)}catch(_){}w.classList.add("caja-on");
+    const W=p.cuerpo.clientWidth||ANCHO_REF,c0={fx:+t.fx||0,fw:+t.fw||1,y:parseFloat(w.style.top)||0},x0=ev.clientX,y0=ev.clientY;
+    const mv=e2=>{Object.assign(t,fn(c0,(e2.clientX-x0)/W,e2.clientY-y0,W));ajustarPagina(p)};
+    const up=()=>{h._drag=false;h.removeEventListener("pointermove",mv);h.removeEventListener("pointerup",up);h.removeEventListener("pointercancel",up);w.classList.remove("caja-on");cacheFilas=null;ajustarPagina(p);guardarDiaFeed(p)};
     h.addEventListener("pointermove",mv);h.addEventListener("pointerup",up);h.addEventListener("pointercancel",up)});
-  arrastre(mover,(c,dx,dy)=>{const rl=RL();return {fw:c.fw,fx:Math.max(0,Math.min(1-c.fw,c.fx+dx)),y:Math.max(0,Math.round((c.y+dy)/rl)*rl)}});
-  arrastre(ancho,(c,dx,dy,W)=>({fx:c.fx,y:c.y,fw:Math.max(Math.min(1,240/W),Math.min(1-c.fx,c.fw+dx))}));
-  ta.addEventListener("input",()=>{normalizarEditor(ta);const r=serializar(ta);moverHoras(p,p.e.texto||"",r.texto);p.e.texto=r.texto;p.e.rico=r.rico;autoHora(p);cacheFilas=null;ajustarPagina(p);guardarDiaFeed(p)});ta.addEventListener("blur",()=>guardarDiaYaFeed(p));
-  pintarBloquesPag(p);return p}
+  arrastre(mover,(c,dx,dy)=>{const rl=RL();return {fx:Math.max(0,Math.min(1-c.fw,c.fx+dx)),y:Math.max(0,Math.round((c.y+dy)/rl)*rl)}});
+  arrastre(ancho,(c,dx,dy,W)=>({fw:Math.max(Math.min(1,240/W),Math.min(1-c.fx,c.fw+dx))}));
+  ed.onLink=u=>{const s=getSelection();let y=null;if(s.rangeCount){const rc=s.getRangeAt(0).getBoundingClientRect();if(rc&&(rc.top||rc.height))y=rc.top-p.cuerpo.getBoundingClientRect().top-20}linkEnDia(p,u,y)};
+  ed.addEventListener("input",()=>entradaTramo(p,x));
+  ed.addEventListener("keydown",e=>{
+    if((e.ctrlKey||e.metaKey)&&!e.altKey&&!e.shiftKey){const k=(e.key||"").toLowerCase(),c=k==="b"?"bold":k==="i"?"italic":k==="u"?"underline":null;if(c){e.preventDefault();formatear(c);return}}
+    if(e.key==="Backspace"&&!e.isComposing){const s=getSelection();if(s.isCollapsed&&ed.selectionStart===0){const i=p.tr.indexOf(x);if(i>0){e.preventDefault();unirTramos(p,i)}}}});
+  ed.addEventListener("blur",()=>{setTimeout(()=>{if(!x.w.isConnected||x.w.contains(document.activeElement))return;if(!(t.texto||"").trim()&&p.e.tramos.length>1){p.e.tramos=p.e.tramos.filter(z=>z!==t);pintarTramos(p);ajustarPagina(p);guardarDiaFeed(p)}guardarDiaYaFeed(p)},150)});
+  return x}
+function entradaTramo(p,x){const ed=x.ed;normalizarEditor(ed);const t=x.t,viejo=t.texto||"",viejoRico=t.rico||"",r=serializar(ed),ahora=Date.now();
+  const agregado=r.texto.startsWith(viejo)?r.texto.slice(viejo.length):null,escribio=agregado!=null?!!agregado.trim():r.texto!==viejo;
+  const pausa=ahora-(p.e.ult||0)>=PAUSA_DIA,alFinal=ed.selectionStart>=r.texto.length,esUlt=p.tr[p.tr.length-1]===x;
+  if(p.k===hoyDia()&&escribio&&pausa&&agregado&&agregado.trim()&&alFinal){
+    if(!viejo.trim()){if(!t.h)t.h=horaAhora()}
+    else if(esUlt){/* volviste a escribir después de un rato: lo nuevo va en un bloque nuevo, con la hora */
+      const base=recortarSalto({texto:viejo,rico:viejoRico});t.texto=base.texto;t.rico=base.rico;
+      const nt={id:bid(),h:horaAhora(),texto:agregado.replace(/^\n+/,""),rico:"",fx:t.fx,fw:t.fw};p.e.tramos.splice(p.e.tramos.indexOf(t)+1,0,nt);p.e.ult=ahora;
+      pintarTramos(p);p.e.texto=textoTramos(p);cacheFilas=null;ajustarPagina(p);const nx=p.tr.find(z=>z.t===nt);if(nx){nx.ed.focus({preventScroll:true});nx.ed.setSelectionRange(nt.texto.length,nt.texto.length)}guardarDiaFeed(p);return}}
+  t.texto=r.texto;t.rico=r.rico;if(escribio)p.e.ult=ahora;p.e.texto=textoTramos(p);cacheFilas=null;ajustarPagina(p);guardarDiaFeed(p)}
+function unirTramos(p,i){const a=p.tr[i-1],b=p.tr[i],ta=a.t,tb=b.t,esc=v=>(v||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const pos=(ta.texto||"").length+((ta.texto||"")&&(tb.texto||"")?1:0),sep=(ta.texto||"")&&(tb.texto||"")?"\n":"";
+  const rico=(ta.rico||tb.rico)?(ta.rico||esc(ta.texto))+sep+(tb.rico||esc(tb.texto)):"";ta.texto=(ta.texto||"")+sep+(tb.texto||"");ta.rico=rico;if(!ta.h)ta.h=tb.h;
+  p.e.tramos=p.e.tramos.filter(z=>z!==tb);pintarTramos(p);p.e.texto=textoTramos(p);cacheFilas=null;ajustarPagina(p);const ax=p.tr[i-1];if(ax){ax.ed.focus({preventScroll:true});ax.ed.setSelectionRange(pos,pos)}guardarDiaFeed(p)}
 function refrescarPagina(p,forzar){if(!forzar&&(feed.pend.has(p.k)||p.el.contains(document.activeElement)))return;
   const srv=entradaDia(p.k);const sig=srv?firmaDia(srv):firmaDia({texto:"",bloques:[]});if(sig===p.sig)return;
-  p.e=entradaLocal(p.k);p.sig=sig;pintarEditor(p.ta,p.e.texto,p.e.rico||"");cacheFilas=null;pintarBloquesPag(p);ajustarPagina(p)}
-const cajaTxt=p=>{const c=p.e.caja||{};return {fx:+c.fx||0,fw:+c.fw||1,y:+c.y||0}};
+  p.e=entradaLocal(p.k);p.sig=sig;cacheFilas=null;pintarTramos(p);pintarBloquesPag(p);ajustarPagina(p)}
 const esCompu=()=>{try{return matchMedia("(pointer:fine)").matches}catch(_){return true}};
-function ajustarPagina(p){const ta=p.ta,rl=RL(),W=p.cuerpo.clientWidth||ANCHO_REF,angosto=W<560,libre=!angosto&&esCompu();p.cuerpo.classList.toggle("angosto",angosto);
-  if(libre){const c=cajaTxt(p);ta.style.marginLeft=Math.round(c.fx*W)+"px";ta.style.width=Math.round(c.fw*W)+"px";ta.style.marginTop=c.y+"px"}else{ta.style.marginLeft="";ta.style.width="";ta.style.marginTop=""}
-  ta.style.height="auto";ta.style.height=Math.max(rl,Math.ceil(ta.scrollHeight/rl)*rl)+"px";
-  if(p.mover){p.mover.hidden=!libre;p.anchoEl.hidden=!libre;if(libre){p.mover.style.left=ta.offsetLeft+"px";p.mover.style.top=ta.offsetTop+"px";p.anchoEl.style.left=(ta.offsetLeft+ta.offsetWidth)+"px";p.anchoEl.style.top=ta.offsetTop+"px";p.anchoEl.style.height=ta.offsetHeight+"px"}}
-  let h=ta.offsetTop+ta.offsetHeight;
-  if(p.k===hoyDia()){const c=$("diario"),cs=getComputedStyle(c);h=Math.max(h,c.clientHeight-(parseFloat(cs.paddingTop)||96)-(parseFloat(cs.paddingBottom)||160)-2*rl-8)}
-  let piso=ta.offsetHeight+rl;
+function ajustarPagina(p){const rl=RL(),W=p.cuerpo.clientWidth||ANCHO_REF,angosto=W<560,libre=!angosto&&esCompu();p.cuerpo.classList.toggle("angosto",angosto);
+  const c=$("diario"),margenRel=c.getBoundingClientRect().left+(parseFloat(getComputedStyle(c).getPropertyValue("--margen"))||72)-p.cuerpo.getBoundingClientRect().left,sep=innerWidth<=760?6:8;
+  const puestos=[];let fondo=0;
+  for(const x of p.tr){const t=x.t,fx=libre?Math.max(0,Math.min(.9,+t.fx||0)):0,fw=libre?Math.max(.15,Math.min(1-fx,+t.fw||1)):1,L=Math.round(fx*W),Wd=Math.round(fw*W);
+    x.w.style.left=L+"px";x.w.style.width=Wd+"px";x.ed.style.height="auto";const h=Math.max(rl,Math.ceil(x.ed.scrollHeight/rl)*rl);x.ed.style.height=h+"px";
+    let top=libre&&typeof t.y==="number"?t.y:(puestos.length?0:0);const solapa=puestos.filter(q=>L<q.r&&L+Wd>q.l);
+    if(!(libre&&typeof t.y==="number")&&puestos.length)top=Math.max(0,...puestos.map(q=>q.b+rl));
+    for(const q of solapa)top=Math.max(top,q.b+rl);top=Math.ceil(top/rl)*rl;x.w.style.top=top+"px";puestos.push({l:L,r:L+Wd,b:top+h});fondo=Math.max(fondo,top+h);
+    x.hb.hidden=!t.h;x.hb.textContent=t.h||"";x.hb.style.left=(L<40?margenRel-L-sep:-10)+"px";x.mover.hidden=x.ancho.hidden=!libre;
+    if(libre&&t.h&&L>=40)x.mover.style.marginLeft=(-30-(x.hb.offsetWidth||40)-6)+"px";else x.mover.style.marginLeft=""}
+  let h=fondo;
+  if(p.k===hoyDia()){const cs=getComputedStyle(c);h=Math.max(h,c.clientHeight-(parseFloat(cs.paddingTop)||96)-(parseFloat(cs.paddingBottom)||160)-2*rl-8)}
+  let piso=fondo+rl;
   const ns=[...p.capa.children].sort((a,b)=>(a._b.y||0)-(b._b.y||0));
   for(const n of ns){if(!n.classList.contains("arrastrando")){const b=n._b,fx=typeof b.fx==="number"?b.fx:(b.x||0)/ANCHO_REF;
       if(angosto){/* en el celu: todo prolijo, en columna abajo del texto */const ancho=b.t==="img"||b.t==="link"||b.t==="tx";if(ancho)n.style.width=W+"px";else n.style.width=(b.t==="post"?160:200)+"px";
         n.style.left=(ancho?0:Math.round((W-n.offsetWidth)/2))+"px";n.style.top=piso+"px";piso+=n.offsetHeight+20}
       else{if(n._w0)n.style.width=n._w0;n.style.left=Math.max(0,Math.min(W-n.offsetWidth,fx*W))+"px";n.style.top=(b.y||0)+"px"}}
     h=Math.max(h,(parseFloat(n.style.top)||0)+n.offsetHeight+24)}
-  p.cuerpo.style.minHeight=Math.ceil(h/rl)*rl+"px";pintarHoras(p)}
+  p.cuerpo.style.minHeight=Math.ceil(h/rl)*rl+"px"}
 function guardarDiaFeed(p){clearTimeout(feed.pend.get(p.k));feed.pend.set(p.k,setTimeout(()=>guardarDiaYaFeed(p),700))}
 function guardarDiaYaFeed(p){const k=p.k;if(!feed.pend.has(k))return;clearTimeout(feed.pend.get(k));feed.pend.delete(k);if(!colDiario||!diarioCargado)return;
-  const doc={texto:p.e.texto||"",bloques:p.e.bloques||[],horas:p.e.horas||[],rico:p.e.rico||"",ult:p.e.ult||0,caja:p.e.caja||null};p.sig=firmaDia(doc);const srv=entradaDia(k);
+  p.e.texto=textoTramos(p);const doc={texto:p.e.texto||"",tramos:p.e.tramos.map(t=>{const o={id:t.id,h:t.h||null,texto:t.texto||"",rico:t.rico||""};if(t.fx)o.fx=Math.round(t.fx*1000)/1000;if(t.fw&&t.fw!==1)o.fw=Math.round(t.fw*1000)/1000;if(typeof t.y==="number")o.y=t.y;return o}),bloques:p.e.bloques||[],ult:p.e.ult||0,horas:[],rico:"",caja:null};p.sig=firmaDia(doc);const srv=entradaDia(k);
   if(srv){const patch={...doc};if(srv.imagen||srv.sonido||srv.escena){patch.imagen="";patch.sonido="";patch.escena=""}escribir(colDiario,k,patch)}
   else if(doc.texto.trim()||doc.bloques.length)cola[k]=(cola[k]||Promise.resolve()).then(()=>entradaDia(k)?colDiario.doc(k).update(doc):colDiario.doc(k).set({fecha:k,creado:Date.now(),...doc})).catch(()=>toast("No se guardó el diario. Revisá la conexión."))}
 function guardarTodoFeed(){for(const k of [...feed.pend.keys()]){const p=feed.pags.get(k);if(p)guardarDiaYaFeed(p)}}
@@ -2243,25 +2331,26 @@ function filasDe(ta){const v=ta.value,w=ta.clientWidth,key=v.length+"|"+w+"|"+ta
   for(const l of lineas){if(!l.length){tops.push(fin+1);fin=fin+1}else{const a=filaDe(pos),b=filaDe(pos+l.length-1);const ini=a==null?fin+1:Math.max(a,fin+1);tops.push(ini);fin=b==null?ini:Math.max(ini,b)}pos+=l.length+1}
   return cacheFilas={ta,key,lineas,tops,total:fin+1}}
 const horaAhora=()=>{const f=new Date();return pad(f.getHours())+":"+pad(f.getMinutes())};
-function ubicarMarca(e){if(!enDiario||e.target.closest&&e.target.closest(".dblq,.marca-hora"))return e.target.closest&&e.target.closest(".marca-hora")?null:ocultarMarca();
-  const p=feed.pags.get(hoyDia());if(!p)return ocultarMarca();const c=$("diario"),cr=c.getBoundingClientRect(),margen=cr.left+(parseFloat(getComputedStyle(c).getPropertyValue("--margen"))||72),
-    r=p.cuerpo.getBoundingClientRect(),rt=p.ta.getBoundingClientRect(),tx=r.left;
-  if(e.clientX<margen-(innerWidth<=760?44:64)||e.clientX>tx+8||e.clientY<rt.top||e.clientY>r.bottom)return ocultarMarca();
-  const rl=RL(),fila=Math.floor((e.clientY-rt.top)/rl),F=filasDe(p.ta);let linea;
-  if(fila<F.total){linea=F.tops.indexOf(fila);if(linea<0)return ocultarMarca()}
-  else linea=F.lineas.length+(fila-F.total);
-  if((p.e.horas||[]).some(x=>x.l===linea))return ocultarMarca();
-  marcaDest={p,linea};marcaHora.textContent=horaAhora();marcaHora.style.top=(rt.top+fila*rl)+"px";marcaHora.hidden=false;marcaHora.style.left=Math.max(1,margen-(innerWidth<=760?6:8)-marcaHora.offsetWidth)+"px"}
+function ubicarMarca(e){if(!enDiario||e.target.closest&&e.target.closest(".dblq,.marca-hora,.dpag-hora"))return e.target.closest&&e.target.closest(".marca-hora")?null:ocultarMarca();
+  const p=feed.pags.get(hoyDia());if(!p)return ocultarMarca();const c=$("diario"),cr=c.getBoundingClientRect(),margen=cr.left+(parseFloat(getComputedStyle(c).getPropertyValue("--margen"))||72),r=p.cuerpo.getBoundingClientRect();
+  if(e.clientX<margen-(innerWidth<=760?44:64)||e.clientX>r.left+8||e.clientY<r.top||e.clientY>r.bottom)return ocultarMarca();
+  const rl=RL(),yRel=e.clientY-r.top,fila=Math.floor(yRel/rl);let dest=null;
+  for(const x of p.tr){const L=parseFloat(x.w.style.left)||0;if(L>=40)continue;const top=parseFloat(x.w.style.top)||0,h=x.ed.offsetHeight;if(yRel<top||yRel>=top+h)continue;
+    const F=filasDe(x.ed),f=Math.floor((yRel-top)/rl),l=F.tops.indexOf(f);if(l<0)return ocultarMarca();if(l===0){if(x.t.h)return ocultarMarca();dest={p,x,tipo:"poner"}}else dest={p,x,tipo:"partir",l};break}
+  if(!dest){const fondo=Math.max(0,...p.tr.map(x=>(parseFloat(x.w.style.top)||0)+x.ed.offsetHeight));if(yRel<fondo+rl)return ocultarMarca();dest={p,tipo:"nuevo",y:fila*rl}}
+  marcaDest=dest;marcaHora.textContent=horaAhora();marcaHora.style.top=(r.top+fila*rl)+"px";marcaHora.hidden=false;marcaHora.style.left=Math.max(1,margen-(innerWidth<=760?6:8)-marcaHora.offsetWidth)+"px"}
 function ocultarMarca(){marcaHora.hidden=true;marcaDest=null}
 $("diario").addEventListener("pointermove",e=>{if(e.pointerType==="mouse")ubicarMarca(e)});
 $("diario").addEventListener("pointerdown",e=>{if(e.pointerType!=="mouse")ubicarMarca(e)});
 $("diario").addEventListener("scroll",()=>{if(!marcaHora.hidden)ocultarMarca()},{passive:true});
 document.addEventListener("pointermove",e=>{if(e.pointerType==="mouse"&&!marcaHora.hidden&&!$("diario").contains(e.target)&&e.target!==marcaHora)ocultarMarca()});
 marcaHora.addEventListener("pointerdown",e=>e.preventDefault());
-marcaHora.onclick=()=>{const d=marcaDest;if(!d)return;const p=d.p,ta=p.ta,n=ta.value.split("\n").length;
-  if(n<=d.linea){const f=ta.lastChild&&esFin(ta.lastChild)?ta.lastChild:null;ta.insertBefore(document.createTextNode("\n".repeat(d.linea-n+1)),f);asegurarFin(ta)}
-  const r=serializar(ta);p.e.texto=r.texto;p.e.rico=r.rico;p.e.horas=[...(p.e.horas||[]).filter(x=>x.l!==d.linea),{l:d.linea,h:horaAhora()}];p.e.ult=Date.now();
-  const lineas=r.texto.split("\n"),pos=lineas.slice(0,d.linea+1).join("\n").length;ta.focus({preventScroll:true});ta.setSelectionRange(pos,pos);cacheFilas=null;ajustarPagina(p);guardarDiaFeed(p);ocultarMarca()};
+marcaHora.onclick=()=>{const d=marcaDest;if(!d)return;const p=d.p,h=horaAhora();let foco=null,pos=0;
+  if(d.tipo==="poner"){d.x.t.h=h;foco=d.x.t;pos=(d.x.t.texto||"").split("\n")[0].length}
+  else if(d.tipo==="partir"){const t=d.x.t,ls=(t.texto||"").split("\n"),a=ls.slice(0,d.l).join("\n").length,[p1,p2]=partirRico(t.texto||"",t.rico||"",[[0,a],[a+1,(t.texto||"").length]]).map(recortarSalto);
+    t.texto=p1.texto;t.rico=p1.rico;const nt={id:bid(),h,texto:p2.texto,rico:p2.rico,fx:t.fx,fw:t.fw};p.e.tramos.splice(p.e.tramos.indexOf(t)+1,0,nt);foco=nt;pos=0}
+  else{const nt={id:bid(),h,texto:"",rico:""};const yy=d.y,ult=p.tr[p.tr.length-1];if(ult){const fin=(parseFloat(ult.w.style.top)||0)+ult.ed.offsetHeight;if(yy>fin+RL())nt.y=yy}p.e.tramos.push(nt);foco=nt}
+  p.e.ult=Date.now();pintarTramos(p);p.e.texto=textoTramos(p);cacheFilas=null;ajustarPagina(p);const fx=p.tr.find(z=>z.t===foco);if(fx){fx.ed.focus({preventScroll:true});fx.ed.setSelectionRange(pos,pos)}guardarDiaFeed(p);ocultarMarca()};
 
 /* ---------- Pilas: la de Keep y las que armás tirando un post-it arriba de otro ---------- */
 let pilaPos=null,pilaTitulo="",docPila=null,pilaCargada=false,pilas=[],colPilas=null,pilasCargadas=false,pvPila="keep";const nodosPila=new Map(),disolviendo=new Set();
@@ -2336,6 +2425,11 @@ $("pv-titulo").addEventListener("input",()=>{const id=pvPila,v=$("pv-titulo").va
   if(id==="keep"){pilaTitulo=v;if(docPila)docPila.set({...pilaXY("keep"),titulo:v}).catch(()=>{})}else{const p=pilas.find(z=>z.id===id);if(p)p.titulo=v;if(colPilas)escribir(colPilas,id,{titulo:v})}pintarPilas()},500)});
 $("pv-titulo").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("pv-titulo").blur()}});
 $("pv-cerrar").onclick=()=>{if(document.activeElement===$("pv-titulo"))$("pv-titulo").blur();cerrarPila()};$("pv-buscar").addEventListener("input",pintarPilaVista);
+async function borrarPila(pid){const its=itemsPila(pid);for(const i of its){try{await cols.ideas.doc(i.id).delete()}catch(_){continue}borrarFlechasDe(i.id);if(assets)for(const b of i.bloques||[])if(b.t==="img")assets.delete(b.a).catch(()=>{})}
+  if(pid!=="keep"&&colPilas)colPilas.doc(pid).delete().catch(()=>{});toast(its.length===1?"Pila borrada (1 nota).":`Pila borrada (${its.length} notas).`)}
+{let seguro=false,tm;$("pv-borrar").onclick=()=>{const b=$("pv-borrar"),n=itemsPila(pvPila).length;
+  if(!seguro){seguro=true;b.textContent=`¿Borrar la pila y sus ${n} notas? Tocá de nuevo`;b.classList.add("sure");clearTimeout(tm);tm=setTimeout(()=>{seguro=false;b.textContent="Borrar pila";b.classList.remove("sure")},4000);return}
+  seguro=false;b.textContent="Borrar pila";b.classList.remove("sure");const id=pvPila;cerrarPila();borrarPila(id)}}
 $("pv-deshacer").onclick=()=>{const id=pvPila;cerrarPila();disolverPila(id,false);toast("Pila deshecha: quedaron todas en la plancha.")};
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("pila-vista").hidden&&$("detalle").hidden){e.preventDefault();e.stopImmediatePropagation();cerrarPila()}},true);
 $("h-a-pila").onclick=()=>{if(!abierto||abierto.k!=="ideas")return;abierto.doc.sacada=false;abierto.doc.pila="";escribir(cols.ideas,abierto.id,{sacada:false,pila:""});$("panel-mas").hidden=true;$("h-a-pila").hidden=true;toast("Volvió a la pila de Keep.")};
