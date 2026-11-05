@@ -17,7 +17,7 @@
 </head>
 <body>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@500;600&family=IBM+Plex+Mono:wght@500&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@500;600&family=IBM+Plex+Mono:wght@500&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap">
 <style>
 /* Plancha de corte infinita (verde o azul): se hace zoom con la rueda o pellizcando, se arrastra el fondo para moverse, y los post-its e imágenes se acomodan a mano. Cada post-it abre su propia plancha. Look único elegido a propósito. */
 :root{--rl:32px;
@@ -401,15 +401,13 @@ body.en-diario #zoom-hoja{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) +
 .dc-grilla{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px 4px;padding-bottom:10px;border-bottom:1px solid rgba(70,110,170,.25)}
 .dc-grilla .dow{text-align:center;font:600 .6rem var(--mono);color:var(--muted);padding:2px 0 4px}
 .dc-grilla .dow:nth-child(6),.dc-grilla .dow:nth-child(7){color:#c2462a}
-.dc-grilla button{position:relative;height:44px;border:0;border-radius:6px;background:none;font:600 1.05rem var(--hand);color:var(--ink);cursor:pointer;padding:0}
+.dc-grilla button{position:relative;height:44px;border:0;border-radius:6px;background:none;font:500 1.05rem var(--hand);color:rgba(43,37,32,.38);cursor:pointer;padding:0}
 .dc-grilla button span{position:relative;z-index:1}
-.dc-grilla button::before{content:"";position:absolute;left:50%;top:50%;width:36px;height:36px;margin:-18px 0 0 -18px;border-radius:50%;background:transparent}
-.dc-grilla button.escrito::before{background:#ffd84d}
-.dc-grilla button.hoy::before{box-shadow:inset 0 0 0 2px #c2462a}
-.dc-grilla button.hoy{color:#c2462a}
-.dc-grilla button.sel span{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
-.dc-grilla button:hover:not(:disabled):not(.escrito)::before{background:rgba(43,37,32,.07)}
-.dc-grilla button.escrito:hover::before{background:#ffc928}
+.dc-grilla button.escrito{color:var(--ink);font-weight:700}
+.dc-grilla button.escrito::after{content:"";position:absolute;left:50%;bottom:6px;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--ink)}
+.dc-grilla button.hoy{color:#c2462a;font-weight:700}
+.dc-grilla button.hoy.escrito::after{background:#c2462a}
+.dc-grilla button:hover:not(:disabled){background:rgba(43,37,32,.06)}
 .dc-grilla button:disabled{color:rgba(43,37,32,.25);cursor:default}
 .dc-lista{display:grid;gap:2px}
 .dc-lista .dc-vacio{font:500 .95rem var(--hand);color:var(--muted);padding:4px 2px}
@@ -451,7 +449,7 @@ body.en-diario #vp-main,body.en-diario .composer,body.en-diario>.lateral,body.en
 .dpag-txt{display:block;width:100%;white-space:pre-wrap;overflow-wrap:break-word;word-break:break-word;caret-color:var(--ink);overflow:hidden;border:0;background:transparent;color:var(--ink);font:500 var(--fdia,19px)/var(--rl) var(--hand);padding:0;min-height:var(--rl);user-select:text;-webkit-user-select:text}
 .dpag-txt:focus{outline:none}
 .dpag-txt:empty::before{content:attr(data-ph);color:rgba(43,37,32,.38);pointer-events:none}
-.dpag-txt b{font-weight:700}
+.dpag-txt b{font-weight:800}
 .barrita-dia{position:fixed;z-index:30;display:flex;align-items:center;gap:2px;padding:4px;border-radius:10px;background:var(--ink);box-shadow:0 8px 20px -6px rgba(0,0,0,.5)}
 .barrita-dia[hidden]{display:none}
 .barrita-dia button{border:0;background:none;color:var(--paper);min-width:32px;height:32px;border-radius:7px;cursor:pointer;font:600 15px var(--ui);padding:0 6px}
@@ -473,20 +471,33 @@ body.en-diario #vp-main,body.en-diario .composer,body.en-diario>.lateral,body.en
 .dblq-img{background:#fff;padding:0 8px 8px;box-shadow:0 1px 3px rgba(0,0,0,.25),0 12px 18px -10px rgba(0,0,0,.4)}
 .dblq-img img{display:block;width:100%}
 .dblq-link{background:#fffdf6;padding:0 14px 12px;display:grid;gap:2px;box-shadow:0 1px 1px rgba(0,0,0,.1),0 10px 16px -8px rgba(0,0,0,.4)}
-.dblq-link a{font:600 15px/1.3 var(--hand);color:var(--link);word-break:break-word}
+.dblq-link a{font:600 13px/1.3 var(--mono);color:var(--link);word-break:break-word;text-decoration:none}
+.dblq-link a:hover{text-decoration:underline}
+.dblq-link .dl-tit{display:block;width:100%;border:0;background:transparent;padding:0;font:600 16px/1.3 var(--hand);color:var(--ink);resize:none;overflow:hidden}
+.dblq-link .dl-tit:focus{outline:none}
+.dblq-link .dl-tit::placeholder{color:rgba(43,37,32,.38);font-weight:500}
+.dtxt-mover,.dtxt-ancho{position:absolute;z-index:4;opacity:0;transition:opacity .15s;touch-action:none}
+.dpag-cuerpo:hover .dtxt-mover,.dpag-cuerpo:hover .dtxt-ancho,.dpag-cuerpo.caja-on .dtxt-mover,.dpag-cuerpo.caja-on .dtxt-ancho{opacity:1}
+.dtxt-mover{width:22px;height:22px;margin:3px 0 0 -30px;border-radius:6px;cursor:grab;background:rgba(43,37,32,.06) radial-gradient(circle,rgba(43,37,32,.5) 1.2px,transparent 1.6px) 3px 3px/6px 6px}
+.dtxt-ancho{width:14px;margin-left:4px;cursor:ew-resize;display:flex;justify-content:center}
+.dtxt-ancho::before{content:"";width:3px;height:100%;max-height:120px;border-radius:2px;background:rgba(43,37,32,.28)}
+.dpag-cuerpo.caja-on .dpag-txt{outline:1.5px dashed rgba(43,37,32,.3);outline-offset:6px}
+.dpag-cuerpo.angosto .dtxt-mover,.dpag-cuerpo.angosto .dtxt-ancho{display:none}
+.dpag-cuerpo.angosto .dblq{transform:none}
+.dpag-cuerpo.angosto .dblq-grip{visibility:hidden;height:12px}
 .dblq-link span{font:500 11px var(--mono);color:var(--muted)}
 .dblq-x{position:absolute;top:-11px;right:-11px;min-width:24px;height:24px;border-radius:999px;border:0;padding:0 7px;background:var(--ink);color:var(--paper);font:600 13px/24px var(--ui);cursor:pointer;opacity:0;transition:opacity .15s}
 .dblq:hover .dblq-x,.dblq:focus-within .dblq-x,.dblq-x.sure{opacity:1}
 .dblq-x.sure{background:var(--danger)}
 @media (hover:none){.dblq-x{opacity:.75}}
-@media (max-width:560px){.dblq-post{width:160px!important;min-height:160px}.dblq-img{max-width:78%}.dblq-txt{width:200px!important;min-height:200px!important}}
+@media (max-width:560px){.dblq-post{width:160px!important;min-height:160px}.dblq-txt{width:200px!important;min-height:200px!important}}
 .marca-hora{position:fixed;z-index:7;height:var(--rl);display:flex;align-items:center;border:0;background:none;padding:0 2px;font:600 12px var(--mono);color:#c2462a;cursor:pointer;opacity:.85}
 .marca-hora:hover{opacity:1;text-decoration:underline}
 .marca-hora[hidden]{display:none}
 .dpag-horas{position:absolute;top:0;height:0;width:0}
 .dpag-hora{position:absolute;right:0;height:var(--rl);display:flex;align-items:center;border:0;background:none;padding:0;font:600 12px var(--mono);color:#c2462a;cursor:pointer;white-space:nowrap}
 .dpag-hora:hover{text-decoration:line-through;opacity:.7}
-@media (max-width:760px){.dpag-hora,.marca-hora{font-size:9.5px;letter-spacing:-.3px}}
+@media (max-width:760px){.dpag-hora,.marca-hora{font-size:10px;letter-spacing:-.2px}}
 .espejo-dia{position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre-wrap;word-wrap:break-word;overflow-wrap:break-word;line-height:var(--rl);padding:0}
 .dia-herr{display:none}
 body.en-diario .dia-herr{display:flex}
@@ -551,7 +562,7 @@ body.en-diario .dia-herr{display:flex}
 .vista.papel .fl-linea{stroke:var(--ink)}.vista.papel .fl-cabeza{fill:var(--ink);stroke:var(--ink)}
 .vista.papel .origen-f{outline-color:var(--ink)}
 @media (max-width:1100px){.dia-meses{grid-template-columns:repeat(4,minmax(0,1fr))}}
-@media (max-width:760px){:root{--rl:28px;--fdia:16px}.diario{--margen:30px;padding-right:16px;padding-left:44px}.dpag-fecha{font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dia-feed{gap:var(--rl)}.dia-meses{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 12px}.dmm-grilla{gap:2px}.dg-stats{gap:16px}.dg-stats span{width:112px;min-height:100px}.dg-stats b{font-size:2rem}.dia-muro{columns:2 130px;column-gap:16px}.dia-entrada{padding:14px 10px 10px;margin-bottom:24px}.dia-hoy-txt{font-size:17px}}
+@media (max-width:760px){:root{--rl:26px;--fdia:15px}.diario{--margen:46px;padding-right:16px;padding-left:58px}#dia-herr{display:none!important}.dpag-fecha{font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dia-feed{gap:var(--rl)}.dia-meses{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 12px}.dmm-grilla{gap:2px}.dg-stats{gap:16px}.dg-stats span{width:112px;min-height:100px}.dg-stats b{font-size:2rem}.dia-muro{columns:2 130px;column-gap:16px}.dia-entrada{padding:14px 10px 10px;margin-bottom:24px}.dia-hoy-txt{font-size:17px}}
 /* Pila de Keep */
 .pila{position:absolute;width:230px;height:230px;z-index:2;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none}
 .pila-hoja{position:absolute;inset:0;background:var(--c);box-shadow:0 1px 1px rgba(0,0,0,.12),0 10px 14px -8px rgba(20,10,0,.55)}
@@ -1414,7 +1425,8 @@ lzMain.onArchivo=(f,p)=>decoEnPlancha(f,p);
 $("file").onchange=e=>{const f=e.target.files&&e.target.files[0];e.target.value="";if(!f)return;
   if(destinoArchivo==="diario"&&enDiario){imagenEnDia(f,diaDestino);return}
   if(destinoArchivo==="hoja"&&abierto)bloqueImagen(f,lzHoja.centro());else decoEnPlancha(f,lzMain.centro())};
-document.addEventListener("paste",e=>{if(enDiario){const fi=[...(e.clipboardData?.files||[])].filter(x=>x.type.startsWith("image/"));if(fi.length){e.preventDefault();const p=pagActual();fi.forEach(f=>imagenEnDia(f,p))}return}
+document.addEventListener("paste",e=>{if(enDiario){const fi=[...(e.clipboardData?.files||[])].filter(x=>x.type.startsWith("image/"));if(fi.length){e.preventDefault();const p=pagActual();fi.forEach(f=>imagenEnDia(f,p));return}
+    const tx=((e.clipboardData&&e.clipboardData.getData("text/plain"))||"").trim();if(!escribiendo()&&/^https?:\/\/\S+$/i.test(tx)){e.preventDefault();linkEnDia(pagActual(),tx)}return}
   if(escribiendo()&&!abierto)return;const fs=[...(e.clipboardData?.files||[])].filter(x=>x.type.startsWith("image/"));if(!fs.length)return;e.preventDefault();
   const p=puntoPegar(abierto?lzHoja:lzMain);fs.forEach((f,n)=>{const q={x:p.x+n*30,y:p.y+n*30};if(abierto)bloqueImagen(f,q);else decoEnPlancha(f,q)})});
 
@@ -1977,7 +1989,9 @@ const AYUDA=[
  {t:"Diario",it:[
   ["Scroll infinito","Arriba lo que escribiste antes, abajo el día de hoy. Entrás y ya podés escribir."],
   ["Día nuevo","Empieza a las 3 de la mañana, no a medianoche."],
-  ["Calendario","Círculo amarillo: ese día escribiste. Aro rojo: hoy. Tocá un día para ir."],
+  ["Calendario","Los días en que escribiste aparecen en negro con un puntito; los vacíos, en gris; hoy, en rojo. Tocá un día para ir."],
+  ["Mover el texto","En la compu, pasá el mouse por el texto: con la manija de la izquierda lo movés y con la barrita de la derecha lo hacés más ancho o más angosto."],
+  ["Links","Pegá un link y aparece como tarjeta, sin tocar ningún botón. Arriba le podés escribir un título."],
   ["Hora en el margen","Pasá el mouse pegado a la línea roja y hacé clic: queda la hora en ese renglón. Clic sobre la hora para sacarla."],
   ["Barra de abajo","Pegás post-its, notas, texto, imágenes y links en la hoja."],
   ["Formato","Marcá un pedazo de texto y aparece una barrita: negrita, itálica, subrayado y color. También "+CMD+"+B, "+CMD+"+I y "+CMD+"+U."],
@@ -2073,7 +2087,8 @@ function crearEditor(){const ed=el("div","dpag-txt");ed.contentEditable="true";e
   ed.setSelectionRange=(a,b)=>{const x=nodoDe(ed,a,true),y=nodoDe(ed,b==null?a:b,false),r=document.createRange();try{r.setStart(x.n,x.off);r.setEnd(y.n,y.off)}catch(_){return}const s=getSelection();s.removeAllRanges();s.addRange(r)};
   ed.addEventListener("beforeinput",e=>{const t=e.inputType;
     if(t==="insertParagraph"||t==="insertLineBreak"){e.preventDefault();insertarEnEditor(ed,"\n")}
-    else if(t==="insertFromPaste"||t==="insertFromDrop"||t==="insertFromPasteAsQuotation"){e.preventDefault();const tx=(e.dataTransfer&&e.dataTransfer.getData("text/plain"))||"";if(tx)insertarEnEditor(ed,tx.replace(/\r\n?/g,"\n"))}});
+    else if(t==="insertFromPaste"||t==="insertFromDrop"||t==="insertFromPasteAsQuotation"){e.preventDefault();const tx=(e.dataTransfer&&e.dataTransfer.getData("text/plain"))||"";
+      if(/^https?:\/\/\S+$/i.test(tx.trim())&&ed.onLink){ed.onLink(tx.trim());return}if(tx)insertarEnEditor(ed,tx.replace(/\r\n?/g,"\n"))}});
   ed.addEventListener("drop",e=>{if([...(e.dataTransfer?.files||[])].length)e.preventDefault()});
   return ed}
 function normalizarEditor(ed){if(!ed.querySelector("div,p,br:not([data-fin]),img")){asegurarFin(ed);return}const pos=document.activeElement===ed?ed.selectionStart:null,{texto,rico}=serializar(ed);
@@ -2103,7 +2118,7 @@ function autoHora(p){if(p.k!==hoyDia())return;const ahora=Date.now(),txt=p.e.tex
   hs.push({l,h:horaAhora()})}
 /* ---------- Diario en scroll infinito: un día abajo del otro ---------- */
 const feed={pags:new Map(),extra:new Set(),pend:new Map()},ANCHO_REF=900,TIPOS_FEED=["post","txt","tx","img","link"];
-const firmaDia=e=>JSON.stringify([textoDia(e),(e&&e.bloques)||[],(e&&e.horas)||null,(e&&e.rico)||""]);
+const firmaDia=e=>JSON.stringify([textoDia(e),(e&&e.bloques)||[],(e&&e.horas)||null,(e&&e.rico)||"",(e&&e.caja)||null]);
 function diasFeed(){const hoy=hoyDia(),s=new Set([hoy,...feed.extra,...feed.pags.keys()]);for(const e of data.diario)if(nivelDia(e))s.add(e.id);return [...s].filter(k=>k<=hoy).sort()}
 function pintarFeed(){if(!enDiario)return;const cont=$("dia-feed"),dias=diasFeed();
   dias.forEach((k,i)=>{let p=feed.pags.get(k);if(!p){p=crearPagina(k);feed.pags.set(k,p)}else refrescarPagina(p);if(cont.children[i]!==p.el)cont.insertBefore(p.el,cont.children[i]||null)});
@@ -2121,31 +2136,48 @@ function moverHoras(p,viejo,nuevo){const hs=p.e.horas;if(!hs||!hs.length||viejo=
   p.e.horas=out}
 function pintarHoras(p){const hs=p.e.horas||[],cont=p.horasEl;if(!hs.length){cont.replaceChildren();return}
   const F=filasDe(p.ta),c=$("diario"),margen=c.getBoundingClientRect().left+(parseFloat(getComputedStyle(c).getPropertyValue("--margen"))||72);
-  cont.style.left=(margen-p.cuerpo.getBoundingClientRect().left-(innerWidth<=760?3:8))+"px";cont.replaceChildren();
-  for(const x of hs){const fila=x.l<F.lineas.length?F.tops[x.l]:F.total+(x.l-F.lineas.length);const b=el("button","dpag-hora",x.h);b.type="button";b.title="Sacar esta hora";b.style.top=fila*RL()+"px";
+  cont.style.left=(margen-p.cuerpo.getBoundingClientRect().left-(innerWidth<=760?6:8))+"px";cont.replaceChildren();
+  for(const x of hs){const fila=x.l<F.lineas.length?F.tops[x.l]:F.total+(x.l-F.lineas.length);const b=el("button","dpag-hora",x.h);b.type="button";b.title="Sacar esta hora";b.style.top=(p.ta.offsetTop+fila*RL())+"px";
     b.onpointerdown=e=>e.preventDefault();b.onclick=()=>{p.e.horas=p.e.horas.filter(y=>y!==x);pintarHoras(p);guardarDiaFeed(p)};cont.append(b)}}
 function crearPagina(k){const e=entradaLocal(k),hoy=k===hoyDia();
   const sec=el("section","dpag"+(hoy?" hoy":""));sec.dataset.k=k;const cab=el("header","dpag-cab");cab.append(el("span","dpag-fecha",fechaLarga(k)));if(hoy)cab.append(el("span","dpag-hoy","Hoy"));
   const cuerpo=el("div","dpag-cuerpo"),ta=crearEditor();pintarEditor(ta,e.texto||"",e.rico||"");ta.setAttribute("aria-label","Diario del "+fechaLarga(k));
   ta.placeholder=hoy?"¿Qué pasó hoy? Escribí lo que quieras.":"";const capa=el("div","dpag-capa"),horasEl=el("div","dpag-horas");cuerpo.append(horasEl,ta,capa);sec.append(cab,cuerpo);
   const srv0=entradaDia(k),p={k,e,el:sec,ta,capa,cuerpo,horasEl,sig:firmaDia(srv0||{texto:"",bloques:[]})};
+  ta.onLink=u=>{const s=getSelection();let y=null;if(s.rangeCount){const rc=s.getRangeAt(0).getBoundingClientRect();if(rc&&(rc.top||rc.height))y=rc.top-cuerpo.getBoundingClientRect().top-20}linkEnDia(p,u,y)};
+  const mover=el("div","dtxt-mover"),ancho=el("div","dtxt-ancho");mover.title="Arrastrá para mover el texto";ancho.title="Arrastrá para hacerlo más ancho o más angosto";cuerpo.append(mover,ancho);p.mover=mover;p.anchoEl=ancho;
+  for(const h of [mover,ancho]){h.addEventListener("mouseenter",()=>cuerpo.classList.add("caja-on"));h.addEventListener("mouseleave",()=>{if(!h._drag)cuerpo.classList.remove("caja-on")})}
+  const arrastre=(h,fn)=>h.addEventListener("pointerdown",ev=>{if(ev.button!==0)return;ev.preventDefault();h._drag=true;try{h.setPointerCapture(ev.pointerId)}catch(_){}cuerpo.classList.add("caja-on");
+    const W=cuerpo.clientWidth||ANCHO_REF,c0={...cajaTxt(p)},x0=ev.clientX,y0=ev.clientY;
+    const mv=e2=>{p.e.caja=fn(c0,(e2.clientX-x0)/W,e2.clientY-y0,W);ajustarPagina(p)};
+    const up=()=>{h._drag=false;h.removeEventListener("pointermove",mv);h.removeEventListener("pointerup",up);h.removeEventListener("pointercancel",up);cuerpo.classList.remove("caja-on");cacheFilas=null;ajustarPagina(p);guardarDiaFeed(p)};
+    h.addEventListener("pointermove",mv);h.addEventListener("pointerup",up);h.addEventListener("pointercancel",up)});
+  arrastre(mover,(c,dx,dy)=>{const rl=RL();return {fw:c.fw,fx:Math.max(0,Math.min(1-c.fw,c.fx+dx)),y:Math.max(0,Math.round((c.y+dy)/rl)*rl)}});
+  arrastre(ancho,(c,dx,dy,W)=>({fx:c.fx,y:c.y,fw:Math.max(Math.min(1,240/W),Math.min(1-c.fx,c.fw+dx))}));
   ta.addEventListener("input",()=>{normalizarEditor(ta);const r=serializar(ta);moverHoras(p,p.e.texto||"",r.texto);p.e.texto=r.texto;p.e.rico=r.rico;autoHora(p);cacheFilas=null;ajustarPagina(p);guardarDiaFeed(p)});ta.addEventListener("blur",()=>guardarDiaYaFeed(p));
   pintarBloquesPag(p);return p}
 function refrescarPagina(p,forzar){if(!forzar&&(feed.pend.has(p.k)||p.el.contains(document.activeElement)))return;
   const srv=entradaDia(p.k);const sig=srv?firmaDia(srv):firmaDia({texto:"",bloques:[]});if(sig===p.sig)return;
   p.e=entradaLocal(p.k);p.sig=sig;pintarEditor(p.ta,p.e.texto,p.e.rico||"");cacheFilas=null;pintarBloquesPag(p);ajustarPagina(p)}
-function ajustarPagina(p){const ta=p.ta;ta.style.height="auto";const rl=RL();ta.style.height=Math.max(rl,Math.ceil(ta.scrollHeight/rl)*rl)+"px";
-  const W=p.cuerpo.clientWidth||ANCHO_REF;let h=ta.offsetHeight;
+const cajaTxt=p=>{const c=p.e.caja||{};return {fx:+c.fx||0,fw:+c.fw||1,y:+c.y||0}};
+const esCompu=()=>{try{return matchMedia("(pointer:fine)").matches}catch(_){return true}};
+function ajustarPagina(p){const ta=p.ta,rl=RL(),W=p.cuerpo.clientWidth||ANCHO_REF,angosto=W<560,libre=!angosto&&esCompu();p.cuerpo.classList.toggle("angosto",angosto);
+  if(libre){const c=cajaTxt(p);ta.style.marginLeft=Math.round(c.fx*W)+"px";ta.style.width=Math.round(c.fw*W)+"px";ta.style.marginTop=c.y+"px"}else{ta.style.marginLeft="";ta.style.width="";ta.style.marginTop=""}
+  ta.style.height="auto";ta.style.height=Math.max(rl,Math.ceil(ta.scrollHeight/rl)*rl)+"px";
+  if(p.mover){p.mover.hidden=!libre;p.anchoEl.hidden=!libre;if(libre){p.mover.style.left=ta.offsetLeft+"px";p.mover.style.top=ta.offsetTop+"px";p.anchoEl.style.left=(ta.offsetLeft+ta.offsetWidth)+"px";p.anchoEl.style.top=ta.offsetTop+"px";p.anchoEl.style.height=ta.offsetHeight+"px"}}
+  let h=ta.offsetTop+ta.offsetHeight;
   if(p.k===hoyDia()){const c=$("diario"),cs=getComputedStyle(c);h=Math.max(h,c.clientHeight-(parseFloat(cs.paddingTop)||96)-(parseFloat(cs.paddingBottom)||160)-2*rl-8)}
-  const angosto=W<560;let piso=ta.offsetHeight+24;
+  let piso=ta.offsetHeight+rl;
   const ns=[...p.capa.children].sort((a,b)=>(a._b.y||0)-(b._b.y||0));
-  for(const n of ns){if(!n.classList.contains("arrastrando")){const b=n._b,fx=typeof b.fx==="number"?b.fx:(b.x||0)/ANCHO_REF;n.style.left=Math.max(0,Math.min(W-n.offsetWidth,fx*W))+"px";
-      if(angosto){const y=Math.max(b.y||0,piso);n.style.top=y+"px";piso=y+n.offsetHeight+28}else n.style.top=(b.y||0)+"px"}
+  for(const n of ns){if(!n.classList.contains("arrastrando")){const b=n._b,fx=typeof b.fx==="number"?b.fx:(b.x||0)/ANCHO_REF;
+      if(angosto){/* en el celu: todo prolijo, en columna abajo del texto */const ancho=b.t==="img"||b.t==="link"||b.t==="tx";if(ancho)n.style.width=W+"px";else n.style.width=(b.t==="post"?160:200)+"px";
+        n.style.left=(ancho?0:Math.round((W-n.offsetWidth)/2))+"px";n.style.top=piso+"px";piso+=n.offsetHeight+20}
+      else{if(n._w0)n.style.width=n._w0;n.style.left=Math.max(0,Math.min(W-n.offsetWidth,fx*W))+"px";n.style.top=(b.y||0)+"px"}}
     h=Math.max(h,(parseFloat(n.style.top)||0)+n.offsetHeight+24)}
   p.cuerpo.style.minHeight=Math.ceil(h/rl)*rl+"px";pintarHoras(p)}
 function guardarDiaFeed(p){clearTimeout(feed.pend.get(p.k));feed.pend.set(p.k,setTimeout(()=>guardarDiaYaFeed(p),700))}
 function guardarDiaYaFeed(p){const k=p.k;if(!feed.pend.has(k))return;clearTimeout(feed.pend.get(k));feed.pend.delete(k);if(!colDiario||!diarioCargado)return;
-  const doc={texto:p.e.texto||"",bloques:p.e.bloques||[],horas:p.e.horas||[],rico:p.e.rico||"",ult:p.e.ult||0};p.sig=firmaDia(doc);const srv=entradaDia(k);
+  const doc={texto:p.e.texto||"",bloques:p.e.bloques||[],horas:p.e.horas||[],rico:p.e.rico||"",ult:p.e.ult||0,caja:p.e.caja||null};p.sig=firmaDia(doc);const srv=entradaDia(k);
   if(srv){const patch={...doc};if(srv.imagen||srv.sonido||srv.escena){patch.imagen="";patch.sonido="";patch.escena=""}escribir(colDiario,k,patch)}
   else if(doc.texto.trim()||doc.bloques.length)cola[k]=(cola[k]||Promise.resolve()).then(()=>entradaDia(k)?colDiario.doc(k).update(doc):colDiario.doc(k).set({fecha:k,creado:Date.now(),...doc})).catch(()=>toast("No se guardó el diario. Revisá la conexión."))}
 function guardarTodoFeed(){for(const k of [...feed.pend.keys()]){const p=feed.pags.get(k);if(p)guardarDiaYaFeed(p)}}
@@ -2156,12 +2188,15 @@ function obsImg(im){if(!("IntersectionObserver" in window)){cargarImg(im,im.data
 function pintarBloquesPag(p){p.capa.replaceChildren(...p.e.bloques.filter(b=>TIPOS_FEED.includes(b.t)).map(b=>nodoBloqueDia(p,b)))}
 function nodoBloqueDia(p,b){
   const n=el("div","dblq dblq-"+b.t);n._b=b;const w=b.t==="post"?190:b.t==="img"?Math.min(b.w||300,380):b.t==="link"?240:Math.min(b.w||(b.t==="tx"?320:240),460);
-  n.style.width=w+"px";n.style.top=(b.y||0)+"px";n.style.setProperty("--r",giro(b.id)*(b.t==="post"?1:.5)+"deg");if(b.t==="txt")n.style.minHeight=w+"px";
+  n.style.width=w+"px";n._w0=w+"px";n.style.top=(b.y||0)+"px";n.style.setProperty("--r",giro(b.id)*(b.t==="post"?1:.5)+"deg");if(b.t==="txt")n.style.minHeight=w+"px";
   const g=el("div","dblq-grip");g.title="Arrastrá para mover";n.append(g);
   if(b.t==="post"||b.t==="txt"||b.t==="tx"){if(b.t==="post")n.style.setProperty("--c",b.c||PALETA[1]);const t=el("textarea");t.spellcheck=false;t.rows=b.t==="post"?4:2;t.value=b.v||"";t.placeholder=b.t==="tx"?"Escribí…":"";
     t.oninput=()=>{b.v=t.value;autosize(t);ajustarPagina(p);guardarDiaFeed(p)};t.onblur=()=>guardarDiaYaFeed(p);n.append(t);requestAnimationFrame(()=>autosize(t))}
   else if(b.t==="img"){const im=el("img");im.alt=b.alt||"";im.draggable=false;im.dataset.ref=b.a;im.onload=()=>ajustarPagina(p);im.onerror=()=>{if(!n.querySelector(".roto"))im.replaceWith(el("div","roto","No se pudo cargar esta imagen."))};obsImg(im);n.append(im)}
-  else if(b.t==="link"){let host=b.url;try{host=new URL(b.url).hostname.replace(/^www\./,"")}catch(_){}const a=el("a",null,b.titulo||host);a.href=b.url;a.target="_blank";a.rel="noopener noreferrer";n.append(a,el("span",null,host))}
+  else if(b.t==="link"){let host=b.url;try{host=new URL(b.url).hostname.replace(/^www\./,"")}catch(_){}
+    const t=el("textarea","dl-tit");t.rows=1;t.spellcheck=false;t.value=b.titulo||"";t.placeholder="Ponele un título…";t.setAttribute("aria-label","Título del link");
+    t.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();t.blur()}});t.oninput=()=>{b.titulo=t.value;autosize(t);ajustarPagina(p);guardarDiaFeed(p)};t.onblur=()=>guardarDiaYaFeed(p);
+    const a=el("a",null,host+" ↗");a.href=b.url;a.target="_blank";a.rel="noopener noreferrer";a.title=b.url;n.append(t,a);requestAnimationFrame(()=>autosize(t))}
   const x=el("button","dblq-x","×");x.type="button";x.setAttribute("aria-label","Quitar");let seguro=false;
   x.onclick=()=>{if(!seguro){seguro=true;x.textContent="Quitar";x.classList.add("sure");setTimeout(()=>{seguro=false;x.textContent="×";x.classList.remove("sure")},3000);return}
     p.e.bloques=p.e.bloques.filter(z=>z!==b);n.remove();ajustarPagina(p);guardarDiaFeed(p);guardarDiaYaFeed(p)};n.append(x);
@@ -2178,6 +2213,9 @@ function pagVisible(){const ref=$("diario").getBoundingClientRect().top+innerHei
 function agregarEnDia(b,p){p=p||pagActual();if(!p||!diarioCargado)return null;const r=p.cuerpo.getBoundingClientRect();b.id=bid();
   b.y=Math.max(0,Math.round(innerHeight*.3-r.top));if(typeof b.fx!=="number")b.fx=innerWidth<600?.08:.68;b.x=Math.round(b.fx*ANCHO_REF);
   p.e.bloques.push(b);const n=nodoBloqueDia(p,b);p.capa.append(n);ajustarPagina(p);guardarDiaFeed(p);return n}
+function linkEnDia(p,u,yRel){if(!p)return;let titulo="";try{const q=new URL(u);titulo=""}catch(_){toast("Ese link no parece válido.");return}
+  const n=agregarEnDia({t:"link",url:u,titulo},p);if(n&&typeof yRel==="number"){n._b.y=Math.max(0,Math.round(yRel));ajustarPagina(p)}
+  guardarDiaYaFeed(p);if(n)requestAnimationFrame(()=>n.querySelector(".dl-tit")?.focus());toast("Link pegado. Ponele un título si querés.")}
 async function imagenEnDia(file,p){p=p||pagActual();if(!p)return;const r=await subir(file);if(!r)return;agregarEnDia({t:"img",a:r.id,alt:file.name||"Imagen",w:300},p);guardarDiaYaFeed(p)}
 function irADiaFeed(k,enfocar){if(k>hoyDia())return;feed.extra.add(k);pintarFeed();const p=feed.pags.get(k);if(!p)return;
   requestAnimationFrame(()=>{const c=$("diario"),top=p.el.getBoundingClientRect().top-c.getBoundingClientRect().top+c.scrollTop-(parseFloat(c.style.paddingTop)||90)+8;c.scrollTo({top:Math.max(0,top),behavior:enfocar?"auto":"smooth"});
@@ -2206,13 +2244,13 @@ function filasDe(ta){const v=ta.value,w=ta.clientWidth,key=v.length+"|"+w+"|"+ta
 const horaAhora=()=>{const f=new Date();return pad(f.getHours())+":"+pad(f.getMinutes())};
 function ubicarMarca(e){if(!enDiario||e.target.closest&&e.target.closest(".dblq,.marca-hora"))return e.target.closest&&e.target.closest(".marca-hora")?null:ocultarMarca();
   const p=feed.pags.get(hoyDia());if(!p)return ocultarMarca();const c=$("diario"),cr=c.getBoundingClientRect(),margen=cr.left+(parseFloat(getComputedStyle(c).getPropertyValue("--margen"))||72),
-    r=p.cuerpo.getBoundingClientRect(),tx=r.left;
-  if(e.clientX<margen-(innerWidth<=760?30:64)||e.clientX>tx+8||e.clientY<r.top||e.clientY>r.bottom)return ocultarMarca();
-  const rl=RL(),fila=Math.floor((e.clientY-r.top)/rl),F=filasDe(p.ta);let linea;
+    r=p.cuerpo.getBoundingClientRect(),rt=p.ta.getBoundingClientRect(),tx=r.left;
+  if(e.clientX<margen-(innerWidth<=760?44:64)||e.clientX>tx+8||e.clientY<rt.top||e.clientY>r.bottom)return ocultarMarca();
+  const rl=RL(),fila=Math.floor((e.clientY-rt.top)/rl),F=filasDe(p.ta);let linea;
   if(fila<F.total){linea=F.tops.indexOf(fila);if(linea<0)return ocultarMarca()}
   else linea=F.lineas.length+(fila-F.total);
   if((p.e.horas||[]).some(x=>x.l===linea))return ocultarMarca();
-  marcaDest={p,linea};marcaHora.textContent=horaAhora();marcaHora.style.top=(r.top+fila*rl)+"px";marcaHora.hidden=false;marcaHora.style.left=Math.max(1,margen-(innerWidth<=760?3:8)-marcaHora.offsetWidth)+"px"}
+  marcaDest={p,linea};marcaHora.textContent=horaAhora();marcaHora.style.top=(rt.top+fila*rl)+"px";marcaHora.hidden=false;marcaHora.style.left=Math.max(1,margen-(innerWidth<=760?6:8)-marcaHora.offsetWidth)+"px"}
 function ocultarMarca(){marcaHora.hidden=true;marcaDest=null}
 $("diario").addEventListener("pointermove",e=>{if(e.pointerType==="mouse")ubicarMarca(e)});
 $("diario").addEventListener("pointerdown",e=>{if(e.pointerType!=="mouse")ubicarMarca(e)});
