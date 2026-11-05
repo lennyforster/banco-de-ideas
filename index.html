@@ -99,7 +99,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus
 .nombre-vivo h2{margin:0;font:700 1.35rem var(--hand)}.nombre-vivo p{margin:0;color:var(--muted);font-size:.9rem}
 .nombre-vivo input{font:500 1rem var(--ui);padding:11px 12px;border-radius:8px;border:1px solid rgba(43,37,32,.25);background:#fff}
 .nombre-vivo button{border:0;border-radius:999px;padding:11px;background:var(--ink);color:var(--paper);font:600 .95rem var(--ui);cursor:pointer}
-body.invitado #volver,body.invitado #h-mas,body.invitado>.barra,body.invitado #barra-extra,body.invitado #vp-main,body.invitado #zoom-main,body.invitado #btn-claude,body.invitado #h-dictar,body.invitado #add-a-idea,body.invitado #abrir-composer,body.invitado #abrir-dictar{display:none!important}
+body.invitado #volver,body.invitado #h-mas,body.invitado>.barra,body.invitado #barra-extra,body.invitado #vp-main,body.invitado #diario,body.invitado #dia-herr,body.invitado #zoom-main,body.invitado #btn-claude,body.invitado #h-dictar,body.invitado #add-a-idea,body.invitado #abrir-composer,body.invitado #abrir-dictar{display:none!important}
 .vivo-mouses{position:absolute;left:0;top:0;width:0;height:0;z-index:40;pointer-events:none}
 .vivo-mouse{position:absolute;transform-origin:0 0;transform:scale(var(--inv,1));transition:left .09s linear,top .09s linear}
 .vivo-mouse svg{display:block;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))}
@@ -858,7 +858,7 @@ const urls=new Map();
 const leerB64=b=>new Promise((ok,mal)=>{const fr=new FileReader();fr.onload=()=>ok(String(fr.result).split(",")[1]);fr.onerror=mal;fr.readAsDataURL(b)});
 const assets={
   async upload(blob,o){const tipo=(o&&o.type)||blob.type||"image/png";if(blob.size>20*1024*1024)throw {code:"too_large"};
-    if(INVITADO||window.__subirVivo){const m=await import("./vivo.js");const id=await m.subirImagen(blob.type?blob:new Blob([blob],{type:tipo})).catch(()=>{throw {code:"store_unavailable"}});const url=m.urlImagen(id);urls.set(id,url);return {id,url,sizeBytes:blob.size,contentType:tipo}}
+    if(INVITADO||window.__subirVivo){const m=await import("./vivo.js?v=3");const id=await m.subirImagen(blob.type?blob:new Blob([blob],{type:tipo})).catch(()=>{throw {code:"store_unavailable"}});const url=m.urlImagen(id);urls.set(id,url);return {id,url,sizeBytes:blob.size,contentType:tipo}}
     const ext=({"image/png":"png","image/jpeg":"jpg","image/gif":"gif","image/webp":"webp"})[tipo]||"bin";
     const b=await api(`${RB}/git/blobs`,{method:"POST",body:{content:await leerB64(blob),encoding:"base64"}}).catch(e=>{throw {code:e.status===401?"upstream_auth":"store_unavailable"}});
     const path=`img/${rid()}.${ext}`;binPend.set(path,b.sha);programar(300);const url=URL.createObjectURL(blob);urls.set(path,url);return {id:path,url,sizeBytes:blob.size,contentType:tipo}},
@@ -885,7 +885,7 @@ async function elegirRepo(){
 function pedirNombreVivo(){let n=null;try{n=localStorage.getItem("vivo_nombre")}catch(_){}if(n)return Promise.resolve(n);
   return new Promise(ok=>{const ov=document.getElementById("nombre-vivo");ov.hidden=false;const i=document.getElementById("nv-input");setTimeout(()=>i.focus(),50);
     document.getElementById("nv-form").onsubmit=e=>{e.preventDefault();const v=i.value.trim();if(!v)return;try{localStorage.setItem("vivo_nombre",v)}catch(_){}ov.hidden=true;ok(v)}})}
-async function conectarInvitado(){document.body.classList.add("invitado");const nombre=await pedirNombreVivo();const m=await import("./vivo.js");let S;
+async function conectarInvitado(){document.body.classList.add("invitado");const nombre=await pedirNombreVivo();const m=await import("./vivo.js?v=3");let S;
   for(;;){try{S=await m.sesion({id:INVITADO,nombre});break}catch(e){if(String(e.message).includes("no existe")){document.body.classList.add("vivo-fin");aviso("Este post-it ya no está compartido.");await new Promise(()=>{})}aviso("No pude conectar. Reintento en unos segundos…");await new Promise(r=>setTimeout(r,4000))}}
   window.__sesionVivo=S;const f=S.foto();docs.set("ideas/"+INVITADO,{texto:f.texto||"",bloques:f.bloques||[],hilos:f.hilos||[],trazos:f.trazos||[],tipo:f.tipo||"otro",estado:f.estado||null,numero:f.numero||"",creado:f.creado||Date.now(),vivo:INVITADO,x:0,y:0});
   return db}
@@ -2071,7 +2071,7 @@ window.onEntradas=lista=>{if(!cols.ideas||!cols.frases||!window.__ideasListas)re
   if(hechos.length)toast(hechos.length===1?`Llegó del celu: ${hechos[0]}.`:`Llegaron ${hechos.length} cosas del celu: ${hechos.join(", ")}.`)};
 /* ---------- Post-its en vivo: todo el tablero de adentro se comparte (texto, piezas, hilos, dibujos, imágenes) ---------- */
 let vivoAct=null,vivoMod=null,vivoSilencio=false;const URL_VIVO=new URL("./",location.href).href.split("?")[0].split("#")[0];
-const modVivo=()=>vivoMod||(vivoMod=import("./vivo.js"));
+const modVivo=()=>vivoMod||(vivoMod=import("./vivo.js?v=3"));
 const NOMBRES_REPO={"banco-de-ideas-datos":"Lenny","banco-de-ideas-datos-2":"Helena","banco-de-ideas-datos-3":"Toby","banco-de-ideas-datos-4":"Shu","banco-de-ideas-datos-5":"Ivan","banco-de-ideas-datos-6":"Sofía"};
 const miNombreVivo=()=>{try{return localStorage.getItem("vivo_nombre")||NOMBRES_REPO[localStorage.getItem("gh_repo")]||"Alguien"}catch(_){return "Alguien"}};
 const CAMPOS_VIVO=["bloques","hilos","trazos","tipo","estado"];
