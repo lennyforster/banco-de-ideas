@@ -764,19 +764,24 @@ async function traer(){
   const ref=await api(`${RB}/git/ref/heads/${GH.branch}`);const sha=ref.object.sha;if(sha===ultimoCommit)return;
   const c=await api(`${RB}/git/commits/${sha}`);const t=await api(`${RB}/git/trees/${c.tree.sha}?recursive=1`);
   const vistos=new Set(),cambiados=new Set(),pedir=[];remotos=new Set();
-  for(const e of t.tree){if(e.type!=="blob")continue;remotos.add(e.path);if(!e.path.endsWith(".json"))continue;const k=e.path.slice(0,-5);vistos.add(k);
+  const entradas=[];
+  for(const e of t.tree){if(e.type!=="blob")continue;remotos.add(e.path);if(/^entrada\/[^/]+\.txt$/.test(e.path)&&!binPend.has(e.path)&&!(enVueloBin&&enVueloBin.has(e.path)))entradas.push(e);if(!e.path.endsWith(".json"))continue;const k=e.path.slice(0,-5);vistos.add(k);
     if(ocupado(k))continue;if(shas.get(k)===e.sha&&docs.has(k))continue;
     if(cache[e.sha]!==undefined){docs.set(k,cache[e.sha]);shas.set(k,e.sha);cambiados.add(k)}else pedir.push([k,e.sha])}
   let i=0;await Promise.all(Array.from({length:6},async()=>{while(i<pedir.length){const [k,s]=pedir[i++];try{const b=await api(`${RB}/git/blobs/${s}`);if(ocupado(k))continue;docs.set(k,JSON.parse(dec(b.content)));shas.set(k,s);cambiados.add(k)}catch(e){console.error("blob",k,e)}}}));
   for(const k of [...docs.keys()])if(!vistos.has(k)&&!ocupado(k)){docs.delete(k);shas.delete(k);cambiados.add(k)}
   ultimoCommit=sha;if(cambiados.size){avisar(cambiados);guardarCache()}
+  if(entradas.length){const out=[];for(const e of entradas){try{const b=await api(`${RB}/git/blobs/${e.sha}`);out.push({path:e.path,texto:dec(b.content)})}catch(_){}}entradasLeidas=out;window.revisarEntradas()}
 }
+let entradasLeidas=[];
+window.revisarEntradas=()=>{if(entradasLeidas.length&&window.onEntradas)try{window.onEntradas(entradasLeidas.slice())}catch(err){console.error(err)}};
+window.borrarEntrada=p=>{entradasLeidas=entradasLeidas.filter(e=>e.path!==p);binPend.set(p,null);programar(300)};
 /* --- subir cambios: todo lo pendiente va en un solo commit --- */
-let subiendo=false,tSubir=null;
+let subiendo=false,tSubir=null,enVueloBin=null;
 function programar(ms){clearTimeout(tSubir);tSubir=setTimeout(subir,ms===undefined?900:ms)}
 async function subir(){
   if(subiendo||(!pend.size&&!binPend.size))return;subiendo=true;
-  const lote=new Map(pend),loteBin=new Map(binPend);pend.clear();binPend.clear();enVuelo=lote;
+  const lote=new Map(pend),loteBin=new Map(binPend);pend.clear();binPend.clear();enVuelo=lote;enVueloBin=loteBin;
   try{
     for(let intento=0;;intento++){
       const ref=await api(`${RB}/git/ref/heads/${GH.branch}`);const base=ref.object.sha;const bc=await api(`${RB}/git/commits/${base}`);
@@ -798,7 +803,7 @@ async function subir(){
     for(const [k,v] of lote)if(!pend.has(k))pend.set(k,v);for(const [p,s] of loteBin)if(!binPend.has(p))binPend.set(p,s);
     if(e.status===401){pedirClave("Tu clave dejó de funcionar. Pegá una nueva para seguir guardando.");}
     else{if(!avisoOff)aviso("Sin conexión: tus cambios quedan acá y se guardan cuando vuelva.");avisoOff=true;programar(8000)}
-  }finally{const subidos=[...enVuelo.keys()];enVuelo=new Map();subiendo=false;avisar(subidos.filter(k=>docs.has(k)||!pend.has(k)));if(pend.size||binPend.size)programar(400)}
+  }finally{const subidos=[...enVuelo.keys()];enVuelo=new Map();enVueloBin=null;subiendo=false;avisar(subidos.filter(k=>docs.has(k)||!pend.has(k)));if(pend.size||binPend.size)programar(400)}
 }
 /* --- historial para deshacer / rehacer (Ctrl+Z) --- */
 const hist={atras:[],adelante:[]};let grupoH=null,tGrupoH=null,grabando=true;
@@ -1976,6 +1981,13 @@ document.addEventListener("keydown",e=>{if(e.key!=="Tab"||e.shiftKey||e.ctrlKey|
   $("btn-menu").before(ex);
   ex.addEventListener("click",e=>{const b=e.target.closest("[data-mm]");if(!b)return;const m=b.dataset.mm;if(m==="undo")deshacerUI(false);else if(m==="redo")deshacerUI(true);else lzMain.setModo(lzMain.modo===m?null:m)})}
 
+/* ---------- Ideas que llegan dictadas desde el atajo del celu (archivos entrada/*.txt) ---------- */
+window.onEntradas=lista=>{if(!cols.ideas||!data.ideas.length)return;let n=0;
+  for(const {path,texto} of lista){const t=(texto||"").trim(),nombre=path.slice(8,-4),id="atajo-"+nombre.replace(/[^a-zA-Z0-9-]/g,"");
+    if(t&&!data.ideas.some(i=>i.id===id)){const m=/^(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})/.exec(nombre),creado=m?new Date(+m[1],+m[2]-1,+m[3],+m[4],+m[5],+m[6]).getTime():Date.now();
+      const numero=data.ideas.reduce((a,i)=>Math.max(a,i.numero||0),0)+1+n;cols.ideas.doc(id).set({texto:t.charAt(0).toUpperCase()+t.slice(1),tipo:"otro",creado,numero,origen:"atajo"});n++}
+    window.borrarEntrada(path)}
+  if(n)toast(n===1?"Llegó 1 idea dictada desde el celu.":`Llegaron ${n} ideas dictadas desde el celu.`)};
 /* ---------- Cómo se usa (sumar acá cada feature nueva) ---------- */
 const MAC=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent||""),CMD=MAC?"⌘":"Ctrl";
 /* claves visuales: texto, [teclas], {ic}, {chip,c}, {h:html}, o una lista de varias */
@@ -1989,7 +2001,8 @@ const AYUDA=[
   [{h:'<span class="ay-post"></span>'},"Tocá un post-it para abrirlo: adentro tenés una hoja entera para desarrollar la idea. Arrastralo para moverlo."],
   ["Arrastrar el fondo","Te movés por la plancha."],
   [{h:'<span class="ay-zoom"><span>−</span><small>80%</small><span>+</span><span>Ver todo</span></span>'},"Zoom con la rueda del mouse o pellizcando con dos dedos. «Ver todo» encuadra todo lo que hay."],
-  ["Imágenes","Arrastralas desde la compu o pegalas con "+CMD+"+V y quedan sueltas en la plancha."]]},
+  ["Imágenes","Arrastralas desde la compu o pegalas con "+CMD+"+V y quedan sueltas en la plancha."],
+  ["Atajo del celu","Con el atajo «Nueva idea» del iPhone dictás y la idea aparece sola en la plancha la próxima vez que abrís la web."]]},
  {t:"Atajos",it:[
   [["Shift","arrastrar"],"Sobre el fondo: dibujás un marco y elegís todo lo que queda adentro."],
   [["Shift","clic"],"Sobre un post-it o una pila: lo sumás o lo sacás de la selección."],
@@ -2879,7 +2892,7 @@ drawComposer();setVista(vista);try{if(localStorage.getItem("pestana")==="diario"
   for(const k of ["ideas","frases"]){
     cols[k]=db.collection(k);
     cols[k].orderBy("creado","desc").onSnapshot(s=>{
-      data[k]=s.docs.map(d=>({id:d.id,...d.data(),_pend:!!(d.metadata&&d.metadata.hasPendingWrites)}));pintarMain();sincronizarAbierto(k);
+      data[k]=s.docs.map(d=>({id:d.id,...d.data(),_pend:!!(d.metadata&&d.metadata.hasPendingWrites)}));pintarMain();sincronizarAbierto(k);if(k==="ideas"&&window.revisarEntradas)setTimeout(window.revisarEntradas,0);
       if(!$("panel-cal").hidden&&!escribiendo())pintarCalMain();
       if(linkInicial){const i=data[k].find(x=>x.id===linkInicial);if(i){linkInicial=null;abrir(k,i.id)}}
       if(k===vista&&!encuadrado[k]&&data[k].length){lzMain.encuadrar(lzMain.limites());encuadrado[k]=true}
