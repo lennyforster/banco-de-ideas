@@ -95,9 +95,9 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus
 .nota.en-vivo .meta span:first-child::after{content:" ● en vivo";color:#1f9d6b;font-weight:600}
 .nombre-vivo{position:fixed;inset:0;z-index:90;background:rgba(20,14,10,.55);display:flex;align-items:center;justify-content:center;padding:16px}
 .nombre-vivo[hidden]{display:none}
-.nombre-vivo form{background:#fbf7ec;border-radius:12px;padding:22px;width:min(360px,100%);display:grid;gap:12px;box-shadow:0 30px 60px -20px rgba(0,0,0,.6)}
+.nombre-vivo form{box-sizing:border-box;background:#fbf7ec;border-radius:12px;padding:22px;width:min(360px,100%);display:grid;grid-template-columns:minmax(0,1fr);gap:12px;box-shadow:0 30px 60px -20px rgba(0,0,0,.6)}
 .nombre-vivo h2{margin:0;font:700 1.35rem var(--hand)}.nombre-vivo p{margin:0;color:var(--muted);font-size:.9rem}
-.nombre-vivo input{font:500 1rem var(--ui);padding:11px 12px;border-radius:8px;border:1px solid rgba(43,37,32,.25);background:#fff}
+.nombre-vivo input,.nombre-vivo button{box-sizing:border-box;width:100%;min-width:0;margin:0}.nombre-vivo input{font-size:16px!important;font:500 1rem var(--ui);padding:11px 12px;border-radius:8px;border:1px solid rgba(43,37,32,.25);background:#fff}
 .nombre-vivo button{border:0;border-radius:999px;padding:11px;background:var(--ink);color:var(--paper);font:600 .95rem var(--ui);cursor:pointer}
 body.invitado #volver,body.invitado #h-mas,body.invitado>.barra,body.invitado #barra-extra,body.invitado #vp-main,body.invitado #diario,body.invitado #dia-herr,body.invitado #zoom-main,body.invitado #btn-claude,body.invitado #h-dictar,body.invitado #add-a-idea,body.invitado #abrir-composer,body.invitado #abrir-dictar{display:none!important}
 .vivo-mouses{position:absolute;left:0;top:0;width:0;height:0;z-index:40;pointer-events:none}
