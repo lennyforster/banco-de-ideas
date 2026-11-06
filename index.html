@@ -743,7 +743,7 @@ body.en-diario .dia-herr{display:flex}
 <script>
 /* ===== Datos en GitHub: reemplaza al runtime de claude.ai con la misma forma (db, assets, downloads) ===== */
 (function(){
-const GH={owner:"lennyforster",branch:"main",repos:["banco-de-ideas-datos","banco-de-ideas-datos-2","banco-de-ideas-datos-3","banco-de-ideas-datos-4","banco-de-ideas-datos-5","banco-de-ideas-datos-6","banco-de-ideas-datos-7"]};
+const GH={owner:"lennyforster",branch:"main",repos:["banco-de-ideas-datos","banco-de-ideas-datos-2","banco-de-ideas-datos-3","banco-de-ideas-datos-4","banco-de-ideas-datos-5","banco-de-ideas-datos-6","banco-de-ideas-datos-7","banco-de-ideas-datos-8"]};
 const API="https://api.github.com";let RB=null;
 const LS={get(k){try{return localStorage.getItem(k)}catch(_){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(_){}},del(k){try{localStorage.removeItem(k)}catch(_){}}};
 let TOKEN=LS.get("gh_token");
@@ -2072,7 +2072,7 @@ window.onEntradas=lista=>{if(!cols.ideas||!cols.frases||!window.__ideasListas)re
 /* ---------- Post-its en vivo: todo el tablero de adentro se comparte (texto, piezas, hilos, dibujos, imágenes) ---------- */
 let vivoAct=null,vivoMod=null,vivoSilencio=false;const URL_VIVO=new URL("./",location.href).href.split("?")[0].split("#")[0];
 const modVivo=()=>vivoMod||(vivoMod=import("./vivo.js?v=3"));
-const NOMBRES_REPO={"banco-de-ideas-datos":"Lenny","banco-de-ideas-datos-2":"Helena","banco-de-ideas-datos-3":"Toby","banco-de-ideas-datos-4":"Shu","banco-de-ideas-datos-5":"Ivan","banco-de-ideas-datos-6":"Sofía","banco-de-ideas-datos-7":"Fercho"};
+const NOMBRES_REPO={"banco-de-ideas-datos":"Lenny","banco-de-ideas-datos-2":"Helena","banco-de-ideas-datos-3":"Toby","banco-de-ideas-datos-4":"Shu","banco-de-ideas-datos-5":"Ivan","banco-de-ideas-datos-6":"Sofía","banco-de-ideas-datos-7":"Fercho","banco-de-ideas-datos-8":"Bere"};
 const miNombreVivo=()=>{try{return localStorage.getItem("vivo_nombre")||NOMBRES_REPO[localStorage.getItem("gh_repo")]||"Alguien"}catch(_){return "Alguien"}};
 const CAMPOS_VIVO=["bloques","hilos","trazos","tipo","estado"];
 const camposVivo=d=>({texto:d.texto||"",bloques:d.bloques||[],hilos:d.hilos||[],trazos:d.trazos||[],tipo:d.tipo||"otro",estado:d.estado||null,numero:d.numero||"",creado:d.creado||Date.now(),titulo:`Idea #${d.numero||"?"}`});
