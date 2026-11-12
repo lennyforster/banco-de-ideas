@@ -46,6 +46,8 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus
 .nov-cuerpo h3:first-child{margin-top:0}
 .nov-cuerpo ul{margin:0 0 8px;padding-left:18px;display:grid;gap:7px;font:500 .95rem/1.4 var(--ui)}
 .nov-cuerpo b{font-weight:700}
+.nov-cuerpo li.nov-1+li:not(.nov-1){margin-top:6px}
+.nov-chicos{margin:4px 0 8px;font:500 .85rem/1.45 var(--ui);color:var(--muted)}
 .nov-pie{display:flex;justify-content:space-between;gap:8px;padding:12px 18px 16px}
 .ay-hoja{width:min(860px,100%);height:min(620px,calc(100dvh - 32px));display:grid;grid-template-rows:auto 1fr;background:#fbf7ec;border-radius:12px;box-shadow:0 30px 60px -20px rgba(0,0,0,.6);overflow:hidden;color:var(--ink)}
 .ay-cab{display:flex;align-items:center;gap:12px;padding:16px 18px 12px;border-bottom:1px solid rgba(43,37,32,.1)}
@@ -2529,33 +2531,29 @@ function pintarAyuda(){const idx=$("ay-idx");idx.replaceChildren();
 /* ---------- Novedades ----------
    Cada vez que se agrega o cambia algo que el usuario nota, sumar ARRIBA una entrada con n = el anterior + 1.
    Al entrar, a cada persona le aparece un cartel con lo que todavía no vio. Formato de cada ítem: [título, explicación].
-   Si el cambio solo lo ve Lenny (pruebas), la entrada lleva mio:true y el cartel le sale solo a él. */
+   Si el cambio solo lo ve Lenny (pruebas), la entrada lleva mio:true y el cartel le sale solo a él.
+   Cada ítem: [título, explicación, importancia 1/2/3]. */
 const NOVEDADES=[
- {n:6,f:"12 de noviembre, de madrugada",it:[
-  ["Esconder todo","El ojito de la barra izquierda deja solo la plancha. Para volver, tocá el ojito que queda apenas visible o apretá Tab."],
-  ["Menú ••• de un post-it, más ordenado","Arriba categoría y estado; abajo En vivo, Compartir y Exportar; al pie la guía."],
-  ["Zoom","Adentro de un post-it, el zoom y «Ver todo» vuelven abajo a la derecha."]]},
- {n:5,f:"12 de noviembre, a la noche",it:[
-  ["Versión texto","En el ••• de arriba hay una A: la web pasa a letra de máquina, y las ideas y frases se ven como una lista. Tocás la palabra subrayada del título para ordenarla por fecha, categoría o estado. El post-it te devuelve a la versión normal."],
-  ["Imágenes en grande","Tocá una imagen y se abre en pantalla completa. Ahí está «Recortar»."],
-  ["Agregar, a la izquierda","Adentro de un post-it, todo lo que se agrega (post-it, nota, texto, link, imagen…) está en el + de la barra de la izquierda. En el celu sigue abajo."],
-  ["Contacto","En «Cómo se usa?», al final, está el celu de Lenny por si querés proponer algo."]]},
- {n:4,f:"12 de noviembre, versión texto (otra vuelta)",mio:true,it:[
-  ["Más simple","Una sola letra, un solo tamaño, sin negrita ni recuadros. El rojo solo marca en qué sección estás."],
-  ["El orden está en el título","Tocá la palabra subrayada («por fecha») y elegí: fecha, antigüedad, categoría o estado. Por categoría o estado, deja un renglón libre entre grupos."],
-  ["«+ nueva idea» arriba de la lista","Ya no flota abajo tapando renglones: es la primera línea de la lista."]]},
- {n:3,f:"12 de noviembre, versión texto",mio:true,it:[
-  ["La lista se ordena","Tocá el título de una columna (N.º, Categoría, Estado, Fecha…) y se ordena por eso; tocalo de nuevo y se da vuelta. Por categoría o estado, además, se agrupa. En el celu está en el renglón «ordenar»."],
-  ["Diseño más trabajado","Título grande, columnas con encabezado, el renglón se pinta al pasar el mouse, y un poco de negrita y rojo: lo de hoy, lo que está en vivo y el orden elegido."]]},
- {n:2,f:"12 de noviembre, más tarde",mio:true,it:[
-  ["Versión texto (prueba, solo la ves vos)","En el ••• está «Versión texto»: fondo gris, letra de máquina y, en vez de post-its, una lista de ideas y frases. Tocás un renglón y se abre."]]},
+ {n:7,f:"12 de noviembre",it:[
+  ["Novedades por importancia","Este cartel ahora muestra primero lo importante; los cambios chicos van al final, en una línea.",3]]},
+ {n:6,f:"12 de noviembre",it:[
+  ["Esconder todo","El ojito de la barra izquierda deja solo la plancha. Para volver, tocá el ojito que queda apenas visible o apretá Tab.",2],
+  ["Menú ••• del post-it más ordenado","",3],
+  ["Zoom abajo a la derecha adentro de los post-its","",3]]},
+ {n:5,f:"12 de noviembre",it:[
+  ["Versión texto","En el ••• de arriba hay una A: la web pasa a letra de máquina, y las ideas y frases se ven como una lista que ordenás tocando la palabra subrayada del título. El post-it te devuelve a la versión normal.",1],
+  ["Imágenes en grande","Tocá una imagen y se abre en pantalla completa. Ahí está «Recortar».",1],
+  ["Agregar, a la izquierda","Adentro de un post-it, todo lo que se agrega (post-it, nota, texto, link, imagen…) está en el + de la barra izquierda. En el celu sigue abajo.",2],
+  ["Contacto en la guía","Al final de «Cómo se usa?» está el celu de Lenny, por si querés proponer algo.",3]]},
  {n:1,f:"12 de noviembre",it:[
-  ["Recortar imágenes","Tocá una imagen y aparece «Recortar». Anda en la plancha, adentro de los post-its y en el diario."],
-  ["Alt + arrastrar duplica","El original se queda en su lugar y la copia va donde la soltás. En Mac es Option (⌥)."],
-  ["Opciones de texto","Tocá un post-it, una nota o un texto de adentro de una idea y aparece «Aa»: tipografía, tamaño, negrita, itálica y color."],
-  ["Doble clic adentro de un post-it","Ahora crea lo último que agregaste (nota, texto, imagen…). En la plancha principal sigue siendo un post-it nuevo."],
-  ["Textos más claros","La trama del fondo se apaga debajo de los textos sueltos, y ya no aparece el subrayado rojo del corrector."],
-  ["Menú ••• de un post-it","Ahí está «Cómo se usa?». Para despegar un post-it, hacelo desde la plancha."]]}];
+  ["Recortar imágenes","Con la imagen en grande, tocá «Recortar». Anda en la plancha, adentro de los post-its y en el diario.",1],
+  ["Alt + arrastrar duplica","El original se queda en su lugar y la copia va donde la soltás. En Mac es Option (⌥).",1],
+  ["Opciones de texto","Tocá un post-it, una nota o un texto de adentro de una idea y aparece «Aa»: tipografía, tamaño, negrita, itálica y color.",1],
+  ["Doble clic adentro de un post-it","Crea lo último que agregaste (nota, texto, imagen…). En la plancha principal sigue siendo un post-it nuevo.",2],
+  ["Textos sueltos más fáciles de leer sobre la trama","",3],
+  ["Sin el subrayado rojo del corrector","",3]]}];
+/* El cartel junta todo lo que la persona no vio y lo ordena por importancia, no por fecha:
+   1 = cambia cómo se usa la web, 2 = útil pero no imprescindible, 3 = detalle (va al final, en una línea). */
 function verNovedades(todas,comoAmigo){if(window.__invitado||$("novedades"))return;const ult=NOVEDADES[0].n;let v=null;try{v=localStorage.getItem("nov_vista")}catch(_){}
   const marcar=()=>{try{localStorage.setItem("nov_vista",String(ult))}catch(_){}};
   if(!todas&&window.__entraNuevo){marcar();return}/* quien recién entra ve la guía, no hace falta el cartel */
@@ -2563,7 +2561,11 @@ function verNovedades(todas,comoAmigo){if(window.__invitado||$("novedades"))retu
   const desde=todas?0:v===null?0:(+v||0),nuevas=NOVEDADES.filter(x=>x.n>desde&&(!x.mio||mio));if(!nuevas.length){marcar();return}
   const ov=el("div","guia");ov.id="novedades";ov.setAttribute("role","dialog");ov.setAttribute("aria-modal","true");ov.setAttribute("aria-label","Novedades");
   const h=el("div","ay-hoja nov-hoja"),cab=el("div","ay-cab"),x=el("button",null,"×");x.type="button";x.setAttribute("aria-label","Cerrar");cab.append(el("h2",null,"Novedades"),x);
-  const cu=el("div","nov-cuerpo");for(const nv of nuevas){if(nuevas.length>1)cu.append(el("h3",null,nv.f));const ul=el("ul");for(const [t,d] of nv.it){const li=el("li");li.append(el("b",null,t+". "),d);ul.append(li)}cu.append(ul)}
+  const vistos=new Set(),its=[];for(const nv of nuevas)for(const [t,d,nivel] of nv.it){if(vistos.has(t))continue;vistos.add(t);its.push({t,d,nivel:nivel||2})}
+  its.sort((a,b)=>a.nivel-b.nivel);const cu=el("div","nov-cuerpo"),ul=el("ul");
+  const solosChicos=!its.some(x=>x.nivel<3);/* si todo es chico, se muestra igual que lo demás */
+  for(const it of its.filter(x=>solosChicos||x.nivel<3)){const li=el("li",it.nivel===1?"nov-1":null);li.append(el("b",null,it.t+(it.d?". ":"")),it.d);ul.append(li)}if(ul.children.length)cu.append(ul);
+  const chicos=solosChicos?[]:its.filter(x=>x.nivel>=3);if(chicos.length)cu.append(el("p","nov-chicos",(ul.children.length?"Y algunos detalles: ":"")+chicos.map(x=>x.t).join(" · ")+"."));
   const pie=el("div","nov-pie"),guia=el("button","btn","Ver la guía"),ok=el("button","btn oscuro","Listo");guia.type="button";ok.type="button";pie.append(guia,ok);h.append(cab,cu,pie);ov.append(h);document.body.append(ov);
   const tecla=e=>{if(e.key==="Escape"||e.key==="Enter"){e.preventDefault();e.stopImmediatePropagation();cerrar2()}};
   function cerrar2(){marcar();ov.remove();document.removeEventListener("keydown",tecla,true)}
