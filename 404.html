@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Imágenes del tiempo</title>
+<style>body{margin:0;padding:16px;background:#e6e6e6;color:#333;font:15px/1.4 "Courier New",Courier,monospace}a{color:inherit}</style>
+</head>
+<body>
+<p>Banco de ideas ahora se llama Imágenes del tiempo.<br>Te llevo a <a id="a" href="https://imagenesdeltiempo.app/">imagenesdeltiempo.app</a>…</p>
+<script>
+/* La web se mudó a imagenesdeltiempo.app. Esta página lleva a la dirección nueva con el mismo camino,
+   y pasa la clave y las preferencias guardadas en este navegador por el # (nunca viaja a ningún servidor),
+   para que nadie tenga que volver a pegar su clave. */
+(function(){
+  var NUEVO="https://imagenesdeltiempo.app";
+  var camino=location.pathname.replace(/^\/banco-de-ideas/,"")||"/";
+  var o={},n=0;
+  try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i),v=localStorage.getItem(k);if(k!=="gh_cache"&&v!=null&&v.length<4000){o[k]=v;n++}}}catch(e){}
+  var partes=[];
+  if(n)partes.push("migrar="+encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(o))))));
+  var h=location.hash.replace(/^#/,"");if(h)partes.push(h);
+  location.replace(NUEVO+camino+location.search+(partes.length?"#"+partes.join("&"):""));
+})();
+</script>
+</body>
+</html>
