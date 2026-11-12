@@ -1263,13 +1263,17 @@ function arrastrable(nodo,lz,{inicio,mover,soltar,tocar:tocar0,solo}){
     if(solo&&!e.target.closest(solo)){tocar(e);return}
     if(lz.ptrs.size>1)return;
     e.stopPropagation();if(escribiendo())document.activeElement.blur();
-    const p0=lz.aMundo(e.clientX,e.clientY),base=inicio();let mov=false,adx=0,ady=0;
+    const p0=lz.aMundo(e.clientX,e.clientY),base=inicio();let mov=false,adx=0,ady=0,fantasmas=null;
+    /* Alt + arrastrar: el original se queda a la vista en su lugar mientras movés la copia */
+    const fantasma=(o,b)=>{if(!duplicable(o)||!o.parentNode)return;const c=o.cloneNode(true),ta=o.querySelectorAll("textarea"),tc=c.querySelectorAll("textarea");ta.forEach((t,i)=>{if(tc[i])tc[i].value=t.value});
+      c.classList.remove("sel","msel","arrastrando","duplicando");c.classList.add("fantasma");c.removeAttribute("data-bid");c.style.left=b.x+"px";c.style.top=b.y+"px";c.style.pointerEvents="none";o.parentNode.insertBefore(c,o);fantasmas.push(c)};
+    const verFantasmas=si=>{if(si&&!fantasmas){fantasmas=[];fantasma(nodo,base);for(const g of grupo)fantasma(g.o,g.b)}else if(!si&&fantasmas){fantasmas.forEach(c=>c.remove());fantasmas=null}};
     const grupo=nodo.classList.contains("msel")?selNodos(lz).filter(o=>o!==nodo&&o._arr).map(o=>({o,b:o._arr.inicio()})):[];
     try{nodo.setPointerCapture(e.pointerId)}catch(_){}
     const mv=ev=>{if(lz.pinch){fin(ev,true);return}const p=lz.aMundo(ev.clientX,ev.clientY);const dx=p.x-p0.x,dy=p.y-p0.y;adx=dx;ady=dy;
-      if(!mov&&Math.hypot(dx,dy)*lz.s<5)return;mov=true;nodo.classList.add("arrastrando");nodo.classList.toggle("duplicando",!!(e.altKey||ev.altKey)&&duplicable(nodo));mover(base.x+dx,base.y+dy);for(const g of grupo)g.o._arr.mover(g.b.x+dx,g.b.y+dy)};
+      if(!mov&&Math.hypot(dx,dy)*lz.s<5)return;mov=true;nodo.classList.add("arrastrando");{const alt=!!(e.altKey||ev.altKey)&&!!lz.onDuplicarSel;nodo.classList.toggle("duplicando",alt&&duplicable(nodo));verFantasmas(alt)}mover(base.x+dx,base.y+dy);for(const g of grupo)g.o._arr.mover(g.b.x+dx,g.b.y+dy)};
     const fin=(ev,cancel)=>{nodo.removeEventListener("pointermove",mv);nodo.removeEventListener("pointerup",up);nodo.removeEventListener("pointercancel",cc);
-      nodo.classList.remove("arrastrando","duplicando");
+      nodo.classList.remove("arrastrando","duplicando");verFantasmas(false);
       if(mov){const ns=[nodo,...grupo.map(g=>g.o)].filter(duplicable);
         if(!cancel&&(e.altKey||(ev&&ev.altKey))&&lz.onDuplicarSel&&ns.length){/* Alt + arrastrar: lo original vuelve a su lugar y la copia queda donde lo soltaste */
           mover(base.x,base.y);for(const g of grupo)g.o._arr.mover(g.b.x,g.b.y);lz.onDuplicarSel(ns,Math.round(adx),Math.round(ady))}
