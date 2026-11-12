@@ -180,6 +180,21 @@ body.invitado #volver,body.invitado #h-mas,body.invitado>.barra,body.invitado #b
 .pieza:not(.sel) .herr,.pieza:not(.sel) .asa{display:none}
 .asa.lado{top:50%;bottom:auto;right:-8px;margin-top:-15px;width:12px;height:30px;border-radius:6px;cursor:ew-resize}
 @media (hover:hover){.pieza.btxt:hover .asa.lado,.pieza.btexto:hover .asa.lado{display:block}}
+.rec{position:fixed;inset:0;z-index:200;background:rgba(20,16,12,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:16px;touch-action:none;user-select:none;-webkit-user-select:none}
+.rec-marco{position:relative;line-height:0}
+.rec-marco img{display:block;max-width:calc(100vw - 48px);max-height:calc(100vh - 150px);max-height:calc(100dvh - 150px);-webkit-user-drag:none;pointer-events:none}
+.rec-caja{position:absolute;box-sizing:border-box;border:1.5px solid #fff;box-shadow:0 0 0 9999px rgba(0,0,0,.62);cursor:move;touch-action:none}
+.rec-asa{position:absolute;width:32px;height:32px;margin:-16px 0 0 -16px;touch-action:none}
+.rec-asa::after{content:"";position:absolute;inset:10px;background:#fff;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.6)}
+.rec-asa[data-h=nw]{left:0;top:0;cursor:nwse-resize}.rec-asa[data-h=n]{left:50%;top:0;cursor:ns-resize}.rec-asa[data-h=ne]{left:100%;top:0;cursor:nesw-resize}
+.rec-asa[data-h=e]{left:100%;top:50%;cursor:ew-resize}.rec-asa[data-h=se]{left:100%;top:100%;cursor:nwse-resize}.rec-asa[data-h=s]{left:50%;top:100%;cursor:ns-resize}
+.rec-asa[data-h=sw]{left:0;top:100%;cursor:nesw-resize}.rec-asa[data-h=w]{left:0;top:50%;cursor:ew-resize}
+.rec-pie{position:relative;z-index:1;display:flex;gap:10px}
+.rec-pie button{font:600 14px var(--ui);border:0;border-radius:999px;padding:10px 20px;cursor:pointer;background:rgba(255,255,255,.16);color:#fff}
+.rec-pie button.ok{background:#fff;color:#1c1712}
+.dblq-rec{position:absolute;bottom:-11px;right:-11px;height:24px;border-radius:999px;border:0;padding:0 9px;background:var(--ink);color:var(--paper);font:600 12px/24px var(--ui);cursor:pointer;opacity:0;transition:opacity .15s}
+.dblq:hover .dblq-rec,.dblq:focus-within .dblq-rec{opacity:1}
+@media (hover:none){.dblq-rec{opacity:.75}}
 .roto{font:500 12px var(--mono);color:var(--paper);padding:16px;border:1px dashed var(--paper)}
 
 /* Plancha de un post-it */
@@ -1314,12 +1329,13 @@ function pintarNota(c,k,i,p){
 function nodoDeco(d){
   const n=el("div","pieza deco");const img=el("img");img.alt="";img.draggable=false;
   img.onerror=()=>{if(!n.querySelector(".roto"))img.replaceWith(el("div","roto","Imagen no disponible"))};
-  const herr=el("div","herr");const capa=el("button",null,"");capa.type="button";const quitar=el("button","peligro","Quitar");quitar.type="button";herr.append(capa,quitar);
+  const herr=el("div","herr");const capa=el("button",null,"");capa.type="button";const rec=el("button",null,"Recortar");rec.type="button";const quitar=el("button","peligro","Quitar");quitar.type="button";herr.append(capa,rec,quitar);
   const asa=el("div","asa");asa.setAttribute("aria-hidden","true");n.append(img,herr,asa);n._id=d.id;n._img=img;n._capa=capa;n._quitar=quitar;
   arrastrable(n,lzMain,{inicio:()=>({x:parseFloat(n.style.left),y:parseFloat(n.style.top)}),mover:(x,y)=>{n.style.left=x+"px";n.style.top=y+"px";pedirFlechas()},
     soltar:()=>escribir(colDeco,n._id,{x:Math.round(parseFloat(n.style.left)),y:Math.round(parseFloat(n.style.top))}),tocar:()=>{selDeco=n._id;borrarDeco=null;pintarMain()}});
   redimensionable(asa,lzMain,{inicio:()=>parseFloat(n.style.width),mover:w=>{n.style.width=w+"px";pedirFlechas()},soltar:()=>escribir(colDeco,n._id,{w:Math.round(parseFloat(n.style.width))})});
   capa.onclick=()=>{const d=decos.find(z=>z.id===n._id);if(!d)return;d.arriba=!d.arriba;pintarMain();escribir(colDeco,d.id,{arriba:d.arriba})};
+  rec.onclick=async()=>{const id=n._id,d0=decos.find(z=>z.id===id);if(!d0)return;const nuevo=await recortarImagen(d0.a);if(!nuevo)return;const d=decos.find(z=>z.id===id);if(!d)return;d.a=nuevo;pintarMain();escribir(colDeco,id,{a:nuevo})};
   quitar.onclick=async()=>{if(borrarDeco!==n._id){borrarDeco=n._id;pintarMain();return}
     const d=decos.find(z=>z.id===n._id);borrarDeco=null;selDeco=null;try{await colDeco.doc(n._id).delete();if(d&&assets){try{await assets.delete(d.a)}catch(_){}}}catch(_){toast("No se pudo quitar la imagen.")}};
   return n;
@@ -1499,6 +1515,36 @@ async function subir(file){
   try{window.__subirVivo=!!(abierto&&abierto.doc.vivo);const r=await assets.upload(file,{type:file.type});window.__subirVivo=false;$("toast").hidden=true;return r}
   catch(e){const c=e&&e.code;toast(c==="too_large"?"La imagen pesa más de 20 MB. Achicala y probá de nuevo.":c==="quota_or_state"?"No queda espacio para más imágenes. Quitá alguna vieja.":c==="rate_limited"?"Demasiadas subidas seguidas. Esperá un momento.":"No se pudo subir la imagen. Probá de nuevo.");return null}
 }
+/* ---------- Recortar ---------- */
+async function recortarImagen(ref,nombre){
+  if(!assets){toast("Para recortar imágenes tenés que poder editar esta página.");return null}if(!ref||document.querySelector(".rec"))return null;
+  let blob;try{toast("Abriendo imagen…");blob=await new Promise((ok,mal)=>{const i=new Image();i.onload=()=>fetch(i.src).then(r=>r.blob()).then(ok,mal);i.onerror=mal;window.cargarImg(i,ref)});$("toast").hidden=true}
+  catch(_){toast("No se pudo abrir la imagen para recortarla.");return null}
+  const url=URL.createObjectURL(blob),capa=el("div","rec");capa.setAttribute("role","dialog");capa.setAttribute("aria-label","Recortar imagen");
+  const marco=el("div","rec-marco"),im=el("img");im.alt="";im.draggable=false;const caja=el("div","rec-caja");
+  for(const h of ["n","e","s","w","nw","ne","se","sw"]){const a=el("i","rec-asa");a.dataset.h=h;caja.append(a)}marco.append(im,caja);
+  const pie=el("div","rec-pie"),no=el("button",null,"Cancelar"),si=el("button","ok","Recortar");no.type="button";si.type="button";pie.append(no,si);capa.append(marco,pie);
+  try{await new Promise((ok,mal)=>{im.onload=ok;im.onerror=mal;im.src=url})}catch(_){URL.revokeObjectURL(url);toast("No se pudo abrir la imagen para recortarla.");return null}
+  document.body.append(capa);
+  let r={x:0,y:0,w:1,h:1};const MIN=.04,pintar=()=>{caja.style.left=r.x*100+"%";caja.style.top=r.y*100+"%";caja.style.width=r.w*100+"%";caja.style.height=r.h*100+"%"};pintar();
+  caja.addEventListener("pointerdown",e=>{if(e.pointerType==="mouse"&&e.button!==0)return;e.preventDefault();const h=e.target.dataset.h||"m",R=marco.getBoundingClientRect(),x0=e.clientX,y0=e.clientY,r0={...r};try{caja.setPointerCapture(e.pointerId)}catch(_){}
+    const mv=ev=>{const dx=(ev.clientX-x0)/R.width,dy=(ev.clientY-y0)/R.height;let x1=r0.x,y1=r0.y,x2=r0.x+r0.w,y2=r0.y+r0.h;
+      if(h==="m"){x1=Math.max(0,Math.min(1-r0.w,r0.x+dx));y1=Math.max(0,Math.min(1-r0.h,r0.y+dy));x2=x1+r0.w;y2=y1+r0.h}
+      else{if(h.includes("w"))x1=Math.max(0,Math.min(x2-MIN,x1+dx));if(h.includes("e"))x2=Math.min(1,Math.max(x1+MIN,x2+dx));if(h.includes("n"))y1=Math.max(0,Math.min(y2-MIN,y1+dy));if(h.includes("s"))y2=Math.min(1,Math.max(y1+MIN,y2+dy))}
+      r={x:x1,y:y1,w:x2-x1,h:y2-y1};pintar()};
+    const up=()=>{caja.removeEventListener("pointermove",mv);caja.removeEventListener("pointerup",up);caja.removeEventListener("pointercancel",up)};
+    caja.addEventListener("pointermove",mv);caja.addEventListener("pointerup",up);caja.addEventListener("pointercancel",up)});
+  let tecla;const ok=await new Promise(res=>{tecla=e=>{e.stopPropagation();if(e.key==="Escape"){e.preventDefault();res(false)}else if(e.key==="Enter"){e.preventDefault();res(true)}};
+    window.addEventListener("keydown",tecla,true);no.onclick=()=>res(false);si.onclick=()=>res(true)});
+  window.removeEventListener("keydown",tecla,true);capa.remove();
+  const W=im.naturalWidth,H=im.naturalHeight,sx=Math.min(W-1,Math.round(r.x*W)),sy=Math.min(H-1,Math.round(r.y*H)),sw=Math.max(1,Math.min(W-sx,Math.round(r.w*W))),sh=Math.max(1,Math.min(H-sy,Math.round(r.h*H)));
+  if(!ok||(sw>=W&&sh>=H)){URL.revokeObjectURL(url);return null}
+  try{const jpg=/jpe?g/.test(blob.type)||(!/png|gif|webp/.test(blob.type)&&/\.jpe?g$/i.test(ref)),c=document.createElement("canvas");c.width=sw;c.height=sh;const x=c.getContext("2d");
+    if(jpg){x.fillStyle="#fff";x.fillRect(0,0,sw,sh)}x.drawImage(im,sx,sy,sw,sh,0,0,sw,sh);
+    const tipo=jpg?"image/jpeg":"image/png",out=await new Promise(f=>c.toBlob(f,tipo,.92));if(!out)throw 0;
+    const s=await subir(new File([out],String(nombre||"imagen").replace(/\.\w+$/,"")+(jpg?".jpg":".png"),{type:tipo}));return s?s.id:null}
+  catch(_){toast("No se pudo recortar la imagen.");return null}finally{URL.revokeObjectURL(url)}
+}
 async function decoEnPlancha(file,p){
   const r=await subir(file);if(!r||!colDeco)return;
   try{const ref=await colDeco.add({tablero:vista,a:r.id,x:Math.round(p.x-130),y:Math.round(p.y-100),w:260,arriba:false,r:Math.round((Math.random()*6-3)*10)/10,creado:Date.now()});selDeco=ref.id;pintarMain()}
@@ -1597,6 +1643,9 @@ function nodoBloque(b){
   else{const im=el("img");im.alt=b.alt||"Imagen";im.draggable=false;im.onload=()=>pintarHilos();im.onerror=()=>im.replaceWith(el("div","roto","No se pudo cargar esta imagen."));cargarImg(im,b.a);n.append(im)}
   const herr=el("div","herr");const q=el("button","peligro",borrarB===b.id?"¿Seguro? Tocá de nuevo":"Quitar");q.type="button";
   if(b.t==="post")for(const col of PALETA.slice(0,8)){const s=el("button","sw");s.type="button";s.style.setProperty("--c",col);s.setAttribute("aria-label","Color "+col);s.onclick=()=>{b.c=col;n.style.setProperty("--c",col);guardarBloques()};herr.append(s)}
+  if(b.t==="img"){const rec=el("button",null,"Recortar");rec.type="button";herr.append(rec);
+    rec.onclick=async()=>{const hoja=abierto&&abierto.id,nuevo=await recortarImagen(b.a,b.alt);if(!nuevo||!abierto||abierto.id!==hoja)return;const bb=abierto.doc.bloques.find(y=>y.id===b.id);if(!bb)return;
+      bb.a=nuevo;b.a=nuevo;const im=document.querySelector('#capa-hoja .pieza[data-bid="'+b.id+'"] img');if(im)cargarImg(im,nuevo);guardarBloques()}}
   herr.append(q);n.append(herr);
   q.onclick=async()=>{if(borrarB!==b.id){borrarB=b.id;q.textContent="¿Seguro? Tocá de nuevo";return}
     borrarB=null;selB=null;const d=abierto.doc;d.bloques=d.bloques.filter(y=>y!==b);const antes=d.hilos.length;d.hilos=d.hilos.filter(h=>h.a!==b.id&&h.b!==b.id);
@@ -2167,6 +2216,7 @@ const AYUDA=[
   [{h:'<span class="ay-chip">Hilo rojo</span><span class="ay-hilo"></span>'},"Lo prendés, tocás dos cosas y quedan unidas con un hilo. «Listo, hilos» para terminar."],
   ["Doble clic en el fondo","Un post-it nuevo ahí mismo."],
   ["Imágenes","Pegalas con "+CMD+"+V o arrastralas desde la compu."],
+  [{chip:"Recortar"},"Tocá una imagen y aparece «Recortar»: arrastrás los bordes o las esquinas, movés el recuadro y confirmás. Anda en la plancha, adentro de los post-its y en el diario. Un GIF animado queda quieto al recortarlo."],
   [{chip:"•••"},"Las opciones de la idea: categoría, estado (Semilla, En desarrollo, En marcha, Descartada), Exportar, Compartir y Despegar."],
   [{chip:"Exportar"},"Copia el texto o lo descarga como .txt para seguir en Docs o Word."],
   [{chip:"Compartir"},"Te da un link directo a esa nota, que abre solo en tus dispositivos."],
@@ -2475,6 +2525,8 @@ function nodoBloqueDia(p,b){
     const t=el("textarea","dl-tit");t.rows=1;t.spellcheck=false;t.value=b.titulo||"";t.placeholder="Ponele un título…";t.setAttribute("aria-label","Título del link");
     t.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();t.blur()}});t.oninput=()=>{b.titulo=t.value;autosize(t);ajustarPagina(p);guardarDiaFeed(p)};t.onblur=()=>guardarDiaYaFeed(p);
     const a=el("a",null,host+" ↗");a.href=b.url;a.target="_blank";a.rel="noopener noreferrer";a.title=b.url;n.append(t,a);requestAnimationFrame(()=>autosize(t))}
+  if(b.t==="img"){const rec=el("button","dblq-rec","Recortar");rec.type="button";n.append(rec);
+    rec.onclick=async()=>{const nuevo=await recortarImagen(b.a,b.alt);if(!nuevo||!p.e.bloques.includes(b))return;b.a=nuevo;const im=n.querySelector("img");if(im){im.dataset.ref=nuevo;cargarImg(im,nuevo)}guardarDiaFeed(p);guardarDiaYaFeed(p)}}
   const x=el("button","dblq-x","×");x.type="button";x.setAttribute("aria-label","Quitar");let seguro=false;
   x.onclick=()=>{if(!seguro){seguro=true;x.textContent="Quitar";x.classList.add("sure");setTimeout(()=>{seguro=false;x.textContent="×";x.classList.remove("sure")},3000);return}
     p.e.bloques=p.e.bloques.filter(z=>z!==b);n.remove();ajustarPagina(p);guardarDiaFeed(p);guardarDiaYaFeed(p)};n.append(x);
