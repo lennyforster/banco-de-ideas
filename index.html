@@ -40,6 +40,13 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus
 /* ---------- Cómo se usa ---------- */
 .guia{position:fixed;inset:0;z-index:80;background:rgba(20,14,10,.55);display:flex;align-items:center;justify-content:center;padding:16px}
 .guia[hidden]{display:none}
+.ay-hoja.nov-hoja{width:min(480px,100%);height:auto;max-height:calc(100dvh - 32px);grid-template-rows:auto 1fr auto}
+.nov-cuerpo{overflow:auto;padding:14px 18px 4px}
+.nov-cuerpo h3{margin:10px 0 6px;font:600 .72rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.nov-cuerpo h3:first-child{margin-top:0}
+.nov-cuerpo ul{margin:0 0 8px;padding-left:18px;display:grid;gap:7px;font:500 .95rem/1.4 var(--ui)}
+.nov-cuerpo b{font-weight:700}
+.nov-pie{display:flex;justify-content:space-between;gap:8px;padding:12px 18px 16px}
 .ay-hoja{width:min(860px,100%);height:min(620px,calc(100dvh - 32px));display:grid;grid-template-rows:auto 1fr;background:#fbf7ec;border-radius:12px;box-shadow:0 30px 60px -20px rgba(0,0,0,.6);overflow:hidden;color:var(--ink)}
 .ay-cab{display:flex;align-items:center;gap:12px;padding:16px 18px 12px;border-bottom:1px solid rgba(43,37,32,.1)}
 .ay-cab h2{flex:1;margin:0;font:700 1.4rem/1.1 var(--hand)}
@@ -920,6 +927,7 @@ async function conectar(){
     if(e.status===401||e.status===403||e.status===404){entraNuevo=true;TOKEN=null;LS.del("gh_token");RB=null;LS.del("gh_repo");pedirClave(e.status===404?"Esa clave no tiene acceso a ninguna plancha. Revisá que al crearla hayas elegido el repo de datos.":"Esa clave no funciona. Revisala y probá de nuevo.");await new Promise(r=>resolverClave=r)}
     else{aviso("No pude conectar con GitHub. Reintento en unos segundos…");await new Promise(r=>setTimeout(r,5000))}}}
   /* la primera vez que alguien entra con su clave en un dispositivo, se abre la guía */
+  if(entraNuevo)window.__entraNuevo=true;
   if(entraNuevo&&!LS.get("ayuda_vista"))setTimeout(()=>{try{if(window.abrirAyuda)window.abrirAyuda()}catch(_){}},800);LS.set("ayuda_vista","1");
   return db;
 }
@@ -2257,6 +2265,7 @@ const AYUDA=[
   [{chip:"Mezclar"},"Junta dos ideas al azar para ver qué sale. Podés filtrar qué entra en la mezcla."],
   [{h:'<span class="ay-seg"><b>N.º</b><span>Categoría</span><span>Grilla</span></span>'},"Cómo se ordenan los post-its."],
   [{chip:"Cómo se usa?"},"Esta guía."],
+  [{chip:"Novedades"},"Cuando la web tiene cambios nuevos, al entrar te aparece un cartel que cuenta qué cambió. Sale una sola vez por cada tanda de cambios."],
   [{chip:"Salir"},"Cierra la sesión en este dispositivo. Para volver vas a necesitar tu clave."],
   [null,"Abajo, en «+ Nueva idea», están «Editar categorías» e «Importar de Google Keep»."]]},
  {t:"Adentro de un post-it",it:[
@@ -2348,6 +2357,28 @@ function pintarAyuda(){const idx=$("ay-idx");idx.replaceChildren();
   for(const [k,txt] of sec.it){const li=el("li",k?null:"solo");if(k)li.append(claveAyuda(k));li.append(el("span",null,txt));ul.append(li)}
   for(const a of ul.querySelectorAll(".ay-atajo-link")){if(LINK_ATAJO){const l=el("a","ay-chip ay-btn","Bajar el atajo");l.href=LINK_ATAJO;l.target="_blank";l.rel="noopener";a.append(l)}else a.append(el("span","ay-chip","Pedíselo a Lenny"))}
   se.append(ul);cu.append(se,el("p","ay-pie","¿Algo no anda o se te ocurre una mejora? ¡Avisame!"));cu.scrollTop=0}
+/* ---------- Novedades ----------
+   Cada vez que se agrega o cambia algo que el usuario nota, sumar ARRIBA una entrada con n = el anterior + 1.
+   Al entrar, a cada persona le aparece un cartel con lo que todavía no vio. Formato de cada ítem: [título, explicación]. */
+const NOVEDADES=[
+ {n:1,f:"12 de noviembre",it:[
+  ["Recortar imágenes","Tocá una imagen y aparece «Recortar». Anda en la plancha, adentro de los post-its y en el diario."],
+  ["Alt + arrastrar duplica","El original se queda en su lugar y la copia va donde la soltás. En Mac es Option (⌥)."],
+  ["Opciones de texto","Tocá un post-it, una nota o un texto de adentro de una idea y aparece «Aa»: tipografía, tamaño, negrita, itálica y color."],
+  ["Doble clic adentro de un post-it","Ahora crea lo último que agregaste (nota, texto, imagen…). En la plancha principal sigue siendo un post-it nuevo."],
+  ["Textos más claros","La trama del fondo se apaga debajo de los textos sueltos, y ya no aparece el subrayado rojo del corrector."],
+  ["Menú ••• de un post-it","Ahí está «Cómo se usa?». Para despegar un post-it, hacelo desde la plancha."]]}];
+function verNovedades(todas){if(window.__invitado||$("novedades"))return;const ult=NOVEDADES[0].n;let v=null;try{v=localStorage.getItem("nov_vista")}catch(_){}
+  const marcar=()=>{try{localStorage.setItem("nov_vista",String(ult))}catch(_){}};
+  if(!todas&&window.__entraNuevo){marcar();return}/* quien recién entra ve la guía, no hace falta el cartel */
+  const desde=todas?0:v===null?ult-1:(+v||0),nuevas=NOVEDADES.filter(x=>x.n>desde);if(!nuevas.length)return;
+  const ov=el("div","guia");ov.id="novedades";ov.setAttribute("role","dialog");ov.setAttribute("aria-modal","true");ov.setAttribute("aria-label","Novedades");
+  const h=el("div","ay-hoja nov-hoja"),cab=el("div","ay-cab"),x=el("button",null,"×");x.type="button";x.setAttribute("aria-label","Cerrar");cab.append(el("h2",null,"Novedades"),x);
+  const cu=el("div","nov-cuerpo");for(const nv of nuevas){if(nuevas.length>1)cu.append(el("h3",null,nv.f));const ul=el("ul");for(const [t,d] of nv.it){const li=el("li");li.append(el("b",null,t+". "),d);ul.append(li)}cu.append(ul)}
+  const pie=el("div","nov-pie"),guia=el("button","btn","Ver la guía"),ok=el("button","btn oscuro","Listo");guia.type="button";ok.type="button";pie.append(guia,ok);h.append(cab,cu,pie);ov.append(h);document.body.append(ov);
+  const tecla=e=>{if(e.key==="Escape"||e.key==="Enter"){e.preventDefault();e.stopImmediatePropagation();cerrar2()}};
+  function cerrar2(){marcar();ov.remove();document.removeEventListener("keydown",tecla,true)}
+  document.addEventListener("keydown",tecla,true);x.onclick=cerrar2;ok.onclick=cerrar2;ov.addEventListener("click",e=>{if(e.target===ov)cerrar2()});guia.onclick=()=>{cerrar2();abrirAyuda()};setTimeout(()=>ok.focus(),30)}
 function abrirAyuda(){pintarAyuda();$("ayuda").hidden=false;$("ay-cuerpo").scrollTop=0;if(document.body.classList.contains("barra-abierta"))$("btn-menu").click();setTimeout(()=>$("ay-cerrar").focus(),30)}
 function cerrarAyuda(){$("ayuda").hidden=true}
 $("ay-cerrar").onclick=cerrarAyuda;$("ayuda").addEventListener("click",e=>{if(e.target===$("ayuda"))cerrarAyuda()});
@@ -3198,7 +3229,7 @@ drawComposer();setVista(vista);try{if(localStorage.getItem("pestana")==="diario"
   colDeco=db.collection("deco");
   colDeco.onSnapshot(s=>{decos=s.docs.map(d=>({id:d.id,...d.data()}));pintarMain()},()=>{});
 })();
-(async()=>{try{assets=window.claude?await window.claude.use("assets"):null}catch(_){assets=null}pintarMain();if(abierto)$("add-img").hidden=!assets})();
+(async()=>{try{assets=window.claude?await window.claude.use("assets"):null}catch(_){assets=null}pintarMain();if(abierto)$("add-img").hidden=!assets;setTimeout(()=>{try{verNovedades()}catch(e){console.error(e)}},900)})();
 (async()=>{try{dl=window.claude?await window.claude.use("downloads"):null}catch(_){dl=null}})();
 (async()=>{try{samp=window.claude?await window.claude.use("sample"):null}catch(_){samp=null}if(abierto)$("btn-claude").hidden=!samp;$("m-claude").hidden=!samp;$("abrir-dictar").hidden=!samp;$("h-dictar").hidden=!samp})();
 </script>
