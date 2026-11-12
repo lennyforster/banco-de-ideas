@@ -751,6 +751,25 @@ body.en-diario .dia-herr{display:flex}
 @media (max-width:560px){.buscar{width:130px}.titulo-hoja{display:none}}
 @media (max-width:420px){.zoom .pct{display:none}}
 @media (prefers-reduced-motion:reduce){.nota{transition:none}}
+
+/* ===== Versión texto (prueba de rediseño, solo la ve Lenny desde el •••) ===== */
+html.plano{background:#e6e6e6;--mat:#e6e6e6;--mat-minor:transparent;--mat-major:transparent;--mat-diag:transparent;--ink:#333;--muted:#555;--paper:#e6e6e6;--chip-bg:#e6e6e6;--soft:#555;--danger:#333;--link:#333;
+  --hand:"Courier New",Courier,monospace;--ui:"Courier New",Courier,monospace;--mono:"Courier New",Courier,monospace}
+html.plano *,html.plano *::before,html.plano *::after{font-family:"Courier New",Courier,monospace!important;font-weight:400!important;font-style:normal!important;letter-spacing:0!important;text-transform:none!important;box-shadow:none!important;text-shadow:none!important;border-radius:0!important;background-image:none!important;border-color:#333!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html.plano :where(*:not(.sw):not(img):not(canvas):not(svg):not(svg *)),html.plano :where(*)::before,html.plano :where(*)::after{background-color:transparent!important;color:#333!important}
+html.plano ::placeholder{color:#8a8a8a!important}
+html.plano .sw{background-color:var(--c)!important}
+/* capas que tienen que tapar lo de atrás */
+html.plano body,html.plano .vista,html.plano .detalle,html.plano .tiempo,html.plano .conectar,html.plano .nota,html.plano .pila,html.plano .pieza,html.plano .panel,html.plano .ay-hoja,html.plano .toast,html.plano .herr,html.plano .lapiz-menu,html.plano .barrita-dia,html.plano .barra-sel,html.plano .linkform,html.plano .rec,html.plano .nombre-vivo>*,html.plano select,html.plano option,html.plano .dblq,html.plano .hoja-dia,html.plano .feed,html.plano .diario{background-color:#e6e6e6!important}
+html.plano .panel,html.plano .ay-hoja,html.plano .toast,html.plano .herr,html.plano .lapiz-menu,html.plano .barrita-dia,html.plano .barra-sel,html.plano .linkform,html.plano .nombre-vivo>*{border:1px solid #333!important}
+/* sin cintas, tramas ni adornos */
+html.plano .nota::before,html.plano .nota::after,html.plano .pieza::before,html.plano .pieza::after,html.plano .cinta,html.plano .btexto::before{display:none!important}
+html.plano .nota,html.plano .pieza{transform:none!important}
+/* lo elegido se subraya */
+html.plano .on,html.plano .act,html.plano .activo,html.plano .activa,html.plano [aria-selected="true"],html.plano [aria-pressed="true"],html.plano [aria-current]{text-decoration:underline!important;text-underline-offset:3px}
+html.plano button:hover,html.plano a{text-decoration:underline!important;text-underline-offset:3px}
+html.plano .nota.msel,html.plano .pieza.sel,html.plano .pieza.msel{outline:1px dashed #333!important;outline-offset:4px}
+html.plano img{filter:grayscale(1)}
 </style>
 <div class="conectar" id="conectar" hidden>
   <form class="cx-card" id="cx-form">
@@ -2142,6 +2161,12 @@ document.addEventListener("keydown",e=>{if(e.key!=="Tab"||e.shiftKey||e.ctrlKey|
   const herr=(m,txt,lbl)=>{const b=el("button","btn ic solo-celu-b",txt);b.type="button";b.dataset.mm=m;b.setAttribute("aria-label",lbl);b.title=lbl;return b};
   ex.append($("buscar"),$("btn-cal"),$("btn-tiempo"),$("mezclar"),$("vistaseg"),herr("undo","↶","Deshacer"),herr("redo","↷","Rehacer"),herr("sel","⬚","Elegir varios"),herr("flecha","↗","Flechas"),$("salir"));
   {const ay=el("button","btn","Cómo se usa?");ay.type="button";ay.id="btn-ayuda";ay.onclick=()=>abrirAyuda();ex.lastElementChild.before(ay)}
+  /* prueba de rediseño: solo aparece en la cuenta de Lenny */
+  {const pl=el("button","btn");pl.type="button";pl.id="btn-plano";pl.hidden=true;
+    const poner=si=>{document.documentElement.classList.toggle("plano",si);pl.textContent=si?"Versión normal":"Versión texto";try{localStorage.setItem("plano",si?"1":"0")}catch(_){}
+      requestAnimationFrame(()=>document.querySelectorAll("textarea").forEach(t=>{try{autosize(t)}catch(_){}}))};
+    pl.onclick=()=>poner(!document.documentElement.classList.contains("plano"));ex.lastElementChild.before(pl);
+    window.revisarPlano=()=>{let mio=false,puesto=false;try{mio=localStorage.getItem("gh_repo")==="banco-de-ideas-datos";puesto=localStorage.getItem("plano")==="1"}catch(_){}pl.hidden=!mio;if(mio)poner(puesto);else document.documentElement.classList.remove("plano")};window.revisarPlano()}
   $("btn-menu").before(ex);
   ex.addEventListener("click",e=>{const b=e.target.closest("[data-mm]");if(!b)return;const m=b.dataset.mm;if(m==="undo")deshacerUI(false);else if(m==="redo")deshacerUI(true);else lzMain.setModo(lzMain.modo===m?null:m)})}
 
@@ -3229,7 +3254,7 @@ drawComposer();setVista(vista);try{if(localStorage.getItem("pestana")==="diario"
   colDeco=db.collection("deco");
   colDeco.onSnapshot(s=>{decos=s.docs.map(d=>({id:d.id,...d.data()}));pintarMain()},()=>{});
 })();
-(async()=>{try{assets=window.claude?await window.claude.use("assets"):null}catch(_){assets=null}pintarMain();if(abierto)$("add-img").hidden=!assets;setTimeout(()=>{try{verNovedades()}catch(e){console.error(e)}},900)})();
+(async()=>{try{assets=window.claude?await window.claude.use("assets"):null}catch(_){assets=null}pintarMain();if(abierto)$("add-img").hidden=!assets;try{window.revisarPlano()}catch(_){}setTimeout(()=>{try{verNovedades()}catch(e){console.error(e)}},900)})();
 (async()=>{try{dl=window.claude?await window.claude.use("downloads"):null}catch(_){dl=null}})();
 (async()=>{try{samp=window.claude?await window.claude.use("sample"):null}catch(_){samp=null}if(abierto)$("btn-claude").hidden=!samp;$("m-claude").hidden=!samp;$("abrir-dictar").hidden=!samp;$("h-dictar").hidden=!samp})();
 </script>
