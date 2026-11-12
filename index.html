@@ -1072,7 +1072,7 @@ window.claude={use:async n=>{if(INVITADO&&n==="db"){if(!listo)listo=conectar();r
     <div class="meta"><span>Esta idea</span><button type="button" class="cerrar" id="cerrar-mas" aria-label="Cerrar">×</button></div>
     <div id="mas-cat" class="mas-sec"><span class="nota-panel">Categoría</span><div class="colores" id="h-colores" role="group" aria-label="Categoría"></div></div>
     <div id="mas-est" class="mas-sec"><span class="nota-panel">Estado</span><div class="colores" id="h-estados" role="group" aria-label="Estado de la idea"></div></div>
-    <div class="acc" style="justify-content:flex-start"><button class="btn" id="h-exportar" type="button">Exportar</button><button class="btn" id="h-vivo" type="button">● En vivo</button><button class="btn" id="h-compartir" type="button">Compartir</button><button class="btn" id="h-a-pila" type="button" hidden>Devolver a la pila</button><button class="btn" id="h-del" type="button">Despegar post-it</button></div>
+    <div class="acc" style="justify-content:flex-start"><button class="btn" id="h-exportar" type="button">Exportar</button><button class="btn" id="h-vivo" type="button">● En vivo</button><button class="btn" id="h-compartir" type="button">Compartir</button><button class="btn" id="h-a-pila" type="button" hidden>Devolver a la pila</button><button class="btn" id="h-ayuda" type="button">Cómo se usa?</button><button class="btn" id="h-del" type="button" hidden>Borrar este día</button></div>
   </div>
   <form class="panel" id="linkform" hidden>
     <input type="text" id="l-url" placeholder="Pegá el link" aria-label="Link">
@@ -1607,7 +1607,7 @@ function prepararDoc(d){delete d._pend;if(!Array.isArray(d.bloques))d.bloques=[]
 function abrir(k,id,virtual){
   const i=data[k].find(x=>x.id===id)||virtual;if(!i)return;
   abierto={k,id,doc:prepararDoc(JSON.parse(JSON.stringify(i))),remoto:null};
-  selB=null;borrarB=null;borrarSure=false;selHilo=null;origenHilo=null;$("h-del").textContent=k==="diario"?"Borrar este día":"Despegar post-it";
+  selB=null;borrarB=null;borrarSure=false;selHilo=null;origenHilo=null;$("h-del").textContent="Borrar este día";$("h-del").hidden=k!=="diario";
   {const papel=k==="diario";lzHoja.papel=papel;$("vp-hoja").classList.toggle("papel",papel);$("add-esc").hidden=papel;$("add-cal").hidden=papel;$("add-a-idea").hidden=!papel;$("h-compartir").hidden=papel;$("h-a-pila").hidden=!(k==="ideas"&&abierto.doc.origen==="keep"&&abierto.doc.sacada);
    if(papel){const d=abierto.doc;if(d.imagen||d.sonido||d.escena){d.texto=textoDia(d);delete d.imagen;delete d.sonido;delete d.escena;abierto.migrar=true}}}$("h-del").style.color="";$("linkform").hidden=true;estado("");
   for(const pnl of ["panel-claude","panel-mezcla","panel-cats","panel-cal","panel-compartir","panel-export","panel-mas"])$(pnl).hidden=true;if(modoHilo)setModoHilo(false);
@@ -1738,6 +1738,7 @@ document.addEventListener("keydown",e=>{
     else if(!abierto&&selFlecha&&quitarFlecha){quitarFlecha.click();e.preventDefault()}
     else if(!abierto&&selDeco){const n=nodosDeco.get(selDeco);n?._quitar.click();e.preventDefault()}}
 });
+$("h-ayuda").onclick=()=>{$("panel-mas").hidden=true;abrirAyuda()};
 $("h-del").onclick=async()=>{
   if(!abierto)return;if(!borrarSure){borrarSure=true;$("h-del").textContent="¿Seguro? Tocá de nuevo";$("h-del").style.color="var(--danger)";return}
   const {k,id,doc}=abierto;for(const key of Object.keys(pend))if(key.startsWith(id+"|")){clearTimeout(timers[key]);delete pend[key]}
@@ -2262,7 +2263,7 @@ const AYUDA=[
   [{chip:"Aa"},"Tocá un post-it, una nota o un texto y aparece «Aa»: le cambiás la tipografía, el tamaño, la negrita, la itálica y el color a todo ese bloque."],
   ["Imágenes","Pegalas con "+CMD+"+V o arrastralas desde la compu."],
   [{chip:"Recortar"},"Tocá una imagen y aparece «Recortar»: arrastrás los bordes o las esquinas, movés el recuadro y confirmás. Anda en la plancha, adentro de los post-its y en el diario. Un GIF animado queda quieto al recortarlo."],
-  [{chip:"•••"},"Las opciones de la idea: categoría, estado (Semilla, En desarrollo, En marcha, Descartada), Exportar, Compartir y Despegar."],
+  [{chip:"•••"},"Las opciones de la idea: categoría, estado (Semilla, En desarrollo, En marcha, Descartada), Exportar, Compartir y «Cómo se usa?». Para despegar un post-it, hacelo desde la plancha: con la × de su esquina, o elegilo y tocá «Borrar»."],
   [{chip:"Exportar"},"Copia el texto o lo descarga como .txt para seguir en Docs o Word."],
   [{chip:"Compartir"},"Te da un link directo a esa nota, que abre solo en tus dispositivos."],
   [{h:'<span class="ay-chip" style="background:#1f9d6b;color:#fff">● En vivo</span>'},"Para trabajar un post-it con otra gente al mismo tiempo. Mirá la pestaña «En vivo»."]]},
