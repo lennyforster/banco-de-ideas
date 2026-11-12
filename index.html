@@ -187,6 +187,14 @@ body.invitado #volver,body.invitado #h-mas,body.invitado>.barra,body.invitado #b
 .pieza:not(.sel) .herr,.pieza:not(.sel) .asa{display:none}
 .asa.lado{top:50%;bottom:auto;right:-8px;margin-top:-15px;width:12px;height:30px;border-radius:6px;cursor:ew-resize}
 @media (hover:hover){.pieza.btxt:hover .asa.lado,.pieza.btexto:hover .asa.lado{display:block}}
+.ver-img{position:fixed;inset:0;z-index:150;background:rgba(18,15,12,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:16px}
+.ver-img img{max-width:calc(100vw - 32px);max-height:calc(100vh - 110px);max-height:calc(100dvh - 110px);object-fit:contain;cursor:zoom-out;-webkit-user-drag:none}
+.ver-pie{display:flex;gap:10px}
+.ver-pie button{font:600 14px var(--ui);border:0;border-radius:999px;padding:10px 20px;cursor:pointer;background:rgba(255,255,255,.16);color:#fff}
+.ver-pie button.ok{background:#fff;color:#1c1712}
+html.plano .ver-img{background-color:rgba(18,15,12,.94)!important}
+html.plano .ver-img img{filter:none}
+html.plano .ver-pie button{background-color:transparent!important;color:#fff!important;border:1px solid #fff!important;padding:6px 14px!important}
 .rec{position:fixed;inset:0;z-index:200;background:rgba(20,16,12,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:16px;touch-action:none;user-select:none;-webkit-user-select:none}
 .rec-marco{position:relative;line-height:0}
 .rec-marco img{display:block;max-width:calc(100vw - 48px);max-height:calc(100vh - 150px);max-height:calc(100dvh - 150px);-webkit-user-drag:none;pointer-events:none}
@@ -199,10 +207,9 @@ body.invitado #volver,body.invitado #h-mas,body.invitado>.barra,body.invitado #b
 .rec-pie{position:relative;z-index:1;display:flex;gap:10px}
 .rec-pie button{font:600 14px var(--ui);border:0;border-radius:999px;padding:10px 20px;cursor:pointer;background:rgba(255,255,255,.16);color:#fff}
 .rec-pie button.ok{background:#fff;color:#1c1712}
-.dblq-rec{position:absolute;bottom:-11px;right:-11px;height:24px;border-radius:999px;border:0;padding:0 9px;background:var(--ink);color:var(--paper);font:600 12px/24px var(--ui);cursor:pointer;opacity:0;transition:opacity .15s}
-.dblq:hover .dblq-rec,.dblq:focus-within .dblq-rec{opacity:1}
-@media (hover:none){.dblq-rec{opacity:.75}}
+.dblq-img img{cursor:zoom-in}
 .duplicando{cursor:copy!important}
+.deco img,.pieza.bimg img{cursor:zoom-in}
 .herr-txt{position:absolute;bottom:100%;left:0;margin-bottom:6px;display:flex;gap:4px;align-items:center}
 .herr button.on:not(.sw){background:var(--paper);color:var(--ink)}
 .herr .ht-b{font-weight:800}.herr .ht-i{font-style:italic;font-family:Georgia,serif}
@@ -402,6 +409,14 @@ body.modo-hilo #vp-hoja textarea,body.modo-hilo #vp-hoja input{pointer-events:no
 .lat:hover{background:rgba(43,37,32,.1)}
 .lat[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
 .lat-sep{height:1px;margin:3px 7px;background:rgba(43,37,32,.18)}
+.lat.mas{font:500 22px/1 var(--ui)}
+.agregar-menu{position:fixed;z-index:12;display:flex;flex-direction:column;gap:1px;background:var(--chip-bg);border-radius:14px;padding:5px;box-shadow:0 4px 14px rgba(0,0,0,.3);transform:translateY(-50%)}
+.agregar-menu button{border:0;background:none;border-radius:9px;padding:8px 14px;font:600 .85rem var(--ui);color:var(--ink);cursor:pointer;text-align:left;white-space:nowrap}
+.agregar-menu button:hover{background:rgba(43,37,32,.1)}
+.agregar-menu button.am{background:var(--p-corto)}
+.agregar-menu button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+/* en compu, «Agregar» vive en el + de la barra izquierda; la barra de abajo queda solo para «A Ideas» */
+@media (min-width:761px){#detalle .herramientas:not(:has(#add-a-idea:not([hidden]))){display:none}#detalle .herramientas>:not(#add-a-idea){display:none}}
 .lapiz-menu{position:fixed;z-index:10;left:calc(max(12px,env(safe-area-inset-left,0px)) + 58px);top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:2px;background:var(--chip-bg);border-radius:999px;padding:5px 6px;box-shadow:0 2px 8px rgba(0,0,0,.28)}
 .lm-sep{width:1px;height:22px;margin:0 5px;background:rgba(43,37,32,.18);flex:none}
 .lm-b{flex:none;width:32px;height:32px;border:0;border-radius:50%;background:none;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;color:var(--ink)}
@@ -755,13 +770,32 @@ body.en-diario .dia-herr{display:flex}
 /* ===== Versión texto (prueba de rediseño, solo la ve Lenny desde el •••) ===== */
 html.plano{background:#e6e6e6;--mat:#e6e6e6;--mat-minor:transparent;--mat-major:transparent;--mat-diag:transparent;--ink:#333;--muted:#555;--paper:#e6e6e6;--chip-bg:#e6e6e6;--soft:#555;--danger:#333;--link:#333;
   --hand:"Courier New",Courier,monospace;--ui:"Courier New",Courier,monospace;--mono:"Courier New",Courier,monospace}
-html.plano *,html.plano *::before,html.plano *::after{font-family:"Courier New",Courier,monospace!important;font-weight:400!important;font-style:normal!important;letter-spacing:0!important;text-transform:none!important;box-shadow:none!important;text-shadow:none!important;border-radius:0!important;background-image:none!important;border-color:#333!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html.plano *,html.plano *::before,html.plano *::after{font-family:"Courier New",Courier,monospace!important;font-weight:400!important;font-style:normal!important;letter-spacing:-.035em!important;-webkit-text-stroke:.3px currentColor;-webkit-font-smoothing:auto;text-transform:none!important;box-shadow:none!important;text-shadow:none!important;border-radius:0!important;background-image:none!important;border-color:#333!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 html.plano :where(*:not(.sw):not(img):not(canvas):not(svg):not(svg *)),html.plano :where(*)::before,html.plano :where(*)::after{background-color:transparent!important;color:#333!important}
 html.plano ::placeholder{color:#8a8a8a!important}
-html.plano .sw{background-color:var(--c)!important}
+html.plano .sw{background-color:var(--c)!important;border-radius:50%!important;border:0!important;width:14px!important;height:14px!important;min-width:0!important;padding:0!important}
+html.plano .sw.on,html.plano .sw[aria-pressed="true"]{outline:1px solid #333!important;outline-offset:2px}
 /* capas que tienen que tapar lo de atrás */
 html.plano body,html.plano .vista,html.plano .detalle,html.plano .tiempo,html.plano .conectar,html.plano .nota,html.plano .pila,html.plano .pieza,html.plano .panel,html.plano .ay-hoja,html.plano .toast,html.plano .herr,html.plano .lapiz-menu,html.plano .barrita-dia,html.plano .barra-sel,html.plano .linkform,html.plano .rec,html.plano .nombre-vivo>*,html.plano select,html.plano option,html.plano .dblq,html.plano .hoja-dia,html.plano .feed,html.plano .diario{background-color:#e6e6e6!important}
-html.plano .panel,html.plano .ay-hoja,html.plano .toast,html.plano .herr,html.plano .lapiz-menu,html.plano .barrita-dia,html.plano .barra-sel,html.plano .linkform,html.plano .nombre-vivo>*{border:1px solid #333!important}
+/* todo lo que flota encima de otra cosa: fondo blanco y un borde fino, siempre igual */
+html.plano :is(.panel,.ay-hoja,.toast,.herr,.herr-txt,.lapiz-menu,.barrita-dia,.barra-sel,.linkform,.nombre-vivo>*,#nueva,.chip-modo,.aviso-pegar,.agregar-menu),
+html.plano .detalle :is(.lateral,.herramientas,.zoom),html.plano body.barra-abierta .barra-extra{background-color:#fff!important;border:1px solid #333!important}
+html.plano body.barra-abierta .barra-extra{padding:6px 12px!important;flex-wrap:wrap;row-gap:4px}
+html.plano :is(.herr,.herr-txt){padding:3px 6px!important;gap:1.5ch!important}
+html.plano #nueva{padding:12px!important}
+html.plano #nueva :is(textarea,input){background-color:#fff!important}
+/* el único color en las ideas: un punto por categoría */
+html.plano .cchip i{display:inline-block;width:.55em!important;height:.55em!important;border-radius:50%!important;background-color:var(--c)!important;box-shadow:none!important}
+html.plano .cchip{border:0!important;padding:2px 4px!important}
+html.plano .cchip[aria-pressed="true"]{text-decoration:underline!important;text-underline-offset:3px}
+.lp-dot{display:inline-block;width:.55em;height:.55em;border-radius:50%;margin-right:.7ch;vertical-align:.06em}
+html.plano .lp-dot{background-color:var(--c)!important;border-radius:50%!important}
+/* el diario conserva su margen rojo */
+html.plano .diario{background-image:linear-gradient(90deg,transparent calc(var(--margen) - 1px),rgba(200,40,30,.75) calc(var(--margen) - 1px) var(--margen),transparent var(--margen))!important}
+/* botones de versión: una A de máquina para pasar a texto, un post-it para volver */
+.ic-a{font:400 1.05rem/1 "Courier New",Courier,monospace;letter-spacing:0}
+.ic-post{display:inline-block;width:14px;height:14px;background:#ffe76a;transform:rotate(-5deg);box-shadow:0 1px 2px rgba(0,0,0,.3);vertical-align:-2px}
+html.plano .ic-post{background-color:#ffe76a!important;box-shadow:0 1px 2px rgba(0,0,0,.3)!important}
 /* sin cintas, tramas ni adornos */
 html.plano .nota::before,html.plano .nota::after,html.plano .pieza::before,html.plano .pieza::after,html.plano .cinta,html.plano .btexto::before{display:none!important}
 html.plano .nota,html.plano .pieza{transform:none!important}
@@ -770,6 +804,7 @@ html.plano .on,html.plano .act,html.plano .activo,html.plano .activa,html.plano 
 html.plano button:hover,html.plano a{text-decoration:underline!important;text-underline-offset:3px}
 html.plano .nota.msel,html.plano .pieza.sel,html.plano .pieza.msel{outline:1px dashed #333!important;outline-offset:4px}
 html.plano img{filter:grayscale(1)}
+html.plano :is(.bimg,.deco) img{border:0!important}
 /* en la versión texto, la plancha de ideas y frases es una lista.
    Regla de diseño: una sola letra, un solo tamaño, un solo gris. Nada de negrita ni cajas.
    Lo que se toca se subraya al pasar; el único rojo marca dónde estás. */
@@ -779,7 +814,8 @@ html.plano body:not(.en-diario) #lista-plana{display:block;position:fixed;inset:
   padding:calc(env(safe-area-inset-top,0px) + var(--m) + 2.6em) max(var(--m),env(safe-area-inset-right,0px)) 5em max(var(--m),env(safe-area-inset-left,0px))}
 html.plano body:not(.en-diario) .lateral,html.plano body:not(.en-diario) .lapiz-menu,html.plano body:not(.en-diario) .zoom,html.plano body:not(.en-diario) .volver-centro,
 html.plano body:not(.en-diario) #vistaseg,html.plano body:not(.en-diario) #mezclar,html.plano body:not(.en-diario) .solo-celu-b,html.plano .barra .n{display:none!important}
-html.plano .detalle .lateral,html.plano .detalle .zoom{display:flex!important}
+html.plano body .detalle .lateral,html.plano body .detalle .zoom{display:flex!important}
+html.plano .barra .grupo{background-color:#e6e6e6!important}
 /* un solo tamaño en la barra, la lista, el menú y los carteles */
 html.plano :is(.barra,#lista-plana,.composer,#barra-extra,.guia,.panel),html.plano :is(.barra,#lista-plana,.composer,#barra-extra,.guia,.panel) *{font-size:15px!important;line-height:1.35!important}
 html.plano .barra{top:calc(env(safe-area-inset-top,0px) + var(--m));left:max(var(--m),env(safe-area-inset-left,0px));right:max(var(--m),env(safe-area-inset-right,0px))}
@@ -1410,13 +1446,13 @@ function pintarNota(c,k,i,p){
 function nodoDeco(d){
   const n=el("div","pieza deco");const img=el("img");img.alt="";img.draggable=false;
   img.onerror=()=>{if(!n.querySelector(".roto"))img.replaceWith(el("div","roto","Imagen no disponible"))};
-  const herr=el("div","herr");const capa=el("button",null,"");capa.type="button";const rec=el("button",null,"Recortar");rec.type="button";const quitar=el("button","peligro","Quitar");quitar.type="button";herr.append(capa,rec,quitar);
+  const herr=el("div","herr");const capa=el("button",null,"");capa.type="button";const quitar=el("button","peligro","Quitar");quitar.type="button";herr.append(capa,quitar);
   const asa=el("div","asa");asa.setAttribute("aria-hidden","true");n.append(img,herr,asa);n._id=d.id;n._img=img;n._capa=capa;n._quitar=quitar;
   arrastrable(n,lzMain,{inicio:()=>({x:parseFloat(n.style.left),y:parseFloat(n.style.top)}),mover:(x,y)=>{n.style.left=x+"px";n.style.top=y+"px";pedirFlechas()},
-    soltar:()=>escribir(colDeco,n._id,{x:Math.round(parseFloat(n.style.left)),y:Math.round(parseFloat(n.style.top))}),tocar:()=>{selDeco=n._id;borrarDeco=null;pintarMain()}});
+    soltar:()=>escribir(colDeco,n._id,{x:Math.round(parseFloat(n.style.left)),y:Math.round(parseFloat(n.style.top))}),tocar:()=>{selDeco=n._id;borrarDeco=null;pintarMain();const d=decos.find(z=>z.id===n._id);if(d)verImagen(d.a,{recortar:recortarDeco})}});
   redimensionable(asa,lzMain,{inicio:()=>parseFloat(n.style.width),mover:w=>{n.style.width=w+"px";pedirFlechas()},soltar:()=>escribir(colDeco,n._id,{w:Math.round(parseFloat(n.style.width))})});
   capa.onclick=()=>{const d=decos.find(z=>z.id===n._id);if(!d)return;d.arriba=!d.arriba;pintarMain();escribir(colDeco,d.id,{arriba:d.arriba})};
-  rec.onclick=async()=>{const id=n._id,d0=decos.find(z=>z.id===id);if(!d0)return;const nuevo=await recortarImagen(d0.a);if(!nuevo)return;const d=decos.find(z=>z.id===id);if(!d)return;d.a=nuevo;pintarMain();escribir(colDeco,id,{a:nuevo})};
+  const recortarDeco=async()=>{const id=n._id,d0=decos.find(z=>z.id===id);if(!d0)return null;const nuevo=await recortarImagen(d0.a);if(!nuevo)return null;const d=decos.find(z=>z.id===id);if(!d)return null;d.a=nuevo;pintarMain();escribir(colDeco,id,{a:nuevo});return nuevo};
   quitar.onclick=async()=>{if(borrarDeco!==n._id){borrarDeco=n._id;pintarMain();return}
     const d=decos.find(z=>z.id===n._id);borrarDeco=null;selDeco=null;try{await colDeco.doc(n._id).delete();if(d&&assets){try{await quitarAsset(d.a,d.id)}catch(_){}}}catch(_){toast("No se pudo quitar la imagen.")}};
   return n;
@@ -1439,13 +1475,13 @@ function pintarLista(){const L=$("lista-plana");if(!L||!document.documentElement
   tit.append(sel,` al ${new Date().toLocaleDateString("es-AR",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}`);
   const fr=document.createDocumentFragment(),nueva=el("button","lp-nueva",esIdea?"+ nueva idea":"+ nueva frase");nueva.type="button";nueva.onclick=()=>$("abrir-composer").click();fr.append(tit,nueva);
   /* columnas tan anchas como haga falta, como en un texto plano */
-  const wN=Math.max(2,...items.map(i=>String(i.numero||"?").length+1)),wC=Math.min(16,Math.max(4,...items.map(i=>(esIdea?label(i.tipo):(i.autor||"")).length)));
+  const wN=Math.max(2,...items.map(i=>String(i.numero||"?").length+1)),wC=Math.min(16,Math.max(4,...items.map(i=>(esIdea?label(i.tipo):(i.autor||"")).length)))+(esIdea?2:0);
   const caja=el("div");caja.style.setProperty("--lp-cols",`${wN}ch 8ch ${wC}ch minmax(0,1fr)`);caja.style.setProperty("--lp-cols-m",`${wN}ch minmax(0,1fr)`);
   let g0;for(const [x,i] of items.entries()){
     if(ok==="cat"||ok==="est"){const g=grupoDe(i);if(x&&g!==g0)caja.append(el("div","lp-esp"));g0=g}
     const b=el("button","lp-fila");b.type="button";const est=esIdea?estadoDe(i.estado):null,t=(i.texto||"").replace(/\s+/g," ").trim()||"(sin texto)",tx=el("span","lp-t");
     if(i.vivo)tx.append(el("span","lp-vivo","● "));tx.append(esIdea?t:"“"+t.replace(/^[«“"]|[»”"]$/g,"")+"”");if(est)tx.append(` (${est.nombre.toLowerCase()})`);
-    b.append(el("span",null,"#"+(i.numero||"?")),el("span","lp-f",fecha(i.creado)),el("span","lp-c",(esIdea?label(i.tipo):(i.autor||"")).toLowerCase()),tx);
+    b.append(el("span",null,"#"+(i.numero||"?")),el("span","lp-f",fecha(i.creado)),(()=>{const c=el("span","lp-c");if(esIdea){const d=el("span","lp-dot");d.style.setProperty("--c",cat(i.tipo).color);c.append(d)}c.append((esIdea?label(i.tipo):(i.autor||"")).toLowerCase());return c})(),tx);
     b.setAttribute("aria-label",`Abrir ${esIdea?"idea":"frase"} ${i.numero||""}`);b.onclick=()=>abrir(k,i.id);caja.append(b)}
   if(!n)caja.append(el("p",null,busca?"(nada)":"(vacía)"));fr.append(caja);
   const y=L.scrollTop;L.replaceChildren(fr);L.scrollTop=y}
@@ -1631,6 +1667,15 @@ function imagenEnUso(a,ex){const fuera=o=>!!o&&ex.includes(o.id);
   try{for(const pg of feed.pags.values())ds.push({id:pg.k,bloques:pg.e&&pg.e.bloques})}catch(_){}
   return ds.some(i=>!fuera(i)&&(i.bloques||[]).some(b=>b.t==="img"&&b.a===a&&!fuera(b)))}
 function quitarAsset(a,...ex){if(!assets||!a||imagenEnUso(a,ex))return Promise.resolve();return assets.delete(a)}
+/* ---------- Ver una imagen en grande (tocándola), con «Recortar» ahí mismo ---------- */
+function verImagen(ref,{recortar}={}){if(!ref||document.querySelector(".ver-img"))return;
+  const ov=el("div","ver-img");ov.setAttribute("role","dialog");ov.setAttribute("aria-modal","true");ov.setAttribute("aria-label","Imagen");
+  const im=el("img");im.alt="";im.draggable=false;window.cargarImg(im,ref);const pie=el("div","ver-pie");
+  const cerrar=()=>{ov.remove();document.removeEventListener("keydown",tecla,true)};
+  const tecla=e=>{if(e.key==="Escape"&&!document.querySelector(".rec")){e.preventDefault();e.stopImmediatePropagation();cerrar()}};
+  if(recortar&&assets){const rc=el("button",null,"Recortar");rc.type="button";rc.onclick=async()=>{const nuevo=await recortar();if(nuevo)window.cargarImg(im,nuevo)};pie.append(rc)}
+  const ok=el("button","ok","Cerrar");ok.type="button";ok.onclick=cerrar;pie.append(ok);ov.append(im,pie);
+  ov.addEventListener("click",e=>{if(e.target===ov||e.target===im)cerrar()});document.addEventListener("keydown",tecla,true);document.body.append(ov);setTimeout(()=>ok.focus(),30)}
 /* ---------- Recortar ---------- */
 async function recortarImagen(ref,nombre){
   if(!assets){toast("Para recortar imágenes tenés que poder editar esta página.");return null}if(!ref||document.querySelector(".rec"))return null;
@@ -1773,9 +1818,8 @@ function nodoBloque(b){
     bo=bt("B","ht-b","Negrita",()=>{if(b.b)delete b.b;else b.b=1});it=bt("I","ht-i","Itálica",()=>{if(b.i)delete b.i;else b.i=1});
     for(const col of COL_TXT){const x=bt("","sw","Color del texto",()=>{if(b.k===col)delete b.k;else b.k=col});x.style.setProperty("--c",col);x._c=col;sws.push(x)}
     marcas();aa.onclick=()=>{fila.hidden=!fila.hidden};herr.append(aa,fila)}
-  if(b.t==="img"){const rec=el("button",null,"Recortar");rec.type="button";herr.append(rec);
-    rec.onclick=async()=>{const hoja=abierto&&abierto.id,nuevo=await recortarImagen(b.a,b.alt);if(!nuevo||!abierto||abierto.id!==hoja)return;const bb=abierto.doc.bloques.find(y=>y.id===b.id);if(!bb)return;
-      bb.a=nuevo;b.a=nuevo;const im=document.querySelector('#capa-hoja .pieza[data-bid="'+b.id+'"] img');if(im)cargarImg(im,nuevo);guardarBloques()}}
+  const recortarB=b.t!=="img"?null:async()=>{const hoja=abierto&&abierto.id,nuevo=await recortarImagen(b.a,b.alt);if(!nuevo||!abierto||abierto.id!==hoja)return null;const bb=abierto.doc.bloques.find(y=>y.id===b.id);if(!bb)return null;
+      bb.a=nuevo;b.a=nuevo;const im=document.querySelector('#capa-hoja .pieza[data-bid="'+b.id+'"] img');if(im)cargarImg(im,nuevo);guardarBloques();return nuevo};
   herr.append(q);n.append(herr);
   q.onclick=async()=>{if(borrarB!==b.id){borrarB=b.id;q.textContent="¿Seguro? Tocá de nuevo";return}
     borrarB=null;selB=null;const d=abierto.doc;d.bloques=d.bloques.filter(y=>y!==b);const antes=d.hilos.length;d.hilos=d.hilos.filter(h=>h.a!==b.id&&h.b!==b.id);
@@ -1787,7 +1831,7 @@ function nodoBloque(b){
   if(b.t==="img"){const asa=el("div","asa");n.append(asa);redimensionable(asa,lzHoja,{inicio:()=>parseFloat(n.style.width),mover:w=>{n.style.width=w+"px";pintarHilos()},soltar:()=>{b.w=Math.round(parseFloat(n.style.width));guardarBloques()}})}
   arrastrable(n,lzHoja,{solo:b.t==="txt"||b.t==="tx"||b.t==="post"||b.t==="cal"||b.t==="esc"?".grip":null,inicio:()=>({x:parseFloat(n.style.left),y:parseFloat(n.style.top)}),mover:(x,y)=>{n.style.left=x+"px";n.style.top=y+"px";pintarHilos()},
     soltar:()=>{b.x=Math.round(parseFloat(n.style.left));b.y=Math.round(parseFloat(n.style.top));guardarBloques()},
-    tocar:()=>{if(modoHilo){tocarHilo(b.id);return}marcar();borrarB=null;q.textContent="Quitar"}});
+    tocar:()=>{if(modoHilo){tocarHilo(b.id);return}marcar();borrarB=null;q.textContent="Quitar";if(b.t==="img")verImagen(b.a,{recortar:recortarB})}});
   return n;
 }
 function agregarBloque(b){abierto.doc.bloques.push(b);selB=b.id;document.querySelectorAll("#capa-hoja .pieza").forEach(x=>x.classList.remove("sel"));const n=nodoBloque(b);$("capa-hoja").append(n);guardarBloques();return n}
@@ -2064,6 +2108,18 @@ function crearLateral(lz){
     if(mo==="flecha")toast("Tocá un post-it y después otro para unirlos con una flecha.");if(mo==="lapiz"){pincel.goma=false;if(lz.papel&&pincel.c==="#fffdf6")pincel.c="#2b2520";pintarPaletas()}};
 }
 crearLateral(lzMain);crearLateral(lzHoja);pintarPaletas();
+/* adentro de un post-it: el + de la barra izquierda tiene todo lo que se puede agregar */
+{const bar=lzHoja.vp.parentElement.querySelector(".lateral"),mas=el("button","lat mas","+");mas.type="button";mas.title="Agregar";mas.setAttribute("aria-label","Agregar");mas.setAttribute("aria-expanded","false");
+  bar.prepend(mas,el("span","lat-sep"));const menu=el("div","agregar-menu");menu.hidden=true;menu.setAttribute("role","menu");$("detalle").append(menu);
+  const OPC=[["add-post","Post-it","am"],["add-txt","Nota"],["add-tx","Texto"],["add-link","Link"],["add-img","Imagen"],["add-cal","Calendario"],["add-esc","Escaleta"],["h-hilo","Hilo rojo"]];
+  const cerrarM=()=>{menu.hidden=true;mas.setAttribute("aria-expanded","false");document.removeEventListener("pointerdown",fuera,true)};
+  const fuera=e=>{if(!menu.contains(e.target)&&e.target!==mas)cerrarM()};
+  mas.onclick=()=>{if(!menu.hidden){cerrarM();return}menu.replaceChildren();
+    for(const [id,t,c] of OPC){const o=$(id);if(!o||o.hidden)continue;const b=el("button",c||null,t);b.type="button";b.setAttribute("role","menuitem");if(id==="h-hilo")b.setAttribute("aria-pressed",o.getAttribute("aria-pressed"));b.onclick=()=>{cerrarM();o.click()};menu.append(b)}
+    const r=mas.getBoundingClientRect();menu.style.left=(r.right+14)+"px";menu.style.top=(r.top+r.height/2)+"px";menu.hidden=false;mas.setAttribute("aria-expanded","true");
+    requestAnimationFrame(()=>{const m=menu.getBoundingClientRect();if(m.top<8)menu.style.top=(parseFloat(menu.style.top)+8-m.top)+"px";if(m.bottom>innerHeight-8)menu.style.top=(parseFloat(menu.style.top)-(m.bottom-innerHeight+8))+"px"});
+    document.addEventListener("pointerdown",fuera,true)};
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!menu.hidden){cerrarM()}})}
 
 /* ---------- Duplicar ---------- */
 async function duplicarEnPlancha(nodos,dx=40,dy=40){
@@ -2223,11 +2279,14 @@ document.addEventListener("keydown",e=>{if(e.key!=="Tab"||e.shiftKey||e.ctrlKey|
   ex.append($("buscar"),$("btn-cal"),$("btn-tiempo"),$("mezclar"),$("vistaseg"),herr("undo","↶","Deshacer"),herr("redo","↷","Rehacer"),herr("sel","⬚","Elegir varios"),herr("flecha","↗","Flechas"),$("salir"));
   {const ay=el("button","btn","Cómo se usa?");ay.type="button";ay.id="btn-ayuda";ay.onclick=()=>abrirAyuda();ex.lastElementChild.before(ay)}
   /* prueba de rediseño: solo aparece en la cuenta de Lenny */
-  {const pl=el("button","btn");pl.type="button";pl.id="btn-plano";pl.hidden=true;
-    const poner=si=>{document.documentElement.classList.toggle("plano",si);pl.textContent=si?"Versión normal":"Versión texto";try{localStorage.setItem("plano",si?"1":"0")}catch(_){}
+  /* versión texto / versión normal: está en el ••• de la plancha y en el ••• de cada post-it */
+  {const bts=[],mk=()=>{const b=el("button","btn");b.type="button";bts.push(b);b.onclick=()=>poner(!document.documentElement.classList.contains("plano"));return b};
+    const poner=si=>{document.documentElement.classList.toggle("plano",si);try{localStorage.setItem("plano",si?"1":"0")}catch(_){}
+      for(const b of bts){b.replaceChildren(si?el("span","ic-post"):el("span","ic-a","A"));const t=si?"Versión normal":"Versión texto";b.title=t;b.setAttribute("aria-label",t)}
       try{pintarLista()}catch(_){}requestAnimationFrame(()=>document.querySelectorAll("textarea").forEach(t=>{try{autosize(t)}catch(_){}}))};
-    pl.onclick=()=>poner(!document.documentElement.classList.contains("plano"));ex.lastElementChild.before(pl);
-    window.revisarPlano=()=>{let mio=false,puesto=false;try{mio=localStorage.getItem("gh_repo")==="banco-de-ideas-datos";puesto=localStorage.getItem("plano")==="1"}catch(_){}pl.hidden=!mio;if(mio)poner(puesto);else document.documentElement.classList.remove("plano")};window.revisarPlano()}
+    const pl=mk();pl.id="btn-plano";ex.lastElementChild.before(pl);
+    const enPost=mk();enPost.id="h-plano";$("h-ayuda").before(enPost);
+    window.revisarPlano=()=>{let puesto=false;try{puesto=localStorage.getItem("plano")==="1"}catch(_){}poner(puesto)};window.revisarPlano()}
   $("btn-menu").before(ex);
   ex.addEventListener("click",e=>{const b=e.target.closest("[data-mm]");if(!b)return;const m=b.dataset.mm;if(m==="undo")deshacerUI(false);else if(m==="redo")deshacerUI(true);else lzMain.setModo(lzMain.modo===m?null:m)})}
 
@@ -2351,18 +2410,19 @@ const AYUDA=[
   [{chip:"Mezclar"},"Junta dos ideas al azar para ver qué sale. Podés filtrar qué entra en la mezcla."],
   [{h:'<span class="ay-seg"><b>N.º</b><span>Categoría</span><span>Grilla</span></span>'},"Cómo se ordenan los post-its."],
   [{chip:"Cómo se usa?"},"Esta guía."],
+  [{h:'<span class="ay-chip"><span class="ic-a">A</span></span> <span class="ay-chip"><span class="ic-post"></span></span>'},"La A pasa a la versión texto: todo en letra de máquina, y las ideas y frases como una lista que se ordena tocando la palabra subrayada del título. El post-it te devuelve a la versión normal. También está en el ••• de cada post-it."],
   [{chip:"Novedades"},"Cuando la web tiene cambios nuevos, al entrar te aparece un cartel que cuenta qué cambió. Sale una sola vez por cada tanda de cambios."],
   [{chip:"Salir"},"Cierra la sesión en este dispositivo. Para volver vas a necesitar tu clave."],
   [null,"Abajo, en «+ Nueva idea», están «Editar categorías» e «Importar de Google Keep»."]]},
  {t:"Adentro de un post-it",it:[
-  [{h:'<span class="ay-tools"><b class="am">Post-it</b><b>Nota</b><b>Texto</b><b>Link</b><b>Imagen</b><b>Calendario</b></span>'},"La barra de abajo: sumás post-its, notas, texto, links, imágenes y calendarios a la hoja."],
+  [{chip:"+"},"El + de la barra de la izquierda: sumás post-its, notas, texto, links, imágenes, calendarios, escaletas y el hilo rojo. En el celu sigue en la barra de abajo."],
   [{chip:"Escaleta"},"Lista de escenas, con bifurcaciones para probar caminos distintos."],
   [{h:'<span class="ay-chip">Hilo rojo</span><span class="ay-hilo"></span>'},"Lo prendés, tocás dos cosas y quedan unidas con un hilo. «Listo, hilos» para terminar."],
   ["Doble clic en el fondo","Crea ahí mismo lo último que agregaste: post-it, nota, texto, link, imagen… Si todavía no agregaste nada, un post-it. En la plancha principal siempre es un post-it nuevo."],
   [{chip:"Aa"},"Tocá un post-it, una nota o un texto y aparece «Aa»: le cambiás la tipografía, el tamaño, la negrita, la itálica y el color a todo ese bloque."],
-  ["Imágenes","Pegalas con "+CMD+"+V o arrastralas desde la compu."],
-  [{chip:"Recortar"},"Tocá una imagen y aparece «Recortar»: arrastrás los bordes o las esquinas, movés el recuadro y confirmás. Anda en la plancha, adentro de los post-its y en el diario. Un GIF animado queda quieto al recortarlo."],
-  [{chip:"•••"},"Las opciones de la idea: categoría, estado (Semilla, En desarrollo, En marcha, Descartada), Exportar, Compartir y «Cómo se usa?». Para despegar un post-it, hacelo desde la plancha: con la × de su esquina, o elegilo y tocá «Borrar»."],
+  ["Imágenes","Pegalas con "+CMD+"+V o arrastralas desde la compu. Tocá una y se ve en grande, en pantalla completa; tocá afuera o «Cerrar» para volver."],
+  [{chip:"Recortar"},"Con la imagen en grande, tocá «Recortar»: arrastrás los bordes o las esquinas, movés el recuadro y confirmás. Anda en la plancha, adentro de los post-its y en el diario. Un GIF animado queda quieto al recortarlo."],
+  [{chip:"•••"},"Las opciones de la idea: categoría, estado (Semilla, En desarrollo, En marcha, Descartada), Exportar, Compartir, la versión texto (la A) y «Cómo se usa?». Para despegar un post-it, hacelo desde la plancha: con la × de su esquina, o elegilo y tocá «Borrar»."],
   [{chip:"Exportar"},"Copia el texto o lo descarga como .txt para seguir en Docs o Word."],
   [{chip:"Compartir"},"Te da un link directo a esa nota, que abre solo en tus dispositivos."],
   [{h:'<span class="ay-chip" style="background:#1f9d6b;color:#fff">● En vivo</span>'},"Para trabajar un post-it con otra gente al mismo tiempo. Mirá la pestaña «En vivo»."]]},
@@ -2426,7 +2486,10 @@ const AYUDA=[
   [["Tab"],"Esconde toda la interfaz para ver solo la plancha. Tab de nuevo y vuelve."]]},
  {t:"Tus datos",it:[
   [null,"Todo se guarda solo, en un repositorio privado de GitHub. No hay botón de guardar."],
-  [null,"Para abrir tu plancha en otro dispositivo, entrás a la web y pegás tu clave una vez."]]}
+  [null,"Para abrir tu plancha en otro dispositivo, entrás a la web y pegás tu clave una vez."]]},
+ {t:"Contacto",it:[
+  [null,"¿Algo que cambiarías, que no anda o que te gustaría que tenga? Escribile a Lenny."],
+  [{h:'<a class="ay-chip" href="https://wa.me/5491168342011" target="_blank" rel="noopener">15 6834-2011</a>'},"Por WhatsApp o mensaje."]]}
 ];
 function claveAyuda(k){const kk=el("span","ay-k");
   const uno=x=>{if(typeof x==="string")return document.createTextNode(x);if(x.ic){const s=el("span","ay-lat");s.innerHTML=ICO[x.ic];return s}if(x.chip){return el("span","ay-chip"+(x.c?" "+x.c:""),x.chip)}if(x.h){const s=el("span","ay-vis");s.innerHTML=x.h;return s}return document.createTextNode("")};
@@ -2448,6 +2511,11 @@ function pintarAyuda(){const idx=$("ay-idx");idx.replaceChildren();
    Al entrar, a cada persona le aparece un cartel con lo que todavía no vio. Formato de cada ítem: [título, explicación].
    Si el cambio solo lo ve Lenny (pruebas), la entrada lleva mio:true y el cartel le sale solo a él. */
 const NOVEDADES=[
+ {n:5,f:"12 de noviembre, a la noche",it:[
+  ["Versión texto","En el ••• de arriba hay una A: la web pasa a letra de máquina, y las ideas y frases se ven como una lista. Tocás la palabra subrayada del título para ordenarla por fecha, categoría o estado. El post-it te devuelve a la versión normal."],
+  ["Imágenes en grande","Tocá una imagen y se abre en pantalla completa. Ahí está «Recortar»."],
+  ["Agregar, a la izquierda","Adentro de un post-it, todo lo que se agrega (post-it, nota, texto, link, imagen…) está en el + de la barra de la izquierda. En el celu sigue abajo."],
+  ["Contacto","En «Cómo se usa?», al final, está el celu de Lenny por si querés proponer algo."]]},
  {n:4,f:"12 de noviembre, versión texto (otra vuelta)",mio:true,it:[
   ["Más simple","Una sola letra, un solo tamaño, sin negrita ni recuadros. El rojo solo marca en qué sección estás."],
   ["El orden está en el título","Tocá la palabra subrayada («por fecha») y elegí: fecha, antigüedad, categoría o estado. Por categoría o estado, deja un renglón libre entre grupos."],
@@ -2704,8 +2772,9 @@ function nodoBloqueDia(p,b){
     const t=el("textarea","dl-tit");t.rows=1;t.spellcheck=false;t.value=b.titulo||"";t.placeholder="Ponele un título…";t.setAttribute("aria-label","Título del link");
     t.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();t.blur()}});t.oninput=()=>{b.titulo=t.value;autosize(t);ajustarPagina(p);guardarDiaFeed(p)};t.onblur=()=>guardarDiaYaFeed(p);
     const a=el("a",null,host+" ↗");a.href=b.url;a.target="_blank";a.rel="noopener noreferrer";a.title=b.url;n.append(t,a);requestAnimationFrame(()=>autosize(t))}
-  if(b.t==="img"){const rec=el("button","dblq-rec","Recortar");rec.type="button";n.append(rec);
-    rec.onclick=async()=>{const nuevo=await recortarImagen(b.a,b.alt);if(!nuevo||!p.e.bloques.includes(b))return;b.a=nuevo;const im=n.querySelector("img");if(im){im.dataset.ref=nuevo;cargarImg(im,nuevo)}guardarDiaFeed(p);guardarDiaYaFeed(p)}}
+  if(b.t==="img"){const recortarD=async()=>{const nuevo=await recortarImagen(b.a,b.alt);if(!nuevo||!p.e.bloques.includes(b))return null;b.a=nuevo;const im=n.querySelector("img");if(im){im.dataset.ref=nuevo;cargarImg(im,nuevo)}guardarDiaFeed(p);guardarDiaYaFeed(p);return nuevo};
+    let p0=null;n.addEventListener("pointerdown",e=>{p0=e.target.tagName==="IMG"?[e.clientX,e.clientY]:null},true);
+    n.addEventListener("click",e=>{if(!p0||e.target.tagName!=="IMG")return;const mov=Math.hypot(e.clientX-p0[0],e.clientY-p0[1]);p0=null;if(mov<6)verImagen(b.a,{recortar:recortarD})})}
   const x=el("button","dblq-x","×");x.type="button";x.setAttribute("aria-label","Quitar");let seguro=false;
   x.onclick=()=>{if(!seguro){seguro=true;x.textContent="Quitar";x.classList.add("sure");setTimeout(()=>{seguro=false;x.textContent="×";x.classList.remove("sure")},3000);return}
     p.e.bloques=p.e.bloques.filter(z=>z!==b);n.remove();ajustarPagina(p);guardarDiaFeed(p);guardarDiaYaFeed(p)};n.append(x);
