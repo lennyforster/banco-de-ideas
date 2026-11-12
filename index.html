@@ -766,46 +766,38 @@ html.plano .panel,html.plano .ay-hoja,html.plano .toast,html.plano .herr,html.pl
 html.plano .nota::before,html.plano .nota::after,html.plano .pieza::before,html.plano .pieza::after,html.plano .cinta,html.plano .btexto::before{display:none!important}
 html.plano .nota,html.plano .pieza{transform:none!important}
 /* lo elegido se subraya */
-html.plano .on,html.plano .act,html.plano .activo,html.plano .activa,html.plano [aria-selected="true"],html.plano [aria-pressed="true"],html.plano [aria-current]{text-decoration:underline!important;text-underline-offset:3px}
+html.plano .on,html.plano .act,html.plano .activo,html.plano .activa,html.plano [aria-pressed="true"],html.plano [aria-current]{text-decoration:underline!important;text-underline-offset:3px}
 html.plano button:hover,html.plano a{text-decoration:underline!important;text-underline-offset:3px}
 html.plano .nota.msel,html.plano .pieza.sel,html.plano .pieza.msel{outline:1px dashed #333!important;outline-offset:4px}
 html.plano img{filter:grayscale(1)}
-/* en la versión texto, la plancha de ideas y frases es una lista */
+/* en la versión texto, la plancha de ideas y frases es una lista.
+   Regla de diseño: una sola letra, un solo tamaño, un solo gris. Nada de negrita ni cajas.
+   Lo que se toca se subraya al pasar; el único rojo marca dónde estás. */
 #lista-plana{display:none}
-html.plano{--rojo:#c8281e;--gris:#7c7c7c}
-html.plano body:not(.en-diario) #lista-plana{display:block;position:fixed;inset:0;z-index:5;overflow:auto;background-color:#e6e6e6!important;padding:calc(env(safe-area-inset-top,0px) + 92px) max(28px,calc((100vw - 1040px)/2)) 130px;font-size:15px;line-height:1.5}
-html.plano body:not(.en-diario) .lateral,html.plano body:not(.en-diario) .lapiz-menu,html.plano body:not(.en-diario) .zoom,html.plano body:not(.en-diario) .volver-centro{display:none!important}
+html.plano{--rojo:#c8281e;--m:16px}
+html.plano body:not(.en-diario) #lista-plana{display:block;position:fixed;inset:0;z-index:5;overflow:auto;background-color:#e6e6e6!important;
+  padding:calc(env(safe-area-inset-top,0px) + var(--m) + 2.6em) max(var(--m),env(safe-area-inset-right,0px)) 5em max(var(--m),env(safe-area-inset-left,0px))}
+html.plano body:not(.en-diario) .lateral,html.plano body:not(.en-diario) .lapiz-menu,html.plano body:not(.en-diario) .zoom,html.plano body:not(.en-diario) .volver-centro,
+html.plano body:not(.en-diario) #vistaseg,html.plano body:not(.en-diario) #mezclar,html.plano body:not(.en-diario) .solo-celu-b,html.plano .barra .n{display:none!important}
 html.plano .detalle .lateral,html.plano .detalle .zoom{display:flex!important}
-/* poco bold y poco rojo, pero con intención */
-html.plano b,html.plano strong,html.plano h1,html.plano h2,html.plano h3,html.plano .lp-b,html.plano [aria-selected="true"],html.plano .principal textarea{font-weight:700!important}
-html.plano .lp-r,html.plano .peligro,html.plano .sure{color:var(--rojo)!important}
-html.plano .lp-m{color:var(--gris)!important}
-html.plano [aria-selected="true"]{text-decoration:none!important;box-shadow:inset 0 -2px 0 #333!important}
-html.plano #abrir-composer{border:1px solid #333!important;padding:9px 14px!important}
-html.plano #abrir-composer:hover{background-color:#333!important;color:#e6e6e6!important;text-decoration:none!important}
-.lp-cab{margin:0 0 26px}
-.lp-tit{margin:0;font-size:22px;line-height:1.25}
-.lp-sub{margin:6px 0 0;font-size:13px}
-.lp-orden{display:none;margin:0 0 14px;font-size:13px;flex-wrap:wrap;gap:4px 14px}
-.lp-orden button,.lp-head button{border:0;background:none;padding:0;margin:0;font-size:inherit;line-height:inherit;text-align:left;cursor:pointer;white-space:nowrap}
-.lp-head,.lp-fila{display:grid;grid-template-columns:var(--lp-cols);gap:0 2ch;width:100%;box-sizing:border-box}
-.lp-ideas{--lp-cols:5ch 13ch minmax(0,1fr) 15ch 9ch}
-.lp-frases{--lp-cols:5ch 20ch minmax(0,1fr) 9ch}
-.lp-head{font-size:15px;padding:0 10px 5px;border-bottom:1px solid #333}
-.lp-head button{font-size:12px}
-html.plano .lp-fila{border-bottom-color:rgba(51,51,51,.22)!important}
-.lp-head>button:last-child,.lp-fila>span:last-child{text-align:right}
-.lp-fila{padding:5px 10px;margin:0;border:0;border-bottom:1px dotted rgba(51,51,51,.28)!important;background:none;text-align:left;font-size:15px;line-height:1.5;cursor:pointer}
+/* un solo tamaño en la barra, la lista, el menú y los carteles */
+html.plano :is(.barra,#lista-plana,.composer,#barra-extra,.guia,.panel),html.plano :is(.barra,#lista-plana,.composer,#barra-extra,.guia,.panel) *{font-size:15px!important;line-height:1.35!important}
+html.plano .barra{top:calc(env(safe-area-inset-top,0px) + var(--m));left:max(var(--m),env(safe-area-inset-left,0px));right:max(var(--m),env(safe-area-inset-right,0px))}
+html.plano .barra .grupo{gap:2ch!important;padding:0!important}
+html.plano .barra .tab{padding:0!important;min-height:0!important}
+html.plano .barra .tab[aria-selected="true"]{color:var(--rojo)!important;text-decoration:none!important}
+html.plano .composer{left:max(var(--m),env(safe-area-inset-left,0px));bottom:calc(env(safe-area-inset-bottom,0px) + var(--m))}
+html.plano #abrir-composer{padding:0!important;min-height:0!important}
+.lp-tit{margin:0 0 1.35em}
+.lp-sel{position:relative;display:inline-block;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.lp-sel select{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px!important;-webkit-appearance:none;appearance:none}
+.lp-fila{display:grid;grid-template-columns:var(--lp-cols);gap:0 2ch;width:100%;padding:0;margin:0;border:0;background:none;text-align:left;cursor:pointer;color:inherit}
 .lp-fila>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-html.plano .lp-fila:hover,html.plano .lp-fila:focus-visible{background-color:#333!important;text-decoration:none!important;outline:0}
-html.plano .lp-fila:hover span,html.plano .lp-fila:focus-visible span{color:#e6e6e6!important}
-html.plano .lp-fila:hover .lp-r,html.plano .lp-fila:focus-visible .lp-r{color:#ff8b7e!important}
-.lp-grupo{margin:26px 0 0;padding:0 10px 5px;font-size:13px;border-bottom:1px solid #333;display:flex;gap:1.5ch;align-items:baseline}
-.lp-grupo:first-of-type{margin-top:14px}
-.lp-fin{margin:22px 10px 0;font-size:12px}
-@media (max-width:700px){html.plano body:not(.en-diario) #lista-plana{padding-left:14px;padding-right:14px;padding-top:calc(env(safe-area-inset-top,0px) + 76px)}
-  .lp-tit{font-size:18px}.lp-head{display:none}.lp-orden{display:flex}
-  .lp-ideas,.lp-frases{--lp-cols:4ch minmax(0,1fr) 8ch}.lp-fila{padding:8px 2px}.lp-fila>span.lp-c2,.lp-fila>span.lp-c4{display:none}.lp-fila>span.lp-c3{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.lp-grupo{padding-left:2px}}
+html.plano .lp-fila:hover,html.plano .lp-fila:focus-visible{text-decoration:none!important;outline:0}
+html.plano .lp-fila:hover .lp-t,html.plano .lp-fila:focus-visible .lp-t{text-decoration:underline;text-underline-offset:3px}
+.lp-esp{height:1.35em}
+.lp-vivo{color:var(--rojo)!important}
+@media (max-width:700px){.lp-fila{grid-template-columns:var(--lp-cols-m);padding:3px 0}.lp-fila>.lp-f,.lp-fila>.lp-c{display:none}.lp-fila>.lp-t{white-space:normal}}
 </style>
 <div class="conectar" id="conectar" hidden>
   <form class="cx-card" id="cx-form">
@@ -1425,34 +1417,33 @@ function nodoDeco(d){
     const d=decos.find(z=>z.id===n._id);borrarDeco=null;selDeco=null;try{await colDeco.doc(n._id).delete();if(d&&assets){try{await quitarAsset(d.a,d.id)}catch(_){}}}catch(_){toast("No se pudo quitar la imagen.")}};
   return n;
 }
-let ordenLista={k:"num",d:-1};try{const o=JSON.parse(localStorage.getItem("lp_orden")||"null");if(o&&o.k&&(o.d===1||o.d===-1))ordenLista=o}catch(_){}
+/* versión texto: la lista se ordena desde la palabra subrayada del título */
+const ORDENES={ideas:[["fecha","fecha"],["vieja","antigüedad"],["cat","categoría"],["est","estado"]],frases:[["fecha","fecha"],["vieja","antigüedad"],["cat","autor"]]};
+let ordenLista={};try{ordenLista=JSON.parse(localStorage.getItem("lp_orden2")||"{}")||{}}catch(_){}
 function pintarLista(){const L=$("lista-plana");if(!L||!document.documentElement.classList.contains("plano")){if(L)L.replaceChildren();return}
-  const k=vista,esIdea=k==="ideas",busca=q.trim();
-  const cols=esIdea?[["num","N.º"],["cat","Categoría"],["txt","Idea"],["est","Estado"],["fec","Fecha"]]:[["num","N.º"],["cat","Autor"],["txt","Frase"],["fec","Fecha"]];
-  const ok=cols.some(c=>c[0]===ordenLista.k)?ordenLista.k:"num",dir=ok===ordenLista.k?ordenLista.d:-1;
-  const val=(i,c)=>c==="num"?(i.numero||0):c==="fec"?(i.creado||0):c==="cat"?(esIdea?label(i.tipo):(i.autor||"")):c==="est"?((estadoDe(i.estado)||{}).nombre||""):(i.texto||"").trim();
-  const items=data[k].filter(coincide).sort((a,b)=>{const x=val(a,ok),y=val(b,ok);let r;
-    if(typeof x==="number")r=(x-y)*dir;else if(!x!==!y)r=x?-1:1;/* los vacíos, siempre al final */else r=x.localeCompare(y,"es",{sensitivity:"base"})*dir;
-    return r||(b.numero||0)-(a.numero||0)});
-  const ordenar=c=>{ordenLista=ordenLista.k===c?{k:c,d:-ordenLista.d}:{k:c,d:c==="num"||c==="fec"?-1:1};try{localStorage.setItem("lp_orden",JSON.stringify(ordenLista))}catch(_){}pintarLista()};
-  const flecha=()=>el("span","lp-r",dir<0?" ↓":" ↑"),hoy0=new Date();hoy0.setHours(0,0,0,0);
-  const fecha=t=>{if(!t)return "";const d=new Date(t),d0=new Date(t);d0.setHours(0,0,0,0);const dif=Math.round((hoy0-d0)/864e5);return dif===0?"hoy":dif===1?"ayer":d.toLocaleDateString("es-AR",{day:"2-digit",month:"2-digit",year:"2-digit"}).replace(/\//g,".")};
-  const fr=document.createDocumentFragment(),cab=el("div","lp-cab");
-  cab.append(el("h1","lp-tit",`Lista de ${esIdea?"ideas":"frases"} al ${new Date().toLocaleDateString("es-AR",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}`));
-  const sub=el("p","lp-sub lp-m",`${items.length} ${esIdea?(items.length===1?"idea":"ideas"):(items.length===1?"frase":"frases")}`);if(busca){sub.append(" que dicen ");sub.append(el("span","lp-r","«"+busca+"»"))}cab.append(sub);fr.append(cab);
-  /* en el celu, el orden se elige en un renglón; en la compu, tocando los títulos de las columnas */
-  const ol=el("p","lp-orden");ol.append(el("span","lp-m","ordenar:"));for(const [c,t] of cols){if(c==="txt")continue;const b=el("button",c===ok?"lp-b":null,t.toLowerCase());b.type="button";if(c===ok)b.append(flecha());b.onclick=()=>ordenar(c);ol.append(b)}fr.append(ol);
-  const tabla=el("div",esIdea?"lp-ideas":"lp-frases"),head=el("div","lp-head");
-  for(const [c,t] of cols){const b=el("button",c===ok?"lp-b":"lp-m",t.toUpperCase());b.type="button";b.title="Ordenar por "+t.toLowerCase();if(c===ok)b.append(flecha());b.onclick=()=>ordenar(c);head.append(b)}tabla.append(head);
-  const agrupa=ok==="cat"||ok==="est";let grupo=null;
-  for(const i of items){
-    if(agrupa){const g=val(i,ok);if(g!==grupo){grupo=g;const n=items.filter(x=>val(x,ok)===g).length,h=el("p","lp-grupo");h.append(el("span","lp-b",(g||(ok==="est"?"sin estado":esIdea?"sin categoría":"sin autor")).toLowerCase()),el("span","lp-m",String(n)));tabla.append(h)}}
-    const b=el("button","lp-fila");b.type="button";const t=(i.texto||"").replace(/\s+/g," ").trim()||"(sin texto)",est=esIdea?estadoDe(i.estado):null,c3=el("span","lp-c3");
-    if(i.vivo)c3.append(el("span","lp-r","● "));c3.append(esIdea?t:"“"+t.replace(/^[«“"]|[»”"]$/g,"")+"”");
-    b.append(el("span","lp-m",String(i.numero||"?").padStart(3,"0")),el("span","lp-c2"+(agrupa&&ok==="cat"?" lp-m":""),(esIdea?label(i.tipo):(i.autor||"—")).toLowerCase()),c3);
-    if(esIdea)b.append(el("span","lp-c4 lp-m",est?est.nombre.toLowerCase():""));
-    const f=fecha(i.creado);b.append(el("span",f==="hoy"?"lp-r":"lp-m",f));b.setAttribute("aria-label",`Abrir ${esIdea?"idea":"frase"} ${i.numero||""}`);b.onclick=()=>abrir(k,i.id);tabla.append(b)}
-  fr.append(tabla);fr.append(el("p","lp-fin lp-m",items.length?"— fin de la lista —":busca?"Nada con eso.":"Todavía no hay nada. Tocá «+ Nueva "+(esIdea?"idea":"frase")+"»."));
+  const k=vista,esIdea=k==="ideas",busca=q.trim(),ops=ORDENES[k]||ORDENES.ideas,ok=ops.some(o=>o[0]===ordenLista[k])?ordenLista[k]:"fecha";
+  const grupoDe=i=>ok==="cat"?(esIdea?label(i.tipo):(i.autor||"")):ok==="est"?((estadoDe(i.estado)||{}).nombre||""):"";
+  const t0=i=>i.creado||0,items=data[k].filter(coincide).sort((a,b)=>{
+    if(ok==="cat"||ok==="est"){const x=grupoDe(a),y=grupoDe(b);if(x!==y){if(!x||!y)return x?-1:1;return x.localeCompare(y,"es",{sensitivity:"base"})}}
+    return ok==="vieja"?t0(a)-t0(b)||(a.numero||0)-(b.numero||0):t0(b)-t0(a)||(b.numero||0)-(a.numero||0)});
+  const fecha=t=>t?new Date(t).toLocaleDateString("es-AR",{day:"2-digit",month:"2-digit",year:"2-digit"}):"";
+  const n=items.length,palabra=esIdea?(n===1?"idea":"ideas"):(n===1?"frase":"frases");
+  const tit=el("p","lp-tit");tit.append(`Lista de ${n} ${palabra} ${busca?`que ${n===1?"dice":"dicen"} «${busca}» `:""}por `);
+  const sel=el("span","lp-sel",(ops.find(o=>o[0]===ok)||ops[0])[1]),dd=el("select");dd.setAttribute("aria-label","Ordenar la lista");
+  for(const [v,t] of ops){const o=el("option",null,t);o.value=v;if(v===ok)o.selected=true;dd.append(o)}
+  dd.onchange=()=>{ordenLista[k]=dd.value;try{localStorage.setItem("lp_orden2",JSON.stringify(ordenLista))}catch(_){}pintarLista()};sel.append(dd);
+  tit.append(sel,` al ${new Date().toLocaleDateString("es-AR",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}`);
+  const fr=document.createDocumentFragment();fr.append(tit);
+  /* columnas tan anchas como haga falta, como en un texto plano */
+  const wN=Math.max(2,...items.map(i=>String(i.numero||"?").length+1)),wC=Math.min(16,Math.max(4,...items.map(i=>(esIdea?label(i.tipo):(i.autor||"")).length)));
+  const caja=el("div");caja.style.setProperty("--lp-cols",`${wN}ch 8ch ${wC}ch minmax(0,1fr)`);caja.style.setProperty("--lp-cols-m",`${wN}ch minmax(0,1fr)`);
+  let g0;for(const [x,i] of items.entries()){
+    if(ok==="cat"||ok==="est"){const g=grupoDe(i);if(x&&g!==g0)caja.append(el("div","lp-esp"));g0=g}
+    const b=el("button","lp-fila");b.type="button";const est=esIdea?estadoDe(i.estado):null,t=(i.texto||"").replace(/\s+/g," ").trim()||"(sin texto)",tx=el("span","lp-t");
+    if(i.vivo)tx.append(el("span","lp-vivo","● "));tx.append(esIdea?t:"“"+t.replace(/^[«“"]|[»”"]$/g,"")+"”");if(est)tx.append(` (${est.nombre.toLowerCase()})`);
+    b.append(el("span",null,"#"+(i.numero||"?")),el("span","lp-f",fecha(i.creado)),el("span","lp-c",(esIdea?label(i.tipo):(i.autor||"")).toLowerCase()),tx);
+    b.setAttribute("aria-label",`Abrir ${esIdea?"idea":"frase"} ${i.numero||""}`);b.onclick=()=>abrir(k,i.id);caja.append(b)}
+  if(!n)caja.append(el("p",null,busca?"(nada)":"(vacía)"));fr.append(caja);
   const y=L.scrollTop;L.replaceChildren(fr);L.scrollTop=y}
 function pintarMain(){
   $("n-ideas").textContent=data.ideas.length||"";$("n-frases").textContent=data.frases.length||"";
@@ -2453,6 +2444,9 @@ function pintarAyuda(){const idx=$("ay-idx");idx.replaceChildren();
    Al entrar, a cada persona le aparece un cartel con lo que todavía no vio. Formato de cada ítem: [título, explicación].
    Si el cambio solo lo ve Lenny (pruebas), la entrada lleva mio:true y el cartel le sale solo a él. */
 const NOVEDADES=[
+ {n:4,f:"12 de noviembre, versión texto (otra vuelta)",mio:true,it:[
+  ["Más simple","Una sola letra, un solo tamaño, sin negrita ni recuadros. El rojo solo marca en qué sección estás."],
+  ["El orden está en el título","Tocá la palabra subrayada («por fecha») y elegí: fecha, antigüedad, categoría o estado. Por categoría o estado, deja un renglón libre entre grupos."]]},
  {n:3,f:"12 de noviembre, versión texto",mio:true,it:[
   ["La lista se ordena","Tocá el título de una columna (N.º, Categoría, Estado, Fecha…) y se ordena por eso; tocalo de nuevo y se da vuelta. Por categoría o estado, además, se agrupa. En el celu está en el renglón «ordenar»."],
   ["Diseño más trabajado","Título grande, columnas con encabezado, el renglón se pinta al pasar el mouse, y un poco de negrita y rojo: lo de hoy, lo que está en vivo y el orden elegido."]]},
