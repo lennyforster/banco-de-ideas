@@ -237,6 +237,9 @@ textarea::placeholder,input::placeholder{color:rgba(43,37,32,.45)}
 .btexto .grip{height:18px;opacity:0;transition:opacity .15s;background:repeating-linear-gradient(90deg,rgba(255,253,246,.55) 0 2px,transparent 2px 6px) center/36px 6px no-repeat;border:0}
 .btexto:hover .grip,.btexto.sel .grip{opacity:1}
 .btexto textarea{display:block;width:100%;resize:none;overflow:hidden;border:0;background:transparent;color:var(--paper);font:600 22px/1.3 var(--hand);padding:2px 4px;text-shadow:0 1px 2px rgba(0,0,0,.35);user-select:text;-webkit-user-select:text;touch-action:auto}
+/* la trama del fondo se apaga solo debajo del texto suelto */
+.btexto::before{content:"";position:absolute;inset:26px 2px 6px;z-index:-1;pointer-events:none;border-radius:12px;background:var(--mat);box-shadow:0 0 14px 12px var(--mat);opacity:.86}
+.vista.papel .btexto::before{display:none}
 .btexto textarea:focus{outline:1px dashed rgba(255,253,246,.5);outline-offset:2px}
 .btexto textarea::placeholder{color:rgba(255,253,246,.55)}
 .btxt{display:flex;flex-direction:column;background:var(--paper);box-shadow:0 1px 1px rgba(0,0,0,.1),0 10px 16px -8px rgba(0,0,0,.45);transform:rotate(var(--r,0deg))}
