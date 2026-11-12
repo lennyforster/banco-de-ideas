@@ -788,7 +788,11 @@ html.plano .barra .tab{padding:0!important;min-height:0!important}
 html.plano .barra .tab[aria-selected="true"]{color:var(--rojo)!important;text-decoration:none!important}
 html.plano .composer{left:max(var(--m),env(safe-area-inset-left,0px));bottom:calc(env(safe-area-inset-bottom,0px) + var(--m))}
 html.plano #abrir-composer{padding:0!important;min-height:0!important}
+/* en la lista, «nueva» es un renglón más, no un botón flotando encima del texto */
+html.plano body:not(.en-diario) #abrir-composer{visibility:hidden}
+.lp-nueva{display:block;padding:0;margin:0 0 1.35em;border:0;background:none;cursor:pointer;color:inherit;text-align:left}
 .lp-tit{margin:0 0 1.35em}
+.lp-tit+.lp-nueva{margin-top:0}
 .lp-sel{position:relative;display:inline-block;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .lp-sel select{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px!important;-webkit-appearance:none;appearance:none}
 .lp-fila{display:grid;grid-template-columns:var(--lp-cols);gap:0 2ch;width:100%;padding:0;margin:0;border:0;background:none;text-align:left;cursor:pointer;color:inherit}
@@ -1433,7 +1437,7 @@ function pintarLista(){const L=$("lista-plana");if(!L||!document.documentElement
   for(const [v,t] of ops){const o=el("option",null,t);o.value=v;if(v===ok)o.selected=true;dd.append(o)}
   dd.onchange=()=>{ordenLista[k]=dd.value;try{localStorage.setItem("lp_orden2",JSON.stringify(ordenLista))}catch(_){}pintarLista()};sel.append(dd);
   tit.append(sel,` al ${new Date().toLocaleDateString("es-AR",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}`);
-  const fr=document.createDocumentFragment();fr.append(tit);
+  const fr=document.createDocumentFragment(),nueva=el("button","lp-nueva",esIdea?"+ nueva idea":"+ nueva frase");nueva.type="button";nueva.onclick=()=>$("abrir-composer").click();fr.append(tit,nueva);
   /* columnas tan anchas como haga falta, como en un texto plano */
   const wN=Math.max(2,...items.map(i=>String(i.numero||"?").length+1)),wC=Math.min(16,Math.max(4,...items.map(i=>(esIdea?label(i.tipo):(i.autor||"")).length)));
   const caja=el("div");caja.style.setProperty("--lp-cols",`${wN}ch 8ch ${wC}ch minmax(0,1fr)`);caja.style.setProperty("--lp-cols-m",`${wN}ch minmax(0,1fr)`);
@@ -2446,7 +2450,8 @@ function pintarAyuda(){const idx=$("ay-idx");idx.replaceChildren();
 const NOVEDADES=[
  {n:4,f:"12 de noviembre, versión texto (otra vuelta)",mio:true,it:[
   ["Más simple","Una sola letra, un solo tamaño, sin negrita ni recuadros. El rojo solo marca en qué sección estás."],
-  ["El orden está en el título","Tocá la palabra subrayada («por fecha») y elegí: fecha, antigüedad, categoría o estado. Por categoría o estado, deja un renglón libre entre grupos."]]},
+  ["El orden está en el título","Tocá la palabra subrayada («por fecha») y elegí: fecha, antigüedad, categoría o estado. Por categoría o estado, deja un renglón libre entre grupos."],
+  ["«+ nueva idea» arriba de la lista","Ya no flota abajo tapando renglones: es la primera línea de la lista."]]},
  {n:3,f:"12 de noviembre, versión texto",mio:true,it:[
   ["La lista se ordena","Tocá el título de una columna (N.º, Categoría, Estado, Fecha…) y se ordena por eso; tocalo de nuevo y se da vuelta. Por categoría o estado, además, se agrupa. En el celu está en el renglón «ordenar»."],
   ["Diseño más trabajado","Título grande, columnas con encabezado, el renglón se pinta al pasar el mouse, y un poco de negrita y rojo: lo de hoy, lo que está en vivo y el orden elegido."]]},
