@@ -360,6 +360,14 @@ body.modo-hilo #vp-hoja textarea,body.modo-hilo #vp-hoja input{pointer-events:no
 .tool.amarillo{background:var(--p-corto)}
 .tool[aria-pressed="true"]{background:#c81e1e;color:#fff}
 .mas-sec{display:grid;gap:6px}
+#panel-mas{gap:14px;padding:14px 16px 12px}
+#panel-mas .mas-sec{gap:7px}
+.mas-fila{display:flex;flex-wrap:wrap;gap:8px;padding-top:12px;border-top:1px solid rgba(43,37,32,.12)}
+.mas-pie{display:flex;align-items:center;gap:4px;margin:0 -6px -2px}
+.mas-pie .btn{background:transparent;box-shadow:none;padding:7px 10px;color:var(--muted)}
+.mas-pie .btn:hover{background:rgba(43,37,32,.07);color:var(--ink)}
+.mas-pie #h-del{margin-left:auto;color:var(--danger)}
+html.plano .mas-fila{border-top:1px solid #333!important}
 #zoom-hoja{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 64px)}
 @media (max-width:560px){#zoom-hoja .todo,#zoom-main .todo{display:none}.herramientas{left:12px;right:12px;transform:none;max-width:none}.tool-lbl{display:none}.vistaseg .seg-lbl{display:none}}
 .comp-btns{display:flex;gap:8px}
@@ -410,6 +418,11 @@ body.modo-hilo #vp-hoja textarea,body.modo-hilo #vp-hoja input{pointer-events:no
 .lat[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
 .lat-sep{height:1px;margin:3px 7px;background:rgba(43,37,32,.18)}
 .lat.mas{font:500 22px/1 var(--ui)}
+.mostrar-ui{display:none;position:fixed;z-index:30;left:max(14px,env(safe-area-inset-left,0px));top:50%;transform:translateY(-50%);width:36px;height:36px;border:0;border-radius:50%;background:none;color:var(--paper);opacity:.35;cursor:pointer;align-items:center;justify-content:center;padding:0;transition:opacity .15s}
+.mostrar-ui:hover,.mostrar-ui:focus-visible{opacity:1;background:rgba(0,0,0,.15)}
+body.sin-ui .mostrar-ui{display:flex}
+body.en-diario .mostrar-ui{color:var(--ink)}
+html.plano .mostrar-ui{color:#333!important}
 .agregar-menu{position:fixed;z-index:12;display:flex;flex-direction:column;gap:1px;background:var(--chip-bg);border-radius:14px;padding:5px;box-shadow:0 4px 14px rgba(0,0,0,.3);transform:translateY(-50%)}
 .agregar-menu button{border:0;background:none;border-radius:9px;padding:8px 14px;font:600 .85rem var(--ui);color:var(--ink);cursor:pointer;text-align:left;white-space:nowrap}
 .agregar-menu button:hover{background:rgba(43,37,32,.1)}
@@ -481,6 +494,7 @@ body.en-diario #btn-menu{display:inline-block}
 body.en-diario #detalle{z-index:9}
 body.en-diario #detalle>.barra{display:none}
 #zoom-hoja{transition:top .2s}
+@media (min-width:761px){#zoom-hoja{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 12px)}}
 body.en-diario #zoom-hoja{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 70px)}
 #panel-diacal{left:auto;right:max(12px,env(safe-area-inset-right,0px));transform:none;width:min(400px,calc(100vw - 24px));max-height:calc(100vh - 90px);overflow:auto;padding:16px 18px 14px;gap:12px;border-radius:6px;
   background:#fbf7ec;box-shadow:0 2px 2px rgba(0,0,0,.12),0 24px 40px -14px rgba(0,0,0,.5)}
@@ -1168,7 +1182,8 @@ window.claude={use:async n=>{if(INVITADO&&n==="db"){if(!listo)listo=conectar();r
     <div class="meta"><span>Esta idea</span><button type="button" class="cerrar" id="cerrar-mas" aria-label="Cerrar">×</button></div>
     <div id="mas-cat" class="mas-sec"><span class="nota-panel">Categoría</span><div class="colores" id="h-colores" role="group" aria-label="Categoría"></div></div>
     <div id="mas-est" class="mas-sec"><span class="nota-panel">Estado</span><div class="colores" id="h-estados" role="group" aria-label="Estado de la idea"></div></div>
-    <div class="acc" style="justify-content:flex-start"><button class="btn" id="h-exportar" type="button">Exportar</button><button class="btn" id="h-vivo" type="button">● En vivo</button><button class="btn" id="h-compartir" type="button">Compartir</button><button class="btn" id="h-a-pila" type="button" hidden>Devolver a la pila</button><button class="btn" id="h-ayuda" type="button">Cómo se usa?</button><button class="btn" id="h-del" type="button" hidden>Borrar este día</button></div>
+    <div class="mas-fila"><button class="btn" id="h-vivo" type="button">● En vivo</button><button class="btn" id="h-compartir" type="button">Compartir</button><button class="btn" id="h-exportar" type="button">Exportar</button><button class="btn" id="h-a-pila" type="button" hidden>Devolver a la pila</button></div>
+    <div class="mas-pie"><button class="btn" id="h-ayuda" type="button">Cómo se usa?</button><button class="btn" id="h-del" type="button" hidden>Borrar este día</button></div>
   </div>
   <form class="panel" id="linkform" hidden>
     <input type="text" id="l-url" placeholder="Pegá el link" aria-label="Link">
@@ -2075,6 +2090,7 @@ const ICO={
   sel:'<svg width="17" height="17" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="2" width="12" height="12" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="3 2.2"/></svg>',
   flecha:'<svg width="17" height="17" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13L12.5 3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M6.5 3.2H12.8V9.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   lapiz:'<svg width="17" height="17" viewBox="0 0 16 16" aria-hidden="true"><path d="M10.8 2.4l2.8 2.8-8.3 8.3-3.5.7.7-3.5z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M9.3 3.9l2.8 2.8" stroke="currentColor" stroke-width="1.5"/></svg>',
+  ojo:'<svg width="18" height="18" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.3 8S3.8 3.6 8 3.6 14.7 8 14.7 8 12.2 12.4 8 12.4 1.3 8 1.3 8z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="8" cy="8" r="2.1" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>',
   undo:'<svg width="17" height="17" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 3.5L2.5 6.5l3 3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.8 6.5H10a3.5 3.5 0 010 7H7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
   redo:'<svg width="17" height="17" viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 3.5l3 3-3 3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.2 6.5H6a3.5 3.5 0 000 7h3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'};
 const paletas=[],GROSORES=[2,5,10,18];
@@ -2086,10 +2102,10 @@ function crearLateral(lz){
   const bar=el("div","lateral");bar.setAttribute("role","toolbar");bar.setAttribute("aria-label","Herramientas");
   const mkB=(m,lbl)=>{const b=el("button","lat");b.type="button";b.innerHTML=ICO[m];b.setAttribute("aria-label",lbl);b.title=lbl;b.dataset.m=m;bar.append(b);return b};
   const modos=[mkB("sel","Seleccionar varios (o Shift + arrastrar)"),mkB("flecha","Flecha: tocá un post-it y después otro"),mkB("lapiz","Lápiz para dibujar")];
-  modos.forEach(b=>b.setAttribute("aria-pressed","false"));bar.append(el("span","lat-sep"));mkB("undo","Deshacer (Ctrl+Z)");mkB("redo","Rehacer (Ctrl+Shift+Z)");
+  modos.forEach(b=>b.setAttribute("aria-pressed","false"));bar.append(el("span","lat-sep"));mkB("undo","Deshacer (Ctrl+Z)");mkB("redo","Rehacer (Ctrl+Shift+Z)");bar.append(el("span","lat-sep"));mkB("ojo","Esconder todo (Tab)");
   bar.addEventListener("click",e=>{const b=e.target.closest(".lat");if(!b)return;const m=b.dataset.m;
     if(escribiendo())document.activeElement.blur();b.blur();
-    if(m==="undo"){deshacerUI(false);return}if(m==="redo"){deshacerUI(true);return}lz.setModo(lz.modo===m?null:m)});
+    if(m==="undo"){deshacerUI(false);return}if(m==="redo"){deshacerUI(true);return}if(m==="ojo"){alternarUI();return}lz.setModo(lz.modo===m?null:m)});
   const pal=el("div","lapiz-menu");pal.hidden=true;pal.setAttribute("role","toolbar");pal.setAttribute("aria-label","Lápiz: color y grosor");
   const mk=(cls,lbl)=>{const b=el("button","lm-b "+cls);b.type="button";b.setAttribute("aria-label",lbl);b.title=lbl;return b};
   const cols=COL_LAPIZ.map(c=>{const b=mk("lm-c","Color");b.dataset.c=c;const i=el("i");i.style.setProperty("--c",c);b.append(i);b.onclick=()=>{pincel.c=c;pincel.goma=false;guardarPincel();pintarPaletas()};return b});
@@ -2267,11 +2283,14 @@ $("add-a-idea").onclick=async()=>{
 
 /* ---------- Tab esconde y muestra toda la interfaz ---------- */
 let avisoTab=false;
+/* esconder todo: con Tab o con el ojito de la barra izquierda; para volver queda un ojito apenas visible */
+const mostrarUI=el("button","mostrar-ui");mostrarUI.type="button";mostrarUI.innerHTML=ICO.ojo;mostrarUI.title="Mostrar todo (Tab)";mostrarUI.setAttribute("aria-label","Mostrar todo");document.body.append(mostrarUI);
+function alternarUI(){const on=document.body.classList.toggle("sin-ui");if(on&&!avisoTab){avisoTab=true;toast("Para volver, tocá el ojito de la izquierda o apretá Tab.")}}
+mostrarUI.onclick=()=>alternarUI();
 document.addEventListener("keydown",e=>{if(e.key!=="Tab"||e.shiftKey||e.ctrlKey||e.metaKey||e.altKey)return;
   const a=document.activeElement,c=document.getElementById("conectar");if(c&&!c.hidden)return;
   if(a&&a.closest&&a.closest(".panel,.composer,#linkform,.pv-cab"))return;
-  e.preventDefault();const on=document.body.classList.toggle("sin-ui");
-  if(on&&!avisoTab){avisoTab=true;toast("Tab de nuevo para volver a ver todo.")}},true);
+  e.preventDefault();alternarUI()},true);
 /* ---------- Menú ••• (la búsqueda vive adentro) ---------- */
 /* ••• abre una fila hacia el costado con todo lo demás */
 {const ex=el("div","barra-extra");ex.id="barra-extra";
@@ -2456,7 +2475,8 @@ const AYUDA=[
   [[{ic:"sel"}," Elegir varios"],"Tocá post-its para elegirlos, o arrastrá un marco."],
   [[{ic:"flecha"}," Flechas"],"Tocá un post-it y después otro: quedan unidos con una flecha."],
   [[{ic:"lapiz"}," Lápiz"],"Dibujás arriba de la plancha. Elegís color y grosor, y tiene goma."],
-  [[{ic:"undo"},{ic:"redo"}],"Deshacer y rehacer."]]},
+  [[{ic:"undo"},{ic:"redo"}],"Deshacer y rehacer."],
+  [[{ic:"ojo"}," Esconder todo"],"Deja solo la plancha, sin botones. Para volver queda un ojito apenas visible a la izquierda (o apretá Tab)."]]},
  {t:"Atajo del iPhone",it:[
   [null,"Con un atajo en el iPhone apretás un botón, hablás, y la idea aparece sola en la web. Ni siquiera hace falta abrirla."],
   [null,"Para instalarlo, hacé todo desde el iPhone (una sola vez):"],
@@ -2483,7 +2503,7 @@ const AYUDA=[
   [["Alt","arrastrar"],"Duplica lo que arrastrás: lo original se queda en su lugar y la copia queda donde la soltás. En Mac es la tecla Option (⌥). Anda en la plancha y adentro de los post-its."],
   [["Supr"],"Despegar lo que tenés elegido (también Borrar)."],
   [["Esc"],"Cerrar lo que esté abierto o soltar la selección."],
-  [["Tab"],"Esconde toda la interfaz para ver solo la plancha. Tab de nuevo y vuelve."]]},
+  [["Tab"],"Esconde toda la interfaz para ver solo la plancha (lo mismo que el ojito de la barra izquierda). Tab de nuevo y vuelve."]]},
  {t:"Tus datos",it:[
   [null,"Todo se guarda solo, en un repositorio privado de GitHub. No hay botón de guardar."],
   [null,"Para abrir tu plancha en otro dispositivo, entrás a la web y pegás tu clave una vez."]]},
@@ -2511,6 +2531,10 @@ function pintarAyuda(){const idx=$("ay-idx");idx.replaceChildren();
    Al entrar, a cada persona le aparece un cartel con lo que todavía no vio. Formato de cada ítem: [título, explicación].
    Si el cambio solo lo ve Lenny (pruebas), la entrada lleva mio:true y el cartel le sale solo a él. */
 const NOVEDADES=[
+ {n:6,f:"12 de noviembre, de madrugada",it:[
+  ["Esconder todo","El ojito de la barra izquierda deja solo la plancha. Para volver, tocá el ojito que queda apenas visible o apretá Tab."],
+  ["Menú ••• de un post-it, más ordenado","Arriba categoría y estado; abajo En vivo, Compartir y Exportar; al pie la guía."],
+  ["Zoom","Adentro de un post-it, el zoom y «Ver todo» vuelven abajo a la derecha."]]},
  {n:5,f:"12 de noviembre, a la noche",it:[
   ["Versión texto","En el ••• de arriba hay una A: la web pasa a letra de máquina, y las ideas y frases se ven como una lista. Tocás la palabra subrayada del título para ordenarla por fecha, categoría o estado. El post-it te devuelve a la versión normal."],
   ["Imágenes en grande","Tocá una imagen y se abre en pantalla completa. Ahí está «Recortar»."],
@@ -2532,10 +2556,10 @@ const NOVEDADES=[
   ["Doble clic adentro de un post-it","Ahora crea lo último que agregaste (nota, texto, imagen…). En la plancha principal sigue siendo un post-it nuevo."],
   ["Textos más claros","La trama del fondo se apaga debajo de los textos sueltos, y ya no aparece el subrayado rojo del corrector."],
   ["Menú ••• de un post-it","Ahí está «Cómo se usa?». Para despegar un post-it, hacelo desde la plancha."]]}];
-function verNovedades(todas){if(window.__invitado||$("novedades"))return;const ult=NOVEDADES[0].n;let v=null;try{v=localStorage.getItem("nov_vista")}catch(_){}
+function verNovedades(todas,comoAmigo){if(window.__invitado||$("novedades"))return;const ult=NOVEDADES[0].n;let v=null;try{v=localStorage.getItem("nov_vista")}catch(_){}
   const marcar=()=>{try{localStorage.setItem("nov_vista",String(ult))}catch(_){}};
   if(!todas&&window.__entraNuevo){marcar();return}/* quien recién entra ve la guía, no hace falta el cartel */
-  let mio=false;try{mio=localStorage.getItem("gh_repo")==="banco-de-ideas-datos"}catch(_){}
+  let mio=false;try{mio=!comoAmigo&&localStorage.getItem("gh_repo")==="banco-de-ideas-datos"}catch(_){}
   const desde=todas?0:v===null?0:(+v||0),nuevas=NOVEDADES.filter(x=>x.n>desde&&(!x.mio||mio));if(!nuevas.length){marcar();return}
   const ov=el("div","guia");ov.id="novedades";ov.setAttribute("role","dialog");ov.setAttribute("aria-modal","true");ov.setAttribute("aria-label","Novedades");
   const h=el("div","ay-hoja nov-hoja"),cab=el("div","ay-cab"),x=el("button",null,"×");x.type="button";x.setAttribute("aria-label","Cerrar");cab.append(el("h2",null,"Novedades"),x);
@@ -3395,7 +3419,7 @@ drawComposer();setVista(vista);try{if(localStorage.getItem("pestana")==="diario"
   colDeco=db.collection("deco");
   colDeco.onSnapshot(s=>{decos=s.docs.map(d=>({id:d.id,...d.data()}));pintarMain()},()=>{});
 })();
-(async()=>{try{assets=window.claude?await window.claude.use("assets"):null}catch(_){assets=null}pintarMain();if(abierto)$("add-img").hidden=!assets;try{window.revisarPlano()}catch(_){}setTimeout(()=>{try{verNovedades()}catch(e){console.error(e)}},900)})();
+(async()=>{try{assets=window.claude?await window.claude.use("assets"):null}catch(_){assets=null}pintarMain();if(abierto)$("add-img").hidden=!assets;try{window.revisarPlano()}catch(_){}setTimeout(()=>{try{const v=new URLSearchParams(location.search).has("novedades");verNovedades(v,v)}catch(e){console.error(e)}},900)})();
 (async()=>{try{dl=window.claude?await window.claude.use("downloads"):null}catch(_){dl=null}})();
 (async()=>{try{samp=window.claude?await window.claude.use("sample"):null}catch(_){samp=null}if(abierto)$("btn-claude").hidden=!samp;$("m-claude").hidden=!samp;$("abrir-dictar").hidden=!samp;$("h-dictar").hidden=!samp})();
 </script>
