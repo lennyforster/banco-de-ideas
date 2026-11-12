@@ -770,6 +770,17 @@ html.plano .on,html.plano .act,html.plano .activo,html.plano .activa,html.plano 
 html.plano button:hover,html.plano a{text-decoration:underline!important;text-underline-offset:3px}
 html.plano .nota.msel,html.plano .pieza.sel,html.plano .pieza.msel{outline:1px dashed #333!important;outline-offset:4px}
 html.plano img{filter:grayscale(1)}
+/* en la versión texto, la plancha de ideas y frases es una lista */
+#lista-plana{display:none}
+html.plano body:not(.en-diario) #lista-plana{display:block;position:fixed;inset:0;z-index:5;overflow:auto;background-color:#e6e6e6!important;padding:calc(env(safe-area-inset-top,0px) + 70px) 28px 110px;font-size:15px;line-height:1.5}
+html.plano body:not(.en-diario) .lateral,html.plano body:not(.en-diario) .lapiz-menu,html.plano body:not(.en-diario) .zoom,html.plano body:not(.en-diario) .volver-centro{display:none!important}
+html.plano .detalle .lateral,html.plano .detalle .zoom{display:flex!important}
+.lp-tit{margin:0 0 2px;font-size:15px}
+.lp-fila{display:grid;grid-template-columns:6ch 14ch minmax(0,1fr) 10ch;gap:0 2ch;width:100%;max-width:1100px;padding:0;margin:0;border:0;background:none;text-align:left;font-size:15px;line-height:1.5;cursor:pointer}
+.lp-fila>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lp-fila>span:last-child{text-align:right}
+.lp-vacio{margin:0}
+@media (max-width:640px){html.plano body:not(.en-diario) #lista-plana{padding-left:16px;padding-right:16px}.lp-fila{grid-template-columns:5ch minmax(0,1fr)}.lp-fila>span:nth-child(2),.lp-fila>span:last-child{display:none}}
 </style>
 <div class="conectar" id="conectar" hidden>
   <form class="cx-card" id="cx-form">
@@ -963,6 +974,7 @@ window.claude={use:async n=>{if(INVITADO&&n==="db"){if(!listo)listo=conectar();r
 <!-- Plancha principal -->
 <div class="nombre-vivo" id="nombre-vivo" hidden><form id="nv-form"><h2>¿Cómo te llamás?</h2><p>Vas a entrar a un post-it compartido. Tu nombre aparece al lado de tu cursor.</p><input id="nv-input" maxlength="30" autocomplete="nickname" placeholder="Tu nombre"><button type="submit">Entrar</button></form></div>
 <div class="guia" id="ayuda" hidden role="dialog" aria-modal="true" aria-labelledby="ay-tit"><div class="ay-hoja"><div class="ay-cab"><h2 id="ay-tit">Cómo se usa</h2><button type="button" id="ay-cerrar" aria-label="Cerrar">×</button></div><div class="ay-main"><nav class="ay-idx" id="ay-idx" role="tablist" aria-label="Secciones"></nav><div class="ay-cuerpo" id="ay-cuerpo" role="tabpanel"></div></div></div></div>
+<div id="lista-plana" aria-label="Lista"></div>
 <div class="vista" id="vp-main"><div class="capa" id="capa-main"></div></div>
 
 <div class="barra">
@@ -1388,6 +1400,16 @@ function nodoDeco(d){
     const d=decos.find(z=>z.id===n._id);borrarDeco=null;selDeco=null;try{await colDeco.doc(n._id).delete();if(d&&assets){try{await quitarAsset(d.a,d.id)}catch(_){}}}catch(_){toast("No se pudo quitar la imagen.")}};
   return n;
 }
+function pintarLista(){const L=$("lista-plana");if(!L||!document.documentElement.classList.contains("plano")){if(L)L.replaceChildren();return}
+  const k=vista,esIdea=k==="ideas",items=data[k].filter(coincide).sort((a,b)=>(b.numero||0)-(a.numero||0));
+  const hoy=new Date().toLocaleDateString("es-AR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  const fr=document.createDocumentFragment();fr.append(el("p","lp-tit",`Lista de ${esIdea?"ideas":"frases"} al ${hoy}${q.trim()?` que dicen «${q.trim()}»`:""}`));
+  if(!items.length)fr.append(el("p","lp-vacio",q.trim()?"nada":"(vacía)"));
+  for(const i of items){const b=el("button","lp-fila");b.type="button";const t=(i.texto||"").replace(/\s+/g," ").trim()||"(sin texto)",est=esIdea?estadoDe(i.estado):null;
+    b.append(el("span",null,"#"+(i.numero||"?")),el("span",null,esIdea?label(i.tipo).toLowerCase():(i.autor||"")),el("span",null,(esIdea?t:"“"+t.replace(/^[«“"]|[»”"]$/g,"")+"”")+(est?"  ["+est.nombre.toLowerCase()+"]":"")),
+      el("span",null,i.creado?new Date(i.creado).toLocaleDateString("es-AR",{day:"2-digit",month:"2-digit",year:"2-digit"}):""));
+    b.onclick=()=>abrir(k,i.id);fr.append(b)}
+  L.replaceChildren(fr)}
 function pintarMain(){
   $("n-ideas").textContent=data.ideas.length||"";$("n-frases").textContent=data.frases.length||"";
   const capa=$("capa-main"),k=vista,lista=enPlancha(k),pos=posiciones(lista),vivos=new Set();
@@ -1400,7 +1422,7 @@ function pintarMain(){
     n.classList.toggle("sel",selDeco===d.id);n._capa.textContent=d.arriba?"Mandar atrás":"Traer adelante";n._quitar.textContent=borrarDeco===d.id?"¿Seguro?":"Quitar";n._capa.hidden=false}
   for(const [id,n] of nodosDeco)if(!vivasD.has(id)){n.remove();nodosDeco.delete(id)}
   $("mezclar").disabled=data.ideas.length+data.frases.length<2;
-  pintarPilas();pedirFlechas();limCache=null;lzMain.pedirRevision();if(!$("pila-vista").hidden)pintarPilaVista();
+  pintarPilas();pedirFlechas();limCache=null;lzMain.pedirRevision();if(!$("pila-vista").hidden)pintarPilaVista();pintarLista();
 }
 async function borrarDePlancha(nodos){
   for(const n of nodos){
@@ -2164,7 +2186,7 @@ document.addEventListener("keydown",e=>{if(e.key!=="Tab"||e.shiftKey||e.ctrlKey|
   /* prueba de rediseño: solo aparece en la cuenta de Lenny */
   {const pl=el("button","btn");pl.type="button";pl.id="btn-plano";pl.hidden=true;
     const poner=si=>{document.documentElement.classList.toggle("plano",si);pl.textContent=si?"Versión normal":"Versión texto";try{localStorage.setItem("plano",si?"1":"0")}catch(_){}
-      requestAnimationFrame(()=>document.querySelectorAll("textarea").forEach(t=>{try{autosize(t)}catch(_){}}))};
+      try{pintarLista()}catch(_){}requestAnimationFrame(()=>document.querySelectorAll("textarea").forEach(t=>{try{autosize(t)}catch(_){}}))};
     pl.onclick=()=>poner(!document.documentElement.classList.contains("plano"));ex.lastElementChild.before(pl);
     window.revisarPlano=()=>{let mio=false,puesto=false;try{mio=localStorage.getItem("gh_repo")==="banco-de-ideas-datos";puesto=localStorage.getItem("plano")==="1"}catch(_){}pl.hidden=!mio;if(mio)poner(puesto);else document.documentElement.classList.remove("plano")};window.revisarPlano()}
   $("btn-menu").before(ex);
@@ -2384,8 +2406,11 @@ function pintarAyuda(){const idx=$("ay-idx");idx.replaceChildren();
   se.append(ul);cu.append(se,el("p","ay-pie","¿Algo no anda o se te ocurre una mejora? ¡Avisame!"));cu.scrollTop=0}
 /* ---------- Novedades ----------
    Cada vez que se agrega o cambia algo que el usuario nota, sumar ARRIBA una entrada con n = el anterior + 1.
-   Al entrar, a cada persona le aparece un cartel con lo que todavía no vio. Formato de cada ítem: [título, explicación]. */
+   Al entrar, a cada persona le aparece un cartel con lo que todavía no vio. Formato de cada ítem: [título, explicación].
+   Si el cambio solo lo ve Lenny (pruebas), la entrada lleva mio:true y el cartel le sale solo a él. */
 const NOVEDADES=[
+ {n:2,f:"12 de noviembre, más tarde",mio:true,it:[
+  ["Versión texto (prueba, solo la ves vos)","En el ••• está «Versión texto»: fondo gris, letra de máquina y, en vez de post-its, una lista de ideas y frases. Tocás un renglón y se abre."]]},
  {n:1,f:"12 de noviembre",it:[
   ["Recortar imágenes","Tocá una imagen y aparece «Recortar». Anda en la plancha, adentro de los post-its y en el diario."],
   ["Alt + arrastrar duplica","El original se queda en su lugar y la copia va donde la soltás. En Mac es Option (⌥)."],
@@ -2396,7 +2421,8 @@ const NOVEDADES=[
 function verNovedades(todas){if(window.__invitado||$("novedades"))return;const ult=NOVEDADES[0].n;let v=null;try{v=localStorage.getItem("nov_vista")}catch(_){}
   const marcar=()=>{try{localStorage.setItem("nov_vista",String(ult))}catch(_){}};
   if(!todas&&window.__entraNuevo){marcar();return}/* quien recién entra ve la guía, no hace falta el cartel */
-  const desde=todas?0:v===null?ult-1:(+v||0),nuevas=NOVEDADES.filter(x=>x.n>desde);if(!nuevas.length)return;
+  let mio=false;try{mio=localStorage.getItem("gh_repo")==="banco-de-ideas-datos"}catch(_){}
+  const desde=todas?0:v===null?0:(+v||0),nuevas=NOVEDADES.filter(x=>x.n>desde&&(!x.mio||mio));if(!nuevas.length){marcar();return}
   const ov=el("div","guia");ov.id="novedades";ov.setAttribute("role","dialog");ov.setAttribute("aria-modal","true");ov.setAttribute("aria-label","Novedades");
   const h=el("div","ay-hoja nov-hoja"),cab=el("div","ay-cab"),x=el("button",null,"×");x.type="button";x.setAttribute("aria-label","Cerrar");cab.append(el("h2",null,"Novedades"),x);
   const cu=el("div","nov-cuerpo");for(const nv of nuevas){if(nuevas.length>1)cu.append(el("h3",null,nv.f));const ul=el("ul");for(const [t,d] of nv.it){const li=el("li");li.append(el("b",null,t+". "),d);ul.append(li)}cu.append(ul)}
